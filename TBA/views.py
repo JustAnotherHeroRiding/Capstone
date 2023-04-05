@@ -6,6 +6,8 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt,csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from django.core.files.storage import FileSystemStorage
+
 import json
 
 from .models import User
@@ -16,9 +18,25 @@ def index(request):
 
 def check_login(request):
     if request.user.is_authenticated:
-        return JsonResponse({'is_authenticated': True})
+        return JsonResponse({
+            'is_authenticated': True, 
+            'username' : request.user.username
+            })
     else:
         return JsonResponse({'is_authenticated': False})
+
+@login_required
+def upload_profile_pic(request):
+    if request.method == 'POST':
+        uploaded_file = request.FILES['profile_pic']
+        fs = FileSystemStorage(location='TBA/static/profile_pictures')
+        filename = fs.save(uploaded_file.name, uploaded_file)
+        request.user.profile_pic = fs.url(filename)
+        request.user.save()
+        return JsonResponse({'profile_pic_upload': True})
+
+
+
 
 @csrf_protect
 def login_view(request):
@@ -62,7 +80,7 @@ def register(request):
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
         if password != confirmation:
-            return render(request, "network/register.html", {
+            return render(request, "base.html", {
                 "message": "Passwords must match."
             })
 
@@ -71,10 +89,10 @@ def register(request):
             user = User.objects.create_user(username, email, password)
             user.save()
         except IntegrityError:
-            return render(request, "network/register.html", {
+            return render(request, "base.html", {
                 "message": "Username already taken."
             })
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "network/register.html")
+        return render(request, "base.html")

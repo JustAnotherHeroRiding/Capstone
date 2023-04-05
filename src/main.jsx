@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import Sidebar from './Sidebar';
-import LogIn from './LogIn';
-import Register from './Register';
 
 function Main() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [username, setUsername] = useState("")
 
   useEffect(() => {
     // Send a request to `/check/login`
@@ -15,6 +14,7 @@ function Main() {
       .then(response => response.json())
       .then(data => {
         setIsLoggedIn(data.is_authenticated);
+        setUsername(data.username)
         setIsLoading(false);
       })
       .catch(error => {
@@ -30,10 +30,8 @@ function Main() {
 
   return (
     <React.StrictMode>
-      <div>
-        <Sidebar isLoggedIn={isLoggedIn} />
-        {/* <LogIn isLoggedIn={isLoggedIn} />
-        <Register isLoggedIn={isLoggedIn} /> */}
+      <div className='bg-Intone-200 h-screen w-screen'>
+        <Sidebar isLoggedIn={isLoggedIn} username={username} />
       </div>
     </React.StrictMode>
   );

@@ -2,8 +2,9 @@ import { useState } from 'react'
 import './App.css'
 import Register from './Register'
 import LogIn from './LogIn'
+import Profile from './Profile'
 
-function Sidebar({ isLoggedIn }) {
+function Sidebar({ isLoggedIn, username }) {
 
     const [showLogIn, setShowLogIn] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
@@ -18,46 +19,58 @@ function Sidebar({ isLoggedIn }) {
         setShowLogIn(false)
     };
 
+    const [showProfile, setShowProfile] = useState(false)
+
+    const handleProfileClick = () => {
+        setShowProfile(showProfile => !showProfile);
+    }
+
 
     return (
         <div>
-            <nav className="md:left-0 md:top-0 md:fixed md:h-screen md:flex lg:w-72 md:w-48 md:flex-col text-green-600 px-2 text-xl bg-gray-900">
-                <h1 className="mb-12 md:mt-4 hover:bg-gray-700 rounded-3xl px-3 py-3"><a className="text-4xl font-bold mx-auto" href="">Slava</a></h1>
+            <nav className="md:left-0 md:top-0 md:fixed md:h-screen md:flex lg:w-72 md:w-48 md:flex-col text-Intone-600 px-2 text-xl bg-Intone-100">
+                <h1 className="mb-12 md:mt-4 hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer"><a className="text-4xl font-bold mx-auto" href=''>inTone</a></h1>
 
                 <div className="">
                     <ul className="max-md:flex max-md:justify-between max-md:mx-auto ">
-                        <li className="mb-8 max-md:mx-2">
-                            <a className="hover:bg-gray-700 rounded-3xl px-3 py-3" id='sidebar-all-posts' href="">All Posts</a>
+                        {username && (
+                            <li className='mb-4 max-md:mx-2'>
+                                <a className=" hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" onClick={handleProfileClick}>{username}</a>
+                            </li>
+                        )}
+                        <li className="mb-4 max-md:mx-2">
+                            <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3" id='sidebar-all-posts' href="">Albums</a>
                         </li>
-                        <li className="mb-8 max-md:mx-2">
-                            <a className="hover:bg-gray-700 rounded-3xl px-3 py-3" id='sidebar-following' href="">Following</a>
+                        <li className="mb-4 max-md:mx-2">
+                            <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3" id='sidebar-following' href="">Artists</a>
+                        </li>
+                        <li className="mb-4 max-md:mx-2">
+                            <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3" id='sidebar-following' href="">Gear</a>
                         </li>
                         {isLoggedIn ? (
                             <li className="mb-4 max-md:mx-2">
-                                <a className="hover:bg-gray-700 rounded-3xl px-3 py-3" href="/logout">Log Out</a>
+                                <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3" href="/logout">Log Out</a>
                             </li>
                         ) : null}
                         {!isLoggedIn && (
-                            <div>
+                            <div className="max-md:flex max-md:justify-between">
                                 <li className="mb-4 max-md:mx-2">
-                                    <button className="hover:bg-gray-700 rounded-3xl px-3 py-3"
-                                        onClick={handleLogInClick}>Log In</button>
+                                    <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer"
+                                        onClick={handleLogInClick}>Log In</a>
                                 </li>
                                 <li className="mb-4 max-md:mx-2">
-                                    <button className="hover:bg-gray-700 rounded-3xl px-3 py-3"
-                                        onClick={handleRegisterClick}>Register</button>
+                                    <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer"
+                                        onClick={handleRegisterClick}>Register</a>
                                 </li>
                             </div>
                         )}
-                        <li className="mb-4 w-full items-center max-md:mx-2">
-                            <button className="hover:bg-spectrum-h2 bg-orange-600 rounded-3xl px-4 py-3 text-white" id="sidebar-new-post">New Post</button>
-                        </li>
                     </ul>
                 </div>
 
             </nav>
-            {showLogIn && <LogIn />}
-            {showRegister && <Register />}
+            {showLogIn && <LogIn handleRegisterClick={handleRegisterClick} />}
+            {showRegister && <Register handleLogInClick={handleLogInClick} />}
+            {showProfile && <Profile username={username} />}
         </div>
     )
 }

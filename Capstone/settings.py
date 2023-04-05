@@ -35,7 +35,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'TBA'
+    'TBA',
+    "django_rename_app",
+
 ]
 
 MIDDLEWARE = [
