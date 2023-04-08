@@ -20,6 +20,28 @@ class User(AbstractUser):
             "date_joined": self.date_joined.strftime('%Y-%m-%d')
         }
 
+    def get_messages(self):
+        return list(self.sent_messages.all()) + list(self.received_messages.all())
+    
+    
+class Message(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    body = models.TextField()
+    image = models.ImageField(upload_to='TBA/static/message_images', blank=True, null=True)
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'sender': self.sender.serialize(),
+            'recipient': self.recipient.serialize(),
+            'body': self.body,
+            'image': self.image.url if self.image else None,
+            'sent_at': self.sent_at.strftime('%Y-%m-%d %H:%M:%S')
+        }
+
+
 
 class Gear(models.Model):
     name = models.CharField(max_length=255)
