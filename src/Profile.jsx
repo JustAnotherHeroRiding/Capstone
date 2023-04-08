@@ -61,7 +61,7 @@ function Profile({ userData, fetchUserData }) {
 
   return (
     <div className='mx-auto h-screen flex flex-col items-center'>
-      <h1 className='text-Intone-600 items-center mb-12'>Welcome {userData.username}</h1>
+      <h1 className='text-Intone-600 items-center mb-12'>Welcome {userData.name}</h1>
 
       <div className='flex flex-row justify-between'>
         <div className='text-Intone-600 border border-indigo-200 rounded-xl px-2 py-4 mr-12'>
@@ -106,7 +106,7 @@ function Profile({ userData, fetchUserData }) {
                   value={value}
                   name="postbody"
                   id="postbody"
-                  placeholder={`Let ${userData.username} know`}
+                  placeholder={`Let ${userData.name} know`}
                   rows='3'
                   className='bg-Intone-200 px-6 placeholder:text-gray-500 outline-none resize-none' />
                 <hr className="border-gray-500" />

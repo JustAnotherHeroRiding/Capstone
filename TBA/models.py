@@ -14,7 +14,7 @@ class User(AbstractUser):
     def serialize(self):
         return {
             "id": self.id,
-            "username": self.username,
+            "name": self.username,
             "email": self.email,
             "profile_pic": self.profile_pic.url if self.profile_pic else None,
             "date_joined": self.date_joined.strftime('%Y-%m-%d')
@@ -152,6 +152,8 @@ class Review(models.Model):
 class Comment(models.Model):
     album = models.ForeignKey(
         Album, on_delete=models.CASCADE, related_name='comments', blank=True, null=True)
+    player= models.ForeignKey(
+        Player, on_delete=models.CASCADE, related_name='comments', blank=True, null=True)
     gear = models.ForeignKey(
         Gear, on_delete=models.CASCADE, related_name='comments', blank=True, null=True)
     text = models.TextField()
@@ -161,6 +163,7 @@ class Comment(models.Model):
             'id': self.id,
             'album': self.album.name if self.album else None,
             'gear': self.gear.name if self.gear else None,
+            'player': self.player.name if self.player else None,
             'text': self.text
         }
 

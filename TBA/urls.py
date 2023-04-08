@@ -10,5 +10,7 @@ urlpatterns = [
     
     path('check/login', views.check_login, name='check_login'),
     path('upload/profile/pic', views.upload_profile_pic, name='upload_profile_pic'),
+    
+    path('search', views.search, name='search'),
 
 ]

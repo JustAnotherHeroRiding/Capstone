@@ -7,10 +7,12 @@ from django.views.decorators.csrf import csrf_exempt,csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.core.files.storage import FileSystemStorage
+from django.db.models import Q
+
 
 import json
 
-from .models import User
+from .models import User,Album,Band,Gear,Message,Comment,ProfileComment,Player,Review
 
 def index(request):
     return render(request, "base.html")
@@ -24,6 +26,58 @@ def check_login(request):
             })
     else:
         return JsonResponse({'is_authenticated': False})
+    
+
+""" def search(request):
+    query = request.GET.get('sidebar-search')
+    results = {}
+
+    # Search Users
+    users = User.objects.filter(Q(username__icontains=query) | Q(email__icontains=query))
+    results['users'] = [user.serialize() for user in users]
+
+    # Search Albums
+    albums = Album.objects.filter(name__icontains=query)
+    results['albums'] = [album.serialize() for album in albums]
+
+    # Search Gear
+    gear = Gear.objects.filter(name__icontains=query)
+    results['gear'] = [g.serialize() for g in gear]
+
+    # Search Players
+    players = Player.objects.filter(name__icontains=query)
+    results['players'] = [player.serialize() for player in players]
+
+    # Search Bands
+    bands = Band.objects.filter(name__icontains=query)
+    results['bands'] = [band.serialize() for band in bands]
+
+    return JsonResponse(results) """
+
+def search(request):
+    results = {}
+
+    # Search Users
+    users = User.objects.all()
+    results['users'] = [user.serialize() for user in users]
+
+    # Search Albums
+    albums = Album.objects.all()
+    results['albums'] = [album.serialize() for album in albums]
+
+    # Search Gear
+    gear = Gear.objects.all()
+    results['gear'] = [g.serialize() for g in gear]
+
+    # Search Players
+    players = Player.objects.all()
+    results['players'] = [player.serialize() for player in players]
+
+    # Search Bands
+    bands = Band.objects.all()
+    results['bands'] = [band.serialize() for band in bands]
+
+    return JsonResponse(results)
 
 @login_required
 def upload_profile_pic(request):
