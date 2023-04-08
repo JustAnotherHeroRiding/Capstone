@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import Sidebar from './Sidebar';
@@ -6,22 +6,29 @@ import Sidebar from './Sidebar';
 function Main() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [username, setUsername] = useState("")
+  const [userData, setUserData] = useState(null);
 
-  useEffect(() => {
-    // Send a request to `/check/login`
+  function fetchUserData() {
     fetch('/check/login')
       .then(response => response.json())
       .then(data => {
         setIsLoggedIn(data.is_authenticated);
-        setUsername(data.username)
+        setUserData(data.user_data);
         setIsLoading(false);
       })
       .catch(error => {
         console.error(error);
         setIsLoading(false);
       });
+  }
+  
+  useEffect(() => {
+    fetchUserData();
   }, []);
+
+  function handleUploadSuccess() {
+    fetchUserData();
+  }
 
   if (isLoading) {
     // Show a loading indicator while waiting for the response
@@ -30,8 +37,8 @@ function Main() {
 
   return (
     <React.StrictMode>
-      <div className='bg-Intone-200 h-screen w-screen'>
-        <Sidebar isLoggedIn={isLoggedIn} username={username} />
+      <div className='text-Intone-600'>
+        <Sidebar isLoggedIn={isLoggedIn} userData={userData} fetchUserData={handleUploadSuccess} />
       </div>
     </React.StrictMode>
   );

@@ -20,7 +20,7 @@ def check_login(request):
     if request.user.is_authenticated:
         return JsonResponse({
             'is_authenticated': True, 
-            'username' : request.user.username
+            'user_data': request.user.serialize()
             })
     else:
         return JsonResponse({'is_authenticated': False})

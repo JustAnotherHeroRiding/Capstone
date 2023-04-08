@@ -15,6 +15,9 @@ A website where users can discuss guitar music, rate albums, list the gear used 
 - Each User will have his own profile, where they can see all of their reviews, review score distribution, albums,gear or artists added to their watchlist, comments people have left them
 - Users will also be able to message each other, and these messages should be visible on their profiles for each user they have communicated with
 - Users can upload their profile pictures #DONE 
+- If i follow a user i can see all of their reviews
+- The user view will have a reactive second nav menu allowing me to select my reviews, reviews from follower users, gear on my wishlist etc
+- Create Lists
 
 ### There will be a search bar to search for any matches in any of the categories
 ## Browse Albums, Players or Gear
