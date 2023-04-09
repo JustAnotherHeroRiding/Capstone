@@ -106,7 +106,7 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData }) {
 
     return (
         <div>
-            <nav className="md:left-0 md:top-0 md:fixed md:h-screen md:flex lg:w-72 md:w-48 md:flex-col text-Intone-600 px-2 text-xl bg-Intone-100">
+            <nav className="z-10 md:left-0 md:top-0 md:fixed md:h-screen md:flex lg:w-72 md:w-48 md:flex-col text-Intone-600 px-2 text-xl bg-Intone-100">
 
                 <h1 className="mb-12 md:mt-4 hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer">
                     <a className="text-4xl font-bold mx-auto" href=''>inTone</a></h1>

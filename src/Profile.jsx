@@ -226,9 +226,12 @@ function Profile({ userData, fetchUserData, current_user }) {
         <div className='w-96 flex flex-col border border-indigo-200 rounded-3xl px-6 py-4 md:ml-6'>
           {comments.map(comment => (
             <div key={comment.id} className='w-full flex flex-col mx-auto border-b border-indigo-200 mb-6'>
-              <p className='whitespace-pre-line'>{comment.text}</p>
+              <p className='whitespace-pre-line mb-2'>{comment.text}</p>
               <div className='flex justify-between'>
-                <p>Posted by: {comment.user_id}</p>
+                <div className='flex flex-row'>
+                  <img src={`static/profile_pictures/${comment.user_picture_poster}`} className='object-cover w-8 h-8 rounded-full'></img>
+                  <p>{comment.user_id}</p>
+                </div>
                 <p>{comment.created_at}</p>
               </div>
 

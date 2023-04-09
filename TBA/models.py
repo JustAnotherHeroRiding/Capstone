@@ -190,6 +190,7 @@ class ProfileComment(models.Model):
             'text': self.text,
             'user_id': self.user.username,
             'profile_user_id': self.profile_user.username,
+            'user_picture_poster': self.user.profile_pic.url,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'model_type' : 'profile_comment'
         }
