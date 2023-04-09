@@ -10,7 +10,11 @@ urlpatterns = [
     
     path('check/login', views.check_login, name='check_login'),
     path('upload/profile/pic', views.upload_profile_pic, name='upload_profile_pic'),
+    path('send/profile/comment/<int:profile_id>', views.send_profile_comment, name='send_profile_comment'),
+    path('profile/comment/<int:profile_id>', views.get_profile_comments, name='get_profile_comments'),
+
     
     path('search', views.search, name='search'),
+    path('user/data/<int:user_id>', views.get_user_data, name='get_user_data')
 
 ]

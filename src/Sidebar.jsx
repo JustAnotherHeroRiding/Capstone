@@ -4,7 +4,7 @@ import Register from './Register'
 import LogIn from './LogIn'
 import Profile from './Profile'
 
-function Sidebar({ isLoggedIn, userData, fetchUserData }) {
+function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData }) {
 
     const [showLogIn, setShowLogIn] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
@@ -19,11 +19,52 @@ function Sidebar({ isLoggedIn, userData, fetchUserData }) {
         setShowLogIn(false)
     };
 
+
+
     const [showProfile, setShowProfile] = useState(false)
 
+    const [showOtherProfile, setShowOtherProfile] = useState(false)
+    const [otherUserData, setOtherUserData] = useState(null);
+
+    const [currentUser, setCurrentUser] = useState(true)
+
+      
+
+    function fetchOtherUserData(user_id) {
+        const id = parseInt(user_id, 10);
+
+        fetch(`/user/data/${id}`)
+          .then(response => response.json())
+          .then(data => {
+            setOtherUserData(data);
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      }
+
+
+
     const handleProfileClick = () => {
+        setShowOtherProfile(false)
+        setCurrentUser(true)
         setShowProfile(showProfile => !showProfile);
+        fetchUserData()
     }
+
+    const handleSearchResultClick = async (result) => {
+        if (result.model_type === 'user') {
+            if (result.id === userData.id) {
+                setCurrentUser(true)
+            } else {
+                setCurrentUser(false)
+            }
+          await fetchOtherUserData(result.id);
+          setShowProfile(false);
+          setShowOtherProfile(true);
+        }
+      };
+      
 
 
     const [query, setQuery] = useState('');
@@ -51,7 +92,6 @@ function Sidebar({ isLoggedIn, userData, fetchUserData }) {
 
         if (value !== '') {
             const filteredData = Object.values(data).flat().filter((item) => item.name.toLowerCase().includes(value.toLowerCase()));
-            console.log(filteredData)
 
             setResults(filteredData);
             setNrResults(filteredData.length);
@@ -115,18 +155,26 @@ function Sidebar({ isLoggedIn, userData, fetchUserData }) {
                         value={query}
                         onChange={handleInputChange}></input>
                     {showResults && results && nrResults > 0 && (
-                        <>
-                            {results.map((result) => (
-                                <p key={result.id}>{result.name}</p>
-                            ))}
-                        </>
+                        <div className='bg-gray-800 px-2 mt-2 py-2 rounded-2xl cursor-pointer'>
+                            <>
+                                {results.map((result) => (
+                                    <div key={`${result.id}-${result.model_type}`}  className='flex justify-between hover:bg-gray-700 p-2 rounded-2xl'
+                                        onClick={() => handleSearchResultClick(result)}>                        
+                                        <p>{result.name}</p>
+                                        <p>{result.model_type.charAt(0).toUpperCase() + result.model_type.slice(1).toLowerCase()}</p>
+                                    </div>
+                                ))}
+                            </>
+                        </div>
                     )}
-                    </div>
+                </div>
 
             </nav>
             {showLogIn && <LogIn handleRegisterClick={handleRegisterClick} />}
             {showRegister && <Register handleLogInClick={handleLogInClick} />}
-            {showProfile && <Profile userData={userData} fetchUserData={fetchUserData} />}
+            {showProfile && <Profile userData={userData} fetchUserData={fetchUserData} current_user={currentUser} />}
+            {otherUserData && showOtherProfile && <Profile userData={otherUserData} fetchUserData={fetchOtherUserData} current_user={currentUser} />}
+
         </div>
     )
 }

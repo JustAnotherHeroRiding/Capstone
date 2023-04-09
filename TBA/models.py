@@ -17,7 +17,8 @@ class User(AbstractUser):
             "name": self.username,
             "email": self.email,
             "profile_pic": self.profile_pic.url if self.profile_pic else None,
-            "date_joined": self.date_joined.strftime('%Y-%m-%d')
+            "date_joined": self.date_joined.strftime('%Y-%m-%d'),
+            'model_type' : 'user'
         }
 
     def get_messages(self):
@@ -38,7 +39,8 @@ class Message(models.Model):
             'recipient': self.recipient.serialize(),
             'body': self.body,
             'image': self.image.url if self.image else None,
-            'sent_at': self.sent_at.strftime('%Y-%m-%d %H:%M:%S')
+            'sent_at': self.sent_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'model_type' : 'message'
         }
 
 
@@ -57,7 +59,8 @@ class Gear(models.Model):
             'name': self.name,
             'category': self.category,
             'description': self.description,
-            'image': self.image.url if self.image else None
+            'image': self.image.url if self.image else None,
+            'model_type' : 'gear'
         }
 
 
@@ -73,6 +76,7 @@ class Player(models.Model):
             'name': self.name,
             'gear': [gear.serialize() for gear in self.gear.all()],
             'picture': self.picture.url if self.picture else None,
+            'model_type' : 'player'
 
         }
 
@@ -88,6 +92,7 @@ class Band(models.Model):
             'members': [member.serialize() for member in self.members.all()],
             'albums': [album.serialize() for album in self.albums.all()],
             'picture': self.picture.url if self.picture else None,
+            'model_type' : 'band'
         }
 
         
@@ -110,7 +115,8 @@ class Album(models.Model):
             'guitar_players': [player.name for player in self.guitar_players.all()],
             'cover_art_url': self.cover_art.url if self.cover_art else None,
             'reviews': [review.serialize() for review in self.reviews.all()],
-            'comments': [comment.serialize() for comment in self.comments.all()]
+            'comments': [comment.serialize() for comment in self.comments.all()],
+            'model_type' : 'album'
         }
 
 
@@ -144,7 +150,8 @@ class Review(models.Model):
             'album': self.album.name if self.album else None,
             'gear': self.gear.name if self.gear else None,
             'stars': self.stars,
-            'text': self.text
+            'text': self.text,
+            'model_type' : 'review'
         }
 
 
@@ -157,6 +164,7 @@ class Comment(models.Model):
     gear = models.ForeignKey(
         Gear, on_delete=models.CASCADE, related_name='comments', blank=True, null=True)
     text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def serialize(self):
         return {
@@ -164,16 +172,24 @@ class Comment(models.Model):
             'album': self.album.name if self.album else None,
             'gear': self.gear.name if self.gear else None,
             'player': self.player.name if self.player else None,
-            'text': self.text
+            'text': self.text,
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'model_type' : 'comment'
         }
 
 class ProfileComment(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile_comments_posted')
+    profile_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile_comments_received', default=None)
+
     text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def serialize(self):
         return {
             'id': self.id,
             'text': self.text,
-            'user_id': self.user
+            'user_id': self.user.username,
+            'profile_user_id': self.profile_user.username,
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'model_type' : 'profile_comment'
         }
