@@ -12,6 +12,9 @@ urlpatterns = [
     path('upload/profile/pic', views.upload_profile_pic, name='upload_profile_pic'),
     path('send/profile/comment/<int:profile_id>', views.send_profile_comment, name='send_profile_comment'),
     path('profile/comment/<int:profile_id>', views.get_profile_comments, name='get_profile_comments'),
+    path('profile/messages', views.get_all_messages, name='get_messages'),
+    
+    path('send/profile/message/<int:recipient_id>', views.send_message, name='send_message'),
 
     
     path('search', views.search, name='search'),

@@ -79,12 +79,23 @@ function Profile({ userData, fetchUserData, current_user }) {
       .catch(error => console.error(error));
   }
 
+  const [messages, setMessages] = useState([]);
+
+  function fetchMessages() {
+    fetch('profile/messages')
+      .then(response => response.json())
+      .then(data => setMessages(data))
+      .catch(error => console.error(error))
+  }
+
   // Debounce the fetchComments function
   const debouncedFetchComments = _.debounce(fetchComments, 10);
+  const debouncedFetchMessages = _.debounce(fetchMessages, 10);
 
   // Call the debounced function in useEffect
   useEffect(() => {
     debouncedFetchComments();
+    debouncedFetchMessages();
   }, [userData.id]);
 
   function send_comment(event) {
@@ -125,10 +136,51 @@ function Profile({ userData, fetchUserData, current_user }) {
       });
   }
 
+  function send_message(event) {
+    event.preventDefault();
+    const profile_id = userData.id;
+
+    const formData = new FormData(event.target);
+    const text = formData.get('message');
+    const image = formData.get('image');
+
+    formData.append('sender', profile_id);
+    console.log(formData)
+
+    fetch(`send/profile/message/${profile_id}`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-CSRFToken': csrftoken
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to send message.');
+        }
+      })
+      .then(data => {
+        setMessageValue("");
+        // Do something with the returned data, like update the UI or show a success message
+      })
+      .catch(error => {
+        console.error(error);
+        // Show an error message or handle the error in some way
+      });
+  }
+
+
+
 
   const [showMessages, setShowMessages] = useState(false);
 
-  const handleClick = () => {
+  const handleInboxClick = () => {
+    setShowMessages(showMessages => !showMessages);
+  };
+
+  const handleMessageClick = () => {
     setShowMessages(showMessages => !showMessages);
   };
 
@@ -136,10 +188,10 @@ function Profile({ userData, fetchUserData, current_user }) {
   return (
 
     <div className='mx-auto h-screen flex flex-col items-center relative'>
-      {current_user && <h1 className='text-Intone-600 items-center mb-12'>Welcome {userData.name}</h1>}
+      {current_user && <h1 className='text-Intone-600 items-center'>Welcome {userData.name}</h1>}
 
 
-      <div className='flex flex-row justify-between'>
+      <div className='flex flex-row justify-between mt-12'>
         {current_user && <div className='text-Intone-600 border border-indigo-200 rounded-xl px-2 py-4 mr-12'>
           <h1>Upload Profile Picture</h1>
           <form onSubmit={handleSubmit} encType='multipart/form-data'>
@@ -164,19 +216,30 @@ function Profile({ userData, fetchUserData, current_user }) {
             Following</li>
           <li className='mr-6 cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl'>
             Wishlist</li>
-          <li className={`cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl${current_user ? ' mr-6' : ''}`}>
+          <li className='cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl mr-6'>
             Charts
           </li>
           {current_user && (
             <li className='cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl'
-              onClick={handleClick}>Inbox</li>
+              onClick={handleInboxClick}>Inbox</li>
+          )}
+          {!current_user && (
+            <li className='cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl'
+              onClick={handleMessageClick}>Message</li>
           )}
         </ul>
         {showMessages && (
           <div className='border border-indigo-200 z-50 bg-Intone-700 rounded-2xl px-2 mt-4 py-2 bottom-0 fixed right-0 w-96 h-[500px] m-4'>
             <h1 className='flex justify-center'>Messages</h1>
+            <div>{messages.map((message) => (
+              <div className='border border-indigo-200s rounded-xl px-4 py-2 whitespace-pre-line flex flex-col' key={message.id}> 
+                <h1>{message.body}</h1>
+                <img className='object-contain w-16 h-16' src={`static/message_images${message.image}`}></img>
+                </div>
+            ))}</div>
             <div className='absolute bottom-0'>
-              <form id='newpost' onSubmit={send_comment} className='flex-row justify-between flex my-6 px-4 pt-6 w-full'>
+              <form id='newpost' onSubmit={send_message}
+                className='flex-row justify-between flex my-6 px-4 pt-6 w-full' encType='multipart/form-data'>
                 <textarea type="text"
                   onChange={onMessageChange}
                   ref={messageTextAreaRef}
@@ -190,6 +253,7 @@ function Profile({ userData, fetchUserData, current_user }) {
                   placeholder="Say Hello!"
                   rows='3'
                   className='bg-Intone-200 px-6 placeholder:text-gray-500 outline-none resize-none border rounded-xl w-64 py-2' />
+                <input type="file" name="image" accept="image/*" className='absolute bottom-0 rounded-3xl ' />
                 <hr className="border-gray-500" />
                 <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
                 <input type="submit" id="post-submit"
@@ -202,7 +266,6 @@ function Profile({ userData, fetchUserData, current_user }) {
       </div>
       <h1 className='mt-12 mb-6 text-3xl font-bold'>Comments</h1>
       <div className='flex flex-row max-md:flex-col justify-between border border-indigo-200 px-6 py-4 rounded-2xl'>
-
         <div className=''>
           <form id='newpost' onSubmit={send_comment} className='flex-col flex my-6 border px-4 rounded-3xl border-indigo-200 pt-6 w-96'>
             <textarea type="text"
@@ -225,11 +288,11 @@ function Profile({ userData, fetchUserData, current_user }) {
         </div>
         <div className='w-96 flex flex-col border border-indigo-200 rounded-3xl px-6 py-4 md:ml-6'>
           {comments.map(comment => (
-            <div key={comment.id} className='w-full flex flex-col mx-auto border-b border-indigo-200 mb-6'>
+            <div key={comment.id} className='w-full flex flex-col mx-auto border-b border-indigo-200 mb-6 pb-4'>
               <p className='whitespace-pre-line mb-2'>{comment.text}</p>
               <div className='flex justify-between'>
                 <div className='flex flex-row'>
-                  <img src={`static/profile_pictures/${comment.user_picture_poster}`} className='object-cover w-8 h-8 rounded-full'></img>
+                  <img src={`static/profile_pictures/${comment.user_picture_poster}`} className='object-cover w-8 h-8 rounded-full mr-2'></img>
                   <p>{comment.user_id}</p>
                 </div>
                 <p>{comment.created_at}</p>

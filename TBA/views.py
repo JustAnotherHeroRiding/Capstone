@@ -5,9 +5,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt,csrf_protect
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST,require_http_methods
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
+
 
 
 import json
@@ -95,6 +96,38 @@ def get_profile_comments(request, profile_id):
         return JsonResponse(serialized_comments, safe=False, status=200)
     else:
         return JsonResponse({"error": "HTTP method not allowed."}, status=405)
+    
+    
+@login_required
+@require_http_methods(['POST'])
+def send_message(request, recipient_id):
+    if request.method == 'POST':
+        sender = request.user
+        recipient = get_object_or_404(User, id=recipient_id)
+        body = request.POST.get('message')
+    
+    # Check if an image was uploaded
+        if 'image' in request.FILES:
+            uploaded_image = request.FILES['image']
+            fs = FileSystemStorage(location='TBA/static/message_images')
+            image_name = fs.save(uploaded_image.name, uploaded_image)
+            image_path = fs.url(image_name)
+        else:
+            image_path = None
+        message = Message(sender=sender, recipient=recipient, body=body, image=image_path)
+        message.save()
+        return JsonResponse(message.serialize(), status=201)
+    else:
+        return JsonResponse({'error': 'HTTP method not allowed.'}, status=405)
+
+    
+    
+@login_required
+def get_all_messages(request):
+    messages = Message.objects.filter(sender=request.user).order_by('-sent_at')
+    serialized_messages = [message.serialize() for message in messages]
+    return JsonResponse(serialized_messages, safe=False)
+
 
 
 
