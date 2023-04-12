@@ -54,16 +54,17 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData }) {
 
     const handleSearchResultClick = async (result) => {
         if (result.model_type === 'user') {
-            if (result.id === userData.id) {
-                setCurrentUser(true)
-            } else {
-                setCurrentUser(false)
-            }
+          if (result.id === userData.id || result.recipient === userData.id || result === userData.id) {
+            setCurrentUser(true);
+          } else {
+            setCurrentUser(false);
+          }
           await fetchOtherUserData(result.id);
           setShowProfile(false);
           setShowOtherProfile(true);
         }
       };
+      
       
 
 
@@ -172,8 +173,8 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData }) {
             </nav>
             {showLogIn && <LogIn handleRegisterClick={handleRegisterClick} />}
             {showRegister && <Register handleLogInClick={handleLogInClick} />}
-            {showProfile && <Profile userData={userData} fetchUserData={fetchUserData} current_user={currentUser} />}
-            {otherUserData && showOtherProfile && <Profile userData={otherUserData} fetchUserData={fetchOtherUserData} current_user={currentUser} />}
+            {showProfile && <Profile userData={userData} fetchUserData={fetchUserData} current_user={currentUser} handleProfileClick={handleProfileClick} handleSearchResultClick={handleSearchResultClick} />}
+            {otherUserData && showOtherProfile && <Profile userData={otherUserData} fetchUserData={fetchOtherUserData} current_user={currentUser} handleProfileClick={handleProfileClick} handleSearchResultClick={handleSearchResultClick} />}
 
         </div>
     )

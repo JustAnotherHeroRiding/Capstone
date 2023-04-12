@@ -188,7 +188,8 @@ class ProfileComment(models.Model):
         return {
             'id': self.id,
             'text': self.text,
-            'user_id': self.user.username,
+            'username': self.user.username,
+            'user': self.user.serialize(),
             'profile_user_id': self.profile_user.username,
             'user_picture_poster': self.user.profile_pic.url,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),

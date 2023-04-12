@@ -13,7 +13,7 @@ function Register({handleLogInClick}) {
         <h2 className="text-3xl font-bold mb-4 mx-auto mt-12 text-Intone-600">Register</h2>
 
     
-        <form action="/register" method="post" className="max-w-md mx-auto mt-6 w-full px-6 py-12 border border-indigo-200 rounded-3xl shadow-2xl">
+        <form action="/register" method="post" className="max-w-md mx-auto mt-6 w-full px-6 py-12 text-black border border-indigo-200 rounded-3xl shadow-2xl">
             <div className="mb-4">
                 <label htmlFor="username" className="block font-medium mb-1 text-Intone-600 ">Username:</label>
     
