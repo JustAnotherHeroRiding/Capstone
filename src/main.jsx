@@ -8,6 +8,7 @@ function Main() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
+  const [currentUserId, setCurrentUserId] =useState('')
 
   function fetchUserData() {
     fetch('/check/login')
@@ -15,11 +16,12 @@ function Main() {
       .then(data => {
         setIsLoggedIn(data.is_authenticated);
         setUserData(data.user_data);
+        setCurrentUserId(data.user_data.id)
         setIsLoading(false);
       })
       .catch(error => {
-        console.error(error);
-        setIsLoading(false);
+     //console.error(error);
+       setIsLoading(false);
       });
   }
   
@@ -39,7 +41,7 @@ function Main() {
   return (
     <React.StrictMode>
       <div className='text-Intone-600'>
-        <Sidebar isLoggedIn={isLoggedIn} userData={userData} fetchUserData={handleUploadSuccess} />
+        <Sidebar isLoggedIn={isLoggedIn} userData={userData} fetchUserData={handleUploadSuccess} currentUserId={currentUserId} />
       </div>
     </React.StrictMode>
   );

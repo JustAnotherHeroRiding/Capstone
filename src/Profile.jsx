@@ -9,7 +9,7 @@ import { faPaperclip } from '@fortawesome/free-solid-svg-icons'
 const MIN_TEXTAREA_HEIGHT = 32;
 
 
-function Profile({ userData, fetchUserData, current_user, handleProfileClick, handleSearchResultClick }) {
+function Profile({ userData, fetchUserData, current_user, handleProfileClick, handleSearchResultClick, currentUserId }) {
   const csrftoken = Cookies.get('csrftoken');
 
   const handleSubmit = (event) => {
@@ -87,17 +87,54 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
     fetch('profile/messages')
       .then(response => response.json())
       .then(data => setMessages(data))
-      .catch(error => console.error(error))
+      .catch(error => {
+        if (currentUserId) {
+          console.error(error);
+        }
+      });
+  }
+
+  const [usersMessages, setUsersMessages] = useState([])
+
+  function GetUsersWithMessage() {
+    fetch('profile/messages/user')
+      .then(response => response.json())
+      .then(data => setUsersMessages(data))
+      .catch(error => {
+        if (currentUserId) {
+          console.error(error);
+        }
+      });
+
+  }
+
+  const [conversation, setConversation] = useState(null)
+  const [messageHistory, setMessageHistory] = useState([])
+
+
+  function fetchMessageHistory(user_id) {
+    fetch(`profile/messages/conversation/${user_id}`)
+    .then(response => response.json())
+    .then(data => setMessageHistory(data))
+    .catch(error => {
+      if (currentUserId) {
+        console.error(error);
+      }
+    });
   }
 
   // Debounce the fetchComments function
   const debouncedFetchComments = _.debounce(fetchComments, 10);
   const debouncedFetchMessages = _.debounce(fetchMessages, 10);
+  const debounchedConversations = _.debounce(GetUsersWithMessage, 10);
+
+  
 
   // Call the debounced function in useEffect
   useEffect(() => {
     debouncedFetchComments();
     debouncedFetchMessages();
+    debounchedConversations();
   }, [userData.id]);
 
   function send_comment(event) {
@@ -147,7 +184,6 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
     const image = formData.get('image');
 
     formData.append('sender', profile_id);
-    console.log(formData)
 
     fetch(`send/profile/message/${profile_id}`, {
       method: 'POST',
@@ -177,14 +213,14 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
 
 
 
-  const [showMessages, setShowMessages] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   const handleInboxClick = () => {
-    setShowMessages(showMessages => !showMessages);
+    setShowChat(showChat => !showChat);
   };
 
   const handleMessageClick = () => {
-    setShowMessages(showMessages => !showMessages);
+    setShowChat(showChat => !showChat);
   };
 
 
@@ -205,10 +241,10 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
     if (current_user && user_id === userData.id) {
       handleProfileClick()
     } else {
-      handleSearchResultClick(user_id) 
+      handleSearchResultClick(user_id)
     }
   }
-
+  
 
   return (
 
@@ -218,12 +254,16 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
 
 
       <div className='flex flex-row justify-between mt-12'>
-        {current_user && <div className='text-Intone-600 border border-indigo-200 rounded-xl px-2 py-4 mr-12'>
+        {current_user && <div className='text-Intone-600 border border-indigo-200 rounded-xl px-6 py-4 mr-12'>
           <h1>Upload Profile Picture</h1>
           <form onSubmit={handleSubmit} encType='multipart/form-data'>
-            <div>
+            <div className='flex flex-col'>
               <label htmlFor="profile_pic">Choose a file:</label>
-              <input type="file" name="profile_pic" id="profile_pic" accept="image/*"></input>
+              {/*               <input type="file" name="profile_pic" id="profile_pic" accept="image/*"></input>*/}
+              <label className='cursor-pointer hover:bg-Intone-900 rounded-lg  justify-center items-center flex'>
+                <input type='file' name='profile_pic' id='profile_pic' accept='image/*' className='opacity-0 absolute -z-10 cursor-pointer' />
+                <FontAwesomeIcon icon={faPaperclip} className='h-10 w-10 hover:bg-Intone-900 my-2' />
+              </label>
             </div>
             <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
 
@@ -245,28 +285,74 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
           <li className='cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl mr-6'>
             Charts
           </li>
-          {current_user && (
-            <li className='cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl'
-              onClick={handleInboxClick}>Inbox</li>
+          {currentUserId && (
+            <>
+              {current_user && (
+                <li className='cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl' onClick={handleInboxClick}>
+                  Inbox
+                </li>
+              )}
+              {!current_user && (
+                <li className='cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl' onClick={handleMessageClick}>
+                  Message
+                </li>
+              )}
+            </>
           )}
-          {!current_user && (
-            <li className='cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl'
-              onClick={handleMessageClick}>Message</li>
-          )}
+
+
         </ul>
-        {showMessages && (
-          <div className='border border-indigo-200 z-50 bg-Intone-100 rounded-2xl px-2 mt-4 py-2 bottom-0 fixed right-0 w-96 h-[500px] m-4'>
+        <div>
+        {usersMessages.map((user) => (
+          <div key={user.id}>
+            <h1 className='cursor-pointer' onClick={() => fetchMessageHistory(user.id)}>{user.name}</h1>
+          </div>
+        ))}
+        {messageHistory.map((message) => (
+          <div className='border border-indigo-200s max-w-[500px] rounded-xl px-4 py-2 whitespace-pre-line flex flex-col mb-4 mr-4'
+                  key={message.id}>
+                  <div className='flex justify-between'>
+                    <h1 className='font-bold cursor-pointer text-Intone-300 hover:text-Intone-900'
+                      onClick={() => handleUserMessageClick(
+                        message.recipient.id === currentUserId ? message.sender : message.recipient
+                      )}
+                    >
+                      {message.recipient.id === currentUserId ? message.sender.name : message.recipient.name}
+                    </h1>
+
+                    <h1>{message.sent_at}</h1>
+                  </div>
+                  <h1>{message.body}</h1>
+                  {message.image && (
+                    <img
+                      className={`object-contain w-16 h-16 cursor-pointer
+          ${isExpanded && expandedImageMessageId == message.id ? 'w-full h-full absolute right-full bottom-1/3' : ''}`}
+                      src={`static/message_images${message.image}`}
+                      onClick={() => handleImageMessageClick(message.id)}
+
+                    />)}
+                </div>
+        ))}
+        </div>
+        {showChat && (
+          <div className='border border-indigo-200 z-50 bg-Intone-100 rounded-2xl px-2 mt-4 py-2 bottom-0 fixed right-0 w-96 h-[600px] m-4'>
             <h1 className='flex justify-center my-6 font-bold'>Messages</h1>
             <h1 className='font-3xl font-bold absolute top-2 right-5 cursor-pointer border border-indigo-200 rounded-full px-2' onClick={handleMessageClick}>X</h1>
             <div
-              className='max-h-[300px] scrollbar-thumb-Intone-300 
+              className='max-h-[400px] scrollbar-thumb-Intone-300 
             scrollbar-thin scrollbar-track-rounded-3xl scrollbar-thumb-rounded-3xl 
              scrollbar-track-white overflow-auto'>{messages.map((message) => (
                 <div className='border border-indigo-200s rounded-xl px-4 py-2 whitespace-pre-line flex flex-col mb-4 mr-4'
                   key={message.id}>
                   <div className='flex justify-between'>
-                    <h1 className='font-bold cursor-pointer text-Intone-300 hover:text-Intone-900' 
-                    onClick={() => handleUserMessageClick(message.recipient)}>{message.recipient.name}</h1>
+                    <h1 className='font-bold cursor-pointer text-Intone-300 hover:text-Intone-900'
+                      onClick={() => handleUserMessageClick(
+                        message.recipient.id === currentUserId ? message.sender : message.recipient
+                      )}
+                    >
+                      {message.recipient.id === currentUserId ? message.sender.name : message.recipient.name}
+                    </h1>
+
                     <h1>{message.sent_at}</h1>
                   </div>
                   <h1>{message.body}</h1>
@@ -335,24 +421,27 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
             <input type="submit" id="post-submit" className="cursor-pointer	hover:bg-Intone-500 bg-Intone-300 text-white font-semibold py-2 mt-6 px-6 rounded-3xl shadow mb-10 w-24 ml-auto mr-6 resize-none" value="Send" />
           </form>
         </div>
-        <div className='w-96 flex flex-col border border-indigo-200 rounded-3xl
-         px-6 py-4 md:ml-6 max-h-[350px] scrollbar-thumb-Intone-300 
+        <div className='px-2 py-4 md:ml-6 shadow-2xl'>
+          <div className='w-96 max-h-[350px] scrollbar-thumb-Intone-300 
             scrollbar-thin scrollbar-track-rounded-3xl scrollbar-thumb-rounded-3xl 
-             scrollbar-track-white overflow-auto'>
-          {comments.map(comment => (
-            <div key={comment.id} className='w-full flex flex-col border-b border-indigo-200 mb-6 pb-4'>
-              <p className='whitespace-pre-line mb-2'>{comment.text}</p>
-              <div className='flex justify-between'>
-                <div className='flex flex-row'>
-                  <img src={`static/profile_pictures/${comment.user_picture_poster}`} className='object-cover w-8 h-8 rounded-full mr-2'></img>
-                  <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
-                   onClick={() => handleUserMessageClick(comment.user)}>{comment.username}</p>
-                </div>
-                <p>{comment.created_at}</p>
-              </div>
+             scrollbar-track-white overflow-y-auto'>
+            <div className='mr-4'>
+              {comments.map(comment => (
+                <div key={comment.id} className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
+                  <p className='whitespace-pre-line mb-2'>{comment.text}</p>
+                  <div className='flex justify-between'>
+                    <div className='flex flex-row'>
+                      <img src={`static/profile_pictures/${comment.user_picture_poster}`} className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                      <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                        onClick={() => handleUserMessageClick(comment.user)}>{comment.username}</p>
+                    </div>
+                    <p>{comment.created_at}</p>
+                  </div>
 
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </div>

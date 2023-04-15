@@ -122,9 +122,38 @@ def send_message(request, recipient_id):
 
     
     
+# Get all users that the current user has sent or received a message from
+@login_required
+def get_all_users(request):
+    sent_messages = Message.objects.filter(sender=request.user)
+    received_messages = Message.objects.filter(recipient=request.user)
+    users = set()
+    for message in sent_messages:
+        users.add(message.recipient)
+    for message in received_messages:
+        users.add(message.sender)
+    serialized_users = [user.serialize() for user in users]
+    return JsonResponse(serialized_users, safe=False)
+
+
+@login_required
+def get_message_history(request, user_id):
+    user = User.objects.get(id=user_id)
+    sent_messages = Message.objects.filter(sender=request.user, recipient=user)
+    received_messages = Message.objects.filter(sender=user, recipient=request.user)
+    messages = list(sent_messages) + list(received_messages)
+    messages.sort(key=lambda message: message.sent_at)
+    serialized_messages = [message.serialize() for message in messages]
+    return JsonResponse(serialized_messages, safe=False)
+
+
+
 @login_required
 def get_all_messages(request):
-    messages = Message.objects.filter(sender=request.user).order_by('-sent_at')
+    sent_messages = Message.objects.filter(sender=request.user)
+    received_messages = Message.objects.filter(recipient=request.user)
+    messages = list(sent_messages) + list(received_messages)
+    messages.sort(key=lambda message: message.sent_at, reverse=True)
     serialized_messages = [message.serialize() for message in messages]
     return JsonResponse(serialized_messages, safe=False)
 

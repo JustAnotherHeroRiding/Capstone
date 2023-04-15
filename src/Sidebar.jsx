@@ -4,7 +4,7 @@ import Register from './Register'
 import LogIn from './LogIn'
 import Profile from './Profile'
 
-function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData }) {
+function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, currentUserId }) {
 
     const [showLogIn, setShowLogIn] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
@@ -54,11 +54,13 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData }) {
 
     const handleSearchResultClick = async (result) => {
         if (result.model_type === 'user') {
-          if (result.id === userData.id || result.recipient === userData.id || result === userData.id) {
-            setCurrentUser(true);
-          } else {
-            setCurrentUser(false);
-          }
+            if (userData){
+                if (result.id === userData.id || result.recipient === userData.id || result === userData.id) {
+                    setCurrentUser(true);
+                  } else {
+                    setCurrentUser(false);
+                  }
+            }
           await fetchOtherUserData(result.id);
           setShowProfile(false);
           setShowOtherProfile(true);
@@ -173,8 +175,11 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData }) {
             </nav>
             {showLogIn && <LogIn handleRegisterClick={handleRegisterClick} />}
             {showRegister && <Register handleLogInClick={handleLogInClick} />}
-            {showProfile && <Profile userData={userData} fetchUserData={fetchUserData} current_user={currentUser} handleProfileClick={handleProfileClick} handleSearchResultClick={handleSearchResultClick} />}
-            {otherUserData && showOtherProfile && <Profile userData={otherUserData} fetchUserData={fetchOtherUserData} current_user={currentUser} handleProfileClick={handleProfileClick} handleSearchResultClick={handleSearchResultClick} />}
+            {showProfile && <Profile userData={userData} fetchUserData={fetchUserData} current_user={currentUser} 
+            handleProfileClick={handleProfileClick} handleSearchResultClick={handleSearchResultClick} currentUserId={currentUserId} />}
+            
+            {otherUserData && showOtherProfile && <Profile userData={otherUserData} 
+            fetchUserData={fetchOtherUserData} current_user={currentUser} handleProfileClick={handleProfileClick} handleSearchResultClick={handleSearchResultClick} currentUserId={currentUserId} />}
 
         </div>
     )

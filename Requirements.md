@@ -22,6 +22,7 @@ A website where users can discuss guitar music, rate albums, list the gear used 
 - If i follow a user i can see all of their reviews
 - The user view will have a reactive second nav menu allowing me to select my reviews, reviews from follower users, gear on my wishlist etc
 - Create Lists
+- Pagination for comments, infinite scroll for messages where messages get loaded when scrolling up
 
 ### There will be a search bar to search for any matches in any of the categories
 - In the sidebar I should be able to search for usernames of other users and view their profiles #DONE 
