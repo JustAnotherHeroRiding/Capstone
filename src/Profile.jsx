@@ -274,8 +274,12 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
   }, [messageHistory]);
 
 
-  function handleEmojiSelect(emoji) {
-    setMessageValue(prevValue => prevValue + emoji.native);
+  function handleEmojiSelect(emoji, origin) {
+    if (origin === 'message') {
+      setMessageValue(prevValue => prevValue + emoji.native);
+    } else if (origin === 'profile_comment'){
+      setValue(prevValue => prevValue + emoji.native)
+    }
   }
 
   const [showMessageEmoji, setShowMessageEmoji] = useState(false)
@@ -396,7 +400,7 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
                   ))}
                   <div className='absolute bottom-0'>
                     {showMessageEmoji && (
-                      <Picker data={data} onEmojiSelect={(emoji) => handleEmojiSelect(emoji)} />
+                      <Picker data={data} onEmojiSelect={(emoji) => handleEmojiSelect(emoji, 'message')} />
                     )}
                     <form id='newpost' onSubmit={send_message}
                       className='flex-row justify-between flex my-2 px-4 pt-6 w-full' encType='multipart/form-data'>
@@ -434,10 +438,10 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
                       )}
                       {showMessageEmoji && (
                         <FontAwesomeIcon icon={faFaceSmile} className='cursor-pointer w-6 h-6 hover:scale-125 transition-transform duration-200 absolute right-8 z-10
-                         bottom-28' onClick={() => handleEmojiShow('message')}/>
+                         bottom-28' onClick={() => handleEmojiShow('message')} />
 
                       )}
-                      </div>
+                    </div>
                   </div>
 
                 </div>
@@ -451,9 +455,11 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
       <h1 className='mt-12 mb-6 text-3xl font-bold'>Comments</h1>
       <div className='flex flex-row max-md:flex-col justify-between border border-indigo-200 px-6 py-4 rounded-2xl'>
         <div className=''>
-        {showProfileCommentEmoji && (
-                      <Picker data={data} onEmojiSelect={(emoji) => handleEmojiSelect(emoji)} />
-                    )}
+          {showProfileCommentEmoji && (
+            <div className='absolute top-28'>
+              <Picker data={data} onEmojiSelect={(emoji) => handleEmojiSelect(emoji, 'profile_comment')} />
+            </div>
+          )}
           <form id='newpost' onSubmit={send_comment} className='flex-col flex my-6 border px-4 rounded-3xl border-indigo-200 pt-6 w-96'>
             <textarea type="text"
               onChange={onChange}
@@ -470,17 +476,11 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
               className='bg-Intone-200 px-6 placeholder:text-gray-500 outline-none resize-none' />
             <hr className="border-gray-500" />
             <div>
-                      {!showProfileCommentEmoji && (
-                        <FontAwesomeIcon icon={faFaceSmile} onClick={() => handleEmojiShow('profile_comment')}
-                          className='cursor-pointer w-6 h-6 hover:scale-125 transition-transform duration-200 z-10' />
-                      )}
-                      {showProfileCommentEmoji && (
-                        <FontAwesomeIcon icon={faFaceSmile} className='cursor-pointer w-6 h-6 hover:scale-125 transition-transform duration-200z-10' onClick={() => handleEmojiShow('profile_comment')}/>
-
-                      )}
-                      </div>
+                <FontAwesomeIcon icon={faFaceSmile} onClick={() => handleEmojiShow('profile_comment')}
+                  className='cursor-pointer w-6 h-6 hover:scale-125 transition-transform duration-200 z-10 mt-6' />
+            </div>
             <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
-            <input type="submit" id="post-submit" className="cursor-pointer	hover:bg-Intone-500 bg-Intone-300 text-white font-semibold py-2 mt-6 px-6 rounded-3xl shadow mb-10 w-24 ml-auto mr-6 resize-none" value="Send" />
+            <input type="submit" id="post-submit" className="cursor-pointer	hover:bg-Intone-500 bg-Intone-300 text-white font-semibold py-2 px-6 rounded-3xl shadow mb-10 w-24 ml-auto mr-6 resize-none" value="Send" />
           </form>
         </div>
         <div className='px-2 py-4 md:ml-6 shadow-2xl'>
