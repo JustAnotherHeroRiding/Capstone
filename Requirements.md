@@ -14,10 +14,10 @@ A website where users can discuss guitar music, rate albums, list the gear used 
 ## Profile View
 - Each User will have his own profile, where they can see all of their reviews, review score distribution, albums,gear or artists added to their watchlist, comments people have left them #DONE 
 - Users will also be able to message each other, and these messages should be visible on their profiles for each user they have communicated with #DONE 
-- The inbox will first show all users that the current user has written or was writen by, showing the last message that was either sent or received in the history with that user
-- Upon clicking on one of the users the message history will be loaded, i will need a state to track which user's messages to show and one more state to see if it should show the users or the message history
-- The user's whose history is showing is the one that will receive the message when sending the new message
-- Messages should have pictures as well as text and emoji
+- The inbox will first show all users that the current user has written or was writen by, showing the last message that was either sent or received in the history with that user #DONE 
+- Upon clicking on one of the users the message history will be loaded, i will need a state to track which user's messages to show and one more state to see if it should show the users or the message history #DONE 
+- The user's whose history is showing is the one that will receive the message when sending the new message #DONE 
+- Messages should have pictures as well as text and emoji #DONE 
 - Users can upload their profile pictures #DONE 
 - If i follow a user i can see all of their reviews
 - The user view will have a reactive second nav menu allowing me to select my reviews, reviews from follower users, gear on my wishlist etc

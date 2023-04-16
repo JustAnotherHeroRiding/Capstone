@@ -8,7 +8,7 @@ function Main() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
-  const [currentUserId, setCurrentUserId] =useState('')
+  const [currentUserId, setCurrentUserId] = useState('')
 
   function fetchUserData() {
     fetch('/check/login')

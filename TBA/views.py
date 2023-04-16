@@ -144,7 +144,13 @@ def get_message_history(request, user_id):
     messages = list(sent_messages) + list(received_messages)
     messages.sort(key=lambda message: message.sent_at)
     serialized_messages = [message.serialize() for message in messages]
-    return JsonResponse(serialized_messages, safe=False)
+    serialized_user = user.serialize() # assuming you have a `serialize()` method defined on the User model
+    data = {
+        'messages': serialized_messages,
+        'user': serialized_user,
+    }
+    return JsonResponse(data)
+
 
 
 
@@ -153,7 +159,7 @@ def get_all_messages(request):
     sent_messages = Message.objects.filter(sender=request.user)
     received_messages = Message.objects.filter(recipient=request.user)
     messages = list(sent_messages) + list(received_messages)
-    messages.sort(key=lambda message: message.sent_at, reverse=True)
+    messages.sort(key=lambda message: message.sent_at)
     serialized_messages = [message.serialize() for message in messages]
     return JsonResponse(serialized_messages, safe=False)
 

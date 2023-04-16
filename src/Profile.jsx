@@ -3,7 +3,9 @@ import './App.css'
 import Cookies from 'js-cookie';
 import _ from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPaperclip } from '@fortawesome/free-solid-svg-icons'
+import { faPaperclip, faCircleLeft, faFaceSmile } from '@fortawesome/free-solid-svg-icons'
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 
 
 const MIN_TEXTAREA_HEIGHT = 32;
@@ -110,17 +112,33 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
 
   const [conversation, setConversation] = useState(null)
   const [messageHistory, setMessageHistory] = useState([])
+  const [conversationUserId, setConversationUserId] = useState(0)
+  const [conversationName, setConversationName] = useState('')
+
 
 
   function fetchMessageHistory(user_id) {
     fetch(`profile/messages/conversation/${user_id}`)
-    .then(response => response.json())
-    .then(data => setMessageHistory(data))
-    .catch(error => {
-      if (currentUserId) {
-        console.error(error);
-      }
-    });
+      .then(response => response.json())
+      .then(data => {
+        setMessageHistory(data.messages)
+        if (!conversation) {
+          setConversation(true)
+        }
+        setConversationUserId(user_id)
+        setConversationName(data.user.name)
+      })
+      .catch(error => {
+        if (currentUserId) {
+          console.error(error);
+        }
+      });
+  }
+
+  function exitConversation() {
+    if (conversation) {
+      setConversation(false)
+    }
   }
 
   // Debounce the fetchComments function
@@ -128,12 +146,12 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
   const debouncedFetchMessages = _.debounce(fetchMessages, 10);
   const debounchedConversations = _.debounce(GetUsersWithMessage, 10);
 
-  
+
 
   // Call the debounced function in useEffect
   useEffect(() => {
     debouncedFetchComments();
-    debouncedFetchMessages();
+    //debouncedFetchMessages();
     debounchedConversations();
   }, [userData.id]);
 
@@ -177,7 +195,7 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
 
   function send_message(event) {
     event.preventDefault();
-    const profile_id = userData.id;
+    const profile_id = conversationUserId
 
     const formData = new FormData(event.target);
     const text = formData.get('message');
@@ -194,7 +212,8 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
     })
       .then(response => {
         if (response.ok) {
-          fetchMessages()
+          //fetchMessages();
+          fetchMessageHistory(profile_id);
           return response.json();
         } else {
           throw new Error('Failed to send message.');
@@ -212,7 +231,6 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
 
 
 
-
   const [showChat, setShowChat] = useState(false);
 
   const handleInboxClick = () => {
@@ -221,6 +239,7 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
 
   const handleMessageClick = () => {
     setShowChat(showChat => !showChat);
+    setConversation(false)
   };
 
 
@@ -244,7 +263,32 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
       handleSearchResultClick(user_id)
     }
   }
-  
+
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    // Scroll to the bottom when messageHistory changes
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [messageHistory]);
+
+
+  function handleEmojiSelect(emoji) {
+    setMessageValue(prevValue => prevValue + emoji.native);
+  }
+
+  const [showMessageEmoji, setShowMessageEmoji] = useState(false)
+  const [showProfileCommentEmoji, setShowProfileCommentEmoji] = useState(false)
+
+  function handleEmojiShow(chat) {
+    if (chat === 'message') {
+      setShowMessageEmoji(!showMessageEmoji)
+    } else if (chat === 'profile_comment') {
+      setShowProfileCommentEmoji(!showProfileCommentEmoji)
+    }
+  }
+
 
   return (
 
@@ -264,6 +308,7 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
                 <input type='file' name='profile_pic' id='profile_pic' accept='image/*' className='opacity-0 absolute -z-10 cursor-pointer' />
                 <FontAwesomeIcon icon={faPaperclip} className='h-10 w-10 hover:bg-Intone-900 my-2' />
               </label>
+
             </div>
             <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
 
@@ -302,99 +347,103 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
 
 
         </ul>
-        <div>
-        {usersMessages.map((user) => (
-          <div key={user.id}>
-            <h1 className='cursor-pointer' onClick={() => fetchMessageHistory(user.id)}>{user.name}</h1>
-          </div>
-        ))}
-        {messageHistory.map((message) => (
-          <div className='border border-indigo-200s max-w-[500px] rounded-xl px-4 py-2 whitespace-pre-line flex flex-col mb-4 mr-4'
-                  key={message.id}>
-                  <div className='flex justify-between'>
-                    <h1 className='font-bold cursor-pointer text-Intone-300 hover:text-Intone-900'
-                      onClick={() => handleUserMessageClick(
-                        message.recipient.id === currentUserId ? message.sender : message.recipient
-                      )}
-                    >
-                      {message.recipient.id === currentUserId ? message.sender.name : message.recipient.name}
-                    </h1>
-
-                    <h1>{message.sent_at}</h1>
-                  </div>
-                  <h1>{message.body}</h1>
-                  {message.image && (
-                    <img
-                      className={`object-contain w-16 h-16 cursor-pointer
-          ${isExpanded && expandedImageMessageId == message.id ? 'w-full h-full absolute right-full bottom-1/3' : ''}`}
-                      src={`static/message_images${message.image}`}
-                      onClick={() => handleImageMessageClick(message.id)}
-
-                    />)}
-                </div>
-        ))}
-        </div>
         {showChat && (
           <div className='border border-indigo-200 z-50 bg-Intone-100 rounded-2xl px-2 mt-4 py-2 bottom-0 fixed right-0 w-96 h-[600px] m-4'>
-            <h1 className='flex justify-center my-6 font-bold'>Messages</h1>
-            <h1 className='font-3xl font-bold absolute top-2 right-5 cursor-pointer border border-indigo-200 rounded-full px-2' onClick={handleMessageClick}>X</h1>
-            <div
-              className='max-h-[400px] scrollbar-thumb-Intone-300 
+
+            <h1 className='flex justify-center my-6 font-bold'>{conversation ? conversationName : "Messages"}</h1>
+            <h1 className='font-3xl font-bold absolute top-2 right-5 cursor-pointer border border-indigo-200 rounded-full px-2 hover:bg-Intone-700' onClick={handleMessageClick}>X</h1>
+            <div className=''>
+              {!conversation &&
+                <div className=''>
+                  {usersMessages.map((user) => (
+                    <div key={user.id} className='flex flex-row justify-end cursor-pointer' onClick={() => fetchMessageHistory(user.id)}>
+                      <h1 >{user.name}</h1>
+                      <img src={`static/profile_pictures/${user.profile_pic}`} className='object-cover w-8 h-8 rounded-full mr-2'></img>
+
+                    </div>
+                  ))}
+                </div>}
+              {conversation &&
+                <div className='max-h-[380px] scrollbar-thumb-Intone-300 
             scrollbar-thin scrollbar-track-rounded-3xl scrollbar-thumb-rounded-3xl 
-             scrollbar-track-white overflow-auto'>{messages.map((message) => (
-                <div className='border border-indigo-200s rounded-xl px-4 py-2 whitespace-pre-line flex flex-col mb-4 mr-4'
-                  key={message.id}>
-                  <div className='flex justify-between'>
-                    <h1 className='font-bold cursor-pointer text-Intone-300 hover:text-Intone-900'
-                      onClick={() => handleUserMessageClick(
-                        message.recipient.id === currentUserId ? message.sender : message.recipient
-                      )}
-                    >
-                      {message.recipient.id === currentUserId ? message.sender.name : message.recipient.name}
-                    </h1>
+             scrollbar-track-white overflow-auto' ref={containerRef}>
+                  <FontAwesomeIcon icon={faCircleLeft} onClick={exitConversation} className='absolute top-2 left-5 cursor-pointer h-8 w-8 hover:scale-110 transition-transform duration-200' />
+                  {messageHistory.map((message) => (
+                    <div className={`border border-indigo-200s max-w-[250px] 
+                rounded-xl px-4 py-2 whitespace-pre-line flex flex-col mb-4 mr-4 ${message.sender.id == currentUserId ? 'ml-auto' : ''}`}
+                      key={message.id}>
+                      <div className='flex justify-between'>
+                        <h1 className='font-bold cursor-pointer text-Intone-300 hover:text-Intone-900'
+                          onClick={() => handleUserMessageClick(
+                            message.sender
+                          )}
+                        >
+                          {message.sender.name}
+                        </h1>
 
-                    <h1>{message.sent_at}</h1>
-                  </div>
-                  <h1>{message.body}</h1>
-                  {message.image && (
-                    <img
-                      className={`object-contain w-16 h-16 cursor-pointer
+                        <h1 className='text-xs text-Intone-800'>{message.sent_at}</h1>
+                      </div>
+                      <h1>{message.body}</h1>
+                      {message.image && (
+                        <img
+                          className={`object-contain w-16 h-16 cursor-pointer
           ${isExpanded && expandedImageMessageId == message.id ? 'w-full h-full absolute right-full bottom-1/3' : ''}`}
-                      src={`static/message_images${message.image}`}
-                      onClick={() => handleImageMessageClick(message.id)}
+                          src={`static/message_images${message.image}`}
+                          onClick={() => handleImageMessageClick(message.id)}
 
-                    />)}
-                </div>
-              ))}</div>
-            <div className='absolute bottom-0'>
-              <form id='newpost' onSubmit={send_message}
-                className='flex-row justify-between flex my-2 px-4 pt-6 w-full' encType='multipart/form-data'>
-                <textarea type="text"
-                  onChange={onMessageChange}
-                  ref={messageTextAreaRef}
-                  style={{
-                    minHeight: MIN_TEXTAREA_HEIGHT,
-                    maxHeight: 400
-                  }}
-                  value={messageValue}
-                  name="message"
-                  id="message-textarea"
-                  placeholder="Say Hello!"
-                  rows='3'
-                  className='bg-Intone-200 px-6 placeholder:text-gray-500 mr-5 outline-none resize-none border rounded-xl w-64 py-2' />
-                <div className='flex flex-col'>
-                  <label className='cursor-pointer hover:bg-Intone-900 rounded-lg flex justify-center items-center'>
-                    <input type='file' name='image' accept='image/*' className='opacity-0 absolute -z-10 cursor-pointer' />
-                    <FontAwesomeIcon icon={faPaperclip} className='h-10 w-10 hover:bg-Intone-900 my-2' />
-                  </label>
+                        />)}
+                    </div>
+                  ))}
+                  <div className='absolute bottom-0'>
+                    {showMessageEmoji && (
+                      <Picker data={data} onEmojiSelect={(emoji) => handleEmojiSelect(emoji)} />
+                    )}
+                    <form id='newpost' onSubmit={send_message}
+                      className='flex-row justify-between flex my-2 px-4 pt-6 w-full' encType='multipart/form-data'>
+                      <textarea type="text"
+                        onChange={onMessageChange}
+                        ref={messageTextAreaRef}
+                        style={{
+                          minHeight: MIN_TEXTAREA_HEIGHT,
+                          maxHeight: 400
+                        }}
+                        value={messageValue}
+                        name="message"
+                        id="message-textarea"
+                        placeholder="Say Hello!"
+                        rows='3'
+                        className='bg-Intone-200 px-6 placeholder:text-gray-500 mr-5 outline-none resize-none border rounded-xl w-64 py-2 scrollbar-blue-thin' />
+                      <div className='flex flex-col'>
+                        <label className='cursor-pointer hover:bg-Intone-900 rounded-lg flex justify-center items-center'>
+                          <input type='file' name='image' accept='image/*' className='opacity-0 absolute -z-10 cursor-pointer' />
+                          <FontAwesomeIcon icon={faPaperclip} className='h-10 w-10 hover:bg-Intone-900 my-2' />
+                        </label>
 
-                  <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
-                  <input type="submit" id="post-submit"
-                    className="cursor-pointer	hover:bg-Intone-500 bg-Intone-300 text-white font-bold 
+
+                        <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+                        <input type="submit" id="post-submit"
+                          className="cursor-pointer	hover:bg-Intone-500 bg-Intone-300 text-white font-bold 
             px-4 rounded-3xl h-12 shadow resize-none text-4xl" value=">" />
+                      </div>
+
+                    </form>
+                    <div>
+                      {!showMessageEmoji && (
+                        <FontAwesomeIcon icon={faFaceSmile} onClick={() => handleEmojiShow('message')}
+                          className='cursor-pointer w-6 h-6 hover:scale-125 transition-transform duration-200 absolute top-0 right-8 z-10' />
+                      )}
+                      {showMessageEmoji && (
+                        <FontAwesomeIcon icon={faFaceSmile} className='cursor-pointer w-6 h-6 hover:scale-125 transition-transform duration-200 absolute right-8 z-10
+                         bottom-28' onClick={() => handleEmojiShow('message')}/>
+
+                      )}
+                      </div>
+                  </div>
+
                 </div>
 
-              </form>
+              }
+
             </div>
           </div>
         )}
@@ -402,6 +451,9 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
       <h1 className='mt-12 mb-6 text-3xl font-bold'>Comments</h1>
       <div className='flex flex-row max-md:flex-col justify-between border border-indigo-200 px-6 py-4 rounded-2xl'>
         <div className=''>
+        {showProfileCommentEmoji && (
+                      <Picker data={data} onEmojiSelect={(emoji) => handleEmojiSelect(emoji)} />
+                    )}
           <form id='newpost' onSubmit={send_comment} className='flex-col flex my-6 border px-4 rounded-3xl border-indigo-200 pt-6 w-96'>
             <textarea type="text"
               onChange={onChange}
@@ -417,14 +469,22 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
               rows='3'
               className='bg-Intone-200 px-6 placeholder:text-gray-500 outline-none resize-none' />
             <hr className="border-gray-500" />
+            <div>
+                      {!showProfileCommentEmoji && (
+                        <FontAwesomeIcon icon={faFaceSmile} onClick={() => handleEmojiShow('profile_comment')}
+                          className='cursor-pointer w-6 h-6 hover:scale-125 transition-transform duration-200 z-10' />
+                      )}
+                      {showProfileCommentEmoji && (
+                        <FontAwesomeIcon icon={faFaceSmile} className='cursor-pointer w-6 h-6 hover:scale-125 transition-transform duration-200z-10' onClick={() => handleEmojiShow('profile_comment')}/>
+
+                      )}
+                      </div>
             <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
             <input type="submit" id="post-submit" className="cursor-pointer	hover:bg-Intone-500 bg-Intone-300 text-white font-semibold py-2 mt-6 px-6 rounded-3xl shadow mb-10 w-24 ml-auto mr-6 resize-none" value="Send" />
           </form>
         </div>
         <div className='px-2 py-4 md:ml-6 shadow-2xl'>
-          <div className='w-96 max-h-[350px] scrollbar-thumb-Intone-300 
-            scrollbar-thin scrollbar-track-rounded-3xl scrollbar-thumb-rounded-3xl 
-             scrollbar-track-white overflow-y-auto'>
+          <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto'>
             <div className='mr-4'>
               {comments.map(comment => (
                 <div key={comment.id} className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
