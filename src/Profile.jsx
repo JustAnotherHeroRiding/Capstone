@@ -483,7 +483,7 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
             <input type="submit" id="post-submit" className="cursor-pointer	hover:bg-Intone-500 bg-Intone-300 text-white font-semibold py-2 px-6 rounded-3xl shadow mb-10 w-24 ml-auto mr-6 resize-none" value="Send" />
           </form>
         </div>
-        <div className='px-2 py-4 md:ml-6 shadow-2xl'>
+        <div className='px-2 py-4 md:ml-6'>
           <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto'>
             <div className='mr-4'>
               {comments.map(comment => (
