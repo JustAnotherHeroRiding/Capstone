@@ -165,6 +165,48 @@ def get_all_messages(request):
 
 
 
+def get_all_entries(request):
+    # Fetch all albums, bands, and artists
+    albums = Album.objects.all()
+    bands = Band.objects.all()
+    artists = Player.objects.all()
+    gear = Gear.objects.all()
+
+    # Serialize the data
+    serialized_albums = [album.serialize() for album in albums]
+    serialized_bands = [band.serialize() for band in bands]
+    serialized_artists = [artist.serialize() for artist in artists]
+    serialized_gear = [g.serialize() for g in gear]
+
+    # Combine the serialized data into one dictionary
+    data = {
+        'albums': serialized_albums,
+        'bands': serialized_bands,
+        'artists': serialized_artists,
+        'gear': serialized_gear
+    }
+
+    # Return the JSON response
+    return JsonResponse(data)
+
+
+def get_single_entry(request, entry_type, entry_id):
+    if entry_type == 'album':
+        entry = get_object_or_404(Album, id=entry_id)
+    elif entry_type == 'band':
+        entry = get_object_or_404(Band, id=entry_id)
+    elif entry_type == 'artist':
+        entry = get_object_or_404(Player, id=entry_id)
+    elif entry_type == 'gear':
+        entry = get_object_or_404(Gear, id=entry_id)
+    else:
+        return JsonResponse({'error': 'Invalid entry type'})
+
+    serialized_entry = entry.serialize()
+    return JsonResponse(serialized_entry)
+
+
+
 
 
 

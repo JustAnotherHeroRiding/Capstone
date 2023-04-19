@@ -3,6 +3,8 @@ import './App.css'
 import Register from './Register'
 import LogIn from './LogIn'
 import Profile from './Profile'
+import Entry from './AlbumGearArtist'
+import MainPageItems from './AlbumGearArtist'
 
 function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, currentUserId }) {
 
@@ -28,20 +30,20 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
 
     const [currentUser, setCurrentUser] = useState(true)
 
-      
+
 
     function fetchOtherUserData(user_id) {
         const id = parseInt(user_id, 10);
 
         fetch(`/user/data/${id}`)
-          .then(response => response.json())
-          .then(data => {
-            setOtherUserData(data);
-          })
-          .catch(error => {
-            console.error(error);
-          });
-      }
+            .then(response => response.json())
+            .then(data => {
+                setOtherUserData(data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
 
 
 
@@ -54,20 +56,20 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
 
     const handleSearchResultClick = async (result) => {
         if (result.model_type === 'user') {
-            if (userData){
+            if (userData) {
                 if (result.id === userData.id || result.recipient === userData.id || result === userData.id) {
                     setCurrentUser(true);
-                  } else {
+                } else {
                     setCurrentUser(false);
-                  }
+                }
             }
-          await fetchOtherUserData(result.id);
-          setShowProfile(false);
-          setShowOtherProfile(true);
+            await fetchOtherUserData(result.id);
+            setShowProfile(false);
+            setShowOtherProfile(true);
         }
-      };
-      
-      
+    };
+
+
 
 
     const [query, setQuery] = useState('');
@@ -161,8 +163,8 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                         <div className='bg-gray-800 px-2 mt-2 py-2 rounded-2xl cursor-pointer'>
                             <>
                                 {results.map((result) => (
-                                    <div key={`${result.id}-${result.model_type}`}  className='flex justify-between hover:bg-gray-700 p-2 rounded-2xl'
-                                        onClick={() => handleSearchResultClick(result)}>                        
+                                    <div key={`${result.id}-${result.model_type}`} className='flex justify-between hover:bg-gray-700 p-2 rounded-2xl'
+                                        onClick={() => handleSearchResultClick(result)}>
                                         <p>{result.name}</p>
                                         <p>{result.model_type.charAt(0).toUpperCase() + result.model_type.slice(1).toLowerCase()}</p>
                                     </div>
@@ -175,13 +177,36 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
             </nav>
             {showLogIn && <LogIn handleRegisterClick={handleRegisterClick} />}
             {showRegister && <Register handleLogInClick={handleLogInClick} />}
-            {showProfile && <Profile userData={userData} fetchUserData={fetchUserData} current_user={currentUser} 
-            handleProfileClick={handleProfileClick} handleSearchResultClick={handleSearchResultClick} currentUserId={currentUserId} />}
-            
-            {otherUserData && showOtherProfile && <Profile userData={otherUserData} 
-            fetchUserData={fetchOtherUserData} current_user={currentUser} handleProfileClick={handleProfileClick} handleSearchResultClick={handleSearchResultClick} currentUserId={currentUserId} />}
+            {!showLogIn && !showRegister && (
+                <>
+                    {showProfile && (
+                        <Profile
+                            userData={userData}
+                            fetchUserData={fetchUserData}
+                            current_user={currentUser}
+                            handleProfileClick={handleProfileClick}
+                            handleSearchResultClick={handleSearchResultClick}
+                            currentUserId={currentUserId}
+                        />
+                    )}
 
-        </div>
+                    {otherUserData && showOtherProfile && (
+                        <Profile
+                            userData={otherUserData}
+                            fetchUserData={fetchOtherUserData}
+                            current_user={currentUser}
+                            handleProfileClick={handleProfileClick}
+                            handleSearchResultClick={handleSearchResultClick}
+                            currentUserId={currentUserId}
+                        />
+                    )}
+                </>
+            )}
+            {!showLogIn && !showRegister && !showOtherProfile && !showProfile && (
+                <MainPageItems />
+            )}
+
+            </div>
     )
 }
 

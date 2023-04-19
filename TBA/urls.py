@@ -17,6 +17,10 @@ urlpatterns = [
     path('profile/messages/conversation/<int:user_id>', views.get_message_history, name='message_history'),
     
     path('send/profile/message/<int:recipient_id>', views.send_message, name='send_message'),
+    
+    path('entries/get/all', views.get_all_entries, name='all_entries'),
+    path('entries/<str:entry_type>/<int:entry_id>', views.get_single_entry, name='get_single_entry'),
+
 
     
     path('search', views.search, name='search'),

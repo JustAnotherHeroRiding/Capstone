@@ -28,7 +28,8 @@ A website where users can discuss guitar music, rate albums, list the gear used 
 - In the sidebar I should be able to search for usernames of other users and view their profiles #DONE 
 - I can check if it is a user, add some identifier in the models so i can load the proper component, profile if it's a user and so on #DONE 
 ## Album/Gear/Player view
-- Separate page for each entry, on the main page there should be a selection from each other these caterogies, ranked by various statictics that I need to determine, it can be by date at first
+- Users should be able to upload pictures for each entry
+- Separate page for each entry, on the main page there should be a selection from each other these caterogies, ranked by various statictics that I need to determine, it can be by date at first #DONE 
 - All the links should load the correct view when clicked, when clicking on the player from the album view it should load the player's page 
 - Each gear entry should have a list of players using it and albums it was used on
 - Each player should have a list of gear used, gear used per album

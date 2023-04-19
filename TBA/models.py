@@ -84,6 +84,7 @@ class Band(models.Model):
     name = models.CharField(max_length=255)
     members = models.ManyToManyField(Player, related_name='bands')
     picture = models.ImageField(upload_to='TBA/static/band_pics/', null=True, blank=True)
+    description = models.TextField(blank=True)
 
     def serialize(self):
         return {
@@ -92,6 +93,7 @@ class Band(models.Model):
             'members': [member.serialize() for member in self.members.all()],
             'albums': [album.serialize() for album in self.albums.all()],
             'picture': self.picture.url if self.picture else None,
+            'description': self.description,
             'model_type' : 'band'
         }
 
