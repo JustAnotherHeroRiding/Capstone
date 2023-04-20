@@ -195,7 +195,7 @@ def get_single_entry(request, entry_type, entry_id):
         entry = get_object_or_404(Album, id=entry_id)
     elif entry_type == 'band':
         entry = get_object_or_404(Band, id=entry_id)
-    elif entry_type == 'artist':
+    elif entry_type == 'player':
         entry = get_object_or_404(Player, id=entry_id)
     elif entry_type == 'gear':
         entry = get_object_or_404(Gear, id=entry_id)

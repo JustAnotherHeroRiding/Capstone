@@ -66,9 +66,39 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
             await fetchOtherUserData(result.id);
             setShowProfile(false);
             setShowOtherProfile(true);
-        }
+        } else if (result.model_type === 'gear' || result.model_type === 'band' || result.model_type === 'album') {
+            fetchSingleEntry(result.model_type, result.id)
+            setQuery('')
+            setResults([])
+            setShowResults(false)
+        };
     };
 
+    const [singleView, setSingleView] = useState(false)
+    const [singleViewType, setSingleViewType] = useState('')
+
+    const [singleEntryData, setSingleEntryData] = useState([])
+
+    const fetchSingleEntry = (entryType, entryId) => {
+        fetch(`entries/${entryType}/${entryId}`)
+            .then(response => response.json())
+            .then(data => {
+                setSingleEntryData(data)
+                setSingleViewType(entryType)
+                setSingleView(true)
+                if (showProfile || showOtherProfile){
+                    setShowProfile(false)
+                    setShowOtherProfile(false)
+                }
+            })
+            .catch(error => console.error(error));
+    }
+
+    function exitSingleView() {
+        if (singleView) {
+            setSingleView(false)
+        }
+    }
 
 
 
@@ -203,10 +233,16 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                 </>
             )}
             {!showLogIn && !showRegister && !showOtherProfile && !showProfile && (
-                <MainPageItems />
+                <MainPageItems
+                    fetchSingleEntry={fetchSingleEntry}
+                    exitSingleView={exitSingleView}
+                    singleView={singleView}
+                    singleViewType={singleViewType}
+                    singleEntryData={singleEntryData}
+                />
             )}
 
-            </div>
+        </div>
     )
 }
 

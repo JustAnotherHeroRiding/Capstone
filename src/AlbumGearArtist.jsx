@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPaperclip, faCircleLeft, faFaceSmile } from '@fortawesome/free-solid-svg-icons'
 
 
-function MainPageItems() {
+function MainPageItems({ fetchSingleEntry, exitSingleView, singleView, singleViewType, singleEntryData }) {
     const csrftoken = Cookies.get('csrftoken');
 
     const [AllEntries, setAllEntries] = useState([])
@@ -21,27 +21,9 @@ function MainPageItems() {
         fetchAllEntries()
     }, []);
 
-    const [singleView, setSingleView] = useState(false)
-    const [singleViewType, setSingleViewType] = useState('')
 
-    const [singleEntryData, setSingleEntryData] = useState([])
 
-    const fetchSingleEntry = (entryType, entryId) => {
-        fetch(`entries/${entryType}/${entryId}`)
-            .then(response => response.json())
-            .then(data => {
-                setSingleEntryData(data)
-                setSingleViewType(entryType)
-                setSingleView(true)
-            })
-            .catch(error => console.error(error));
-    }
 
-    function exitSingleView() {
-        if (singleView) {
-            setSingleView(false)
-        }
-    }
 
 
     return (
@@ -54,9 +36,10 @@ function MainPageItems() {
                             {AllEntries.bands && (
                                 <div>
                                     {AllEntries.bands.map((band) => (
-                                        <div key={band.id} className='border border-indigo-200 px-4 py-6 rounded-2xl hover:bg-Intone-100s'>
-                                            <h1 className='cursor-pointer text-2xl font-bold flex justify-center'
-                                             onClick={() => fetchSingleEntry(band.model_type, band.id)}>{band.name}</h1>
+                                        <div key={band.id} onClick={() => fetchSingleEntry(band.model_type, band.id)}
+                                            className='border cursor-pointer border-indigo-200 px-4 py-6 rounded-2xl hover:bg-Intone-100'>
+                                            <h1 className='text-2xl font-bold flex justify-center'
+                                            >{band.name}</h1>
                                             <img src={`static/band_pics/${band.picture}`} className='object-cover w-40 h-40 mx-auto' />
                                         </div>
                                     ))}
@@ -66,7 +49,21 @@ function MainPageItems() {
                     </li>
                     <li className='mr-12 min-w-[200px]'>
                         <h1 className='flex justify-center'>Albums</h1>
-
+                        <div className='mt-6'>
+                            {AllEntries.albums && (
+                                <div>
+                                    {AllEntries.albums.map((album) => (
+                                        <div key={album.id} onClick={() => fetchSingleEntry(album.model_type, album.id)}
+                                            className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                        hover:bg-Intone-100 cursor-pointer'>
+                                            <h1 className='text-2xl font-bold flex justify-center'
+                                            >{album.name}</h1>
+                                            <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </li>
                     <li className='mr-12 min-w-[200px]'>
                         <h1 className='flex justify-center'>Gear</h1>
@@ -75,9 +72,10 @@ function MainPageItems() {
                             {AllEntries.gear && (
                                 <div>
                                     {AllEntries.gear.map((gear) => (
-                                        <div key={gear.id} className='border border-indigo-200 px-4 py-6 rounded-2xl hover:bg-Intone-100'>
-                                            <h1 className='cursor-pointer text-2xl font-bold flex justify-center'
-                                                onClick={() => fetchSingleEntry(gear.model_type, gear.id)}>{gear.name}</h1>
+                                        <div key={gear.id} onClick={() => fetchSingleEntry(gear.model_type, gear.id)}
+                                            className='border border-indigo-200 px-4 py-6 rounded-2xl hover:bg-Intone-100 cursor-pointer'>
+                                            <h1 className='text-2xl font-bold flex justify-center'
+                                            >{gear.name}</h1>
                                             <img src={`static/gear_images/${gear.image}`} className='object-cover mx-auto w-40 h-40' />
                                         </div>
                                     ))}
@@ -86,6 +84,21 @@ function MainPageItems() {
                         </div></li>
                     <li className='mr-12 min-w-[200px]'>
                         <h1 className='flex justify-center'>Players</h1>
+                        <div className='mt-6'>
+                            {AllEntries.artists && (
+                                <div>
+                                    {AllEntries.artists.map((player) => (
+                                        <div key={player.id} onClick={() => fetchSingleEntry(player.model_type, player.id)}
+                                            className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                        hover:bg-Intone-100 cursor-pointer'>
+                                            <h1 className='text-2xl font-bold flex justify-center'
+                                            >{player.name}</h1>
+                                            <img src={`static/player_pics/${player.picture}`} className='object-cover mx-auto w-40 h-40' />
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
 
                     </li>
 
@@ -110,26 +123,47 @@ function MainPageItems() {
                         )}
                         {singleViewType === 'band' && (
                             <>
-                            <div className='flex items-center flex-col border border-indigo px-6 py-4 rounded-3xl'>
-
-                                <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
-                                <img src={`static/band_pics/${singleEntryData.picture}`} className='object-cover w-60 h-60' />
-                                <p className='w-80'>{singleEntryData.description}</p>
+                                <div className='flex items-center flex-row'>
+                                    <div>
+                                        <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
+                                        <img src={`static/band_pics/${singleEntryData.picture}`} className='object-cover w-60 h-60' />
+                                        <p className='w-80'>{singleEntryData.description}</p>
+                                    </div>
+                                    <div>
+                                    <h1>Albums</h1>
+                                        {singleEntryData.albums.map((album) => (
+                                            <div key={album.id} onClick={() => fetchSingleEntry(album.model_type, album.id)}
+                                                className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                        hover:bg-Intone-100 cursor-pointer'>
+                                                <h1 className='text-2xl font-bold flex justify-center'
+                                                >{album.name}</h1>
+                                                <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </>
                         )}
                         {singleViewType === 'album' && (
                             <>
-                                <h1 className='text-2xl font-bold my-4'>{singleEntryData.title}</h1>
-                                <img src={`static/album_art/${singleEntryData.cover}`} className='object-cover w-40 h-40' />
-                                <p className='w-80'>{singleEntryData.description}</p>
+                                <div className='flex items-center flex-col border border-indigo px-6 py-4 rounded-3xl'>
+
+                                    <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
+                                    <h1 className='text-2xl font-bold my-4'>{singleEntryData.band}</h1>
+
+                                    <img src={`static/album_covers/${singleEntryData.cover_art_url}`} className='object-cover w-40 h-40' />
+                                    <p className='w-80'>{singleEntryData.description}</p>
+                                </div>
                             </>
                         )}
                         {singleViewType === 'player' && (
                             <>
-                                <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
-                                <img src={`static/artist_pics/${singleEntryData.picture}`} className='object-cover w-40 h-40' />
-                                <p className='w-80'>{singleEntryData.bio}</p>
+                                <div className='flex items-center flex-col border border-indigo px-6 py-4 rounded-3xl'>
+
+                                    <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
+                                    <img src={`static/player_pics/${singleEntryData.picture}`} className='object-cover w-40 h-40' />
+                                    <p className='w-80'>{singleEntryData.description}</p>
+                                </div>
                             </>
                         )}
                     </div>

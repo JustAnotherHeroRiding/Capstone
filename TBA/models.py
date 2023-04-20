@@ -68,6 +68,8 @@ class Player(models.Model):
     name = models.CharField(max_length=255)
     gear = models.ManyToManyField(Gear, related_name='players')
     picture = models.ImageField(upload_to='TBA/static/player_pics/', null=True, blank=True)
+    description = models.TextField(blank=True)
+
 
 
     def serialize(self):
@@ -76,6 +78,7 @@ class Player(models.Model):
             'name': self.name,
             'gear': [gear.serialize() for gear in self.gear.all()],
             'picture': self.picture.url if self.picture else None,
+            'description': self.description,
             'model_type' : 'player'
 
         }
@@ -108,6 +111,8 @@ class Album(models.Model):
     guitar_players = models.ManyToManyField(
         Player, related_name='albums')
     cover_art = models.ImageField(upload_to='TBA/static/album_covers/', blank=True, null=True)
+    description = models.TextField(blank=True)
+
 
     def serialize(self):
         return {
@@ -118,6 +123,7 @@ class Album(models.Model):
             'cover_art_url': self.cover_art.url if self.cover_art else None,
             'reviews': [review.serialize() for review in self.reviews.all()],
             'comments': [comment.serialize() for comment in self.comments.all()],
+            'description': self.description,
             'model_type' : 'album'
         }
 
