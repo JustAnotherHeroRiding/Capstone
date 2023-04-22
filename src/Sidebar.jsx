@@ -78,6 +78,8 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
     const [singleViewType, setSingleViewType] = useState('')
 
     const [singleEntryData, setSingleEntryData] = useState([])
+    const [showEntryType, setShowEntryType] = useState('')
+    const [showOnlyEntryType, setShowOnlyEntryType] = useState(false)
 
     const fetchSingleEntry = (entryType, entryId) => {
         fetch(`entries/${entryType}/${entryId}`)
@@ -86,7 +88,8 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                 setSingleEntryData(data)
                 setSingleViewType(entryType)
                 setSingleView(true)
-                if (showProfile || showOtherProfile){
+                setShowOnlyEntryType(false)
+                if (showProfile || showOtherProfile) {
                     setShowProfile(false)
                     setShowOtherProfile(false)
                 }
@@ -98,6 +101,20 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
         if (singleView) {
             setSingleView(false)
         }
+    }
+
+   
+
+    const ShowAllX = (type) => {
+        setShowEntryType(type)
+        if (showEntryType === type) {
+            setShowOnlyEntryType(false)
+            setShowEntryType('')
+        } else {
+            setShowOnlyEntryType(true)
+        }
+        setShowProfile(false)
+        setShowOtherProfile(false)
     }
 
 
@@ -144,10 +161,10 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
             <nav className="z-10 md:left-0 md:top-0 md:fixed md:h-screen md:flex lg:w-72 md:w-48 md:flex-col text-Intone-600 px-2 text-xl bg-Intone-100">
 
                 <h1 className="mb-12 md:mt-4 hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer">
-                    <a className="text-4xl font-bold mx-auto" href=''>inTone</a></h1>
+                    <a className="text-4xl font-bold mx-auto text-Intone-500" href=''>inTone</a></h1>
 
                 <div className="">
-                    <ul className="max-md:flex max-md:justify-between max-md:mx-auto ">
+                    <ul className="max-md:flex max-md:justify-between max-md:mx-auto">
                         {userData && (
                             <li className='mb-4 max-md:mx-2 flex flex-row justify-start'>
                                 <a className=" hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" onClick={handleProfileClick}>{userData.name}</a>
@@ -158,13 +175,16 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                             </li>
                         )}
                         <li className="mb-4 max-md:mx-2">
-                            <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3" id='sidebar-all-posts' href="">Albums</a>
+                            <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" id='sidebar-all-posts' onClick={() => ShowAllX('albums')}>Albums</a>
                         </li>
                         <li className="mb-4 max-md:mx-2">
-                            <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3" id='sidebar-following' href="">Artists</a>
+                            <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" id='sidebar-following' onClick={() => ShowAllX('bands')}>Bands</a>
                         </li>
                         <li className="mb-4 max-md:mx-2">
-                            <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3" id='sidebar-following' href="">Gear</a>
+                            <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" id='sidebar-following' onClick={() => ShowAllX('gear')}>Gear</a>
+                        </li>
+                        <li className="mb-4 max-md:mx-2">
+                            <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" id='sidebar-following' onClick={() => ShowAllX('players')}>Players</a>
                         </li>
                         {isLoggedIn ? (
                             <li className="mb-4 max-md:mx-2">
@@ -239,6 +259,8 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                     singleView={singleView}
                     singleViewType={singleViewType}
                     singleEntryData={singleEntryData}
+                    showEntryType={showEntryType}
+                    showOnlyEntryType={showOnlyEntryType}
                 />
             )}
 

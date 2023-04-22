@@ -18,18 +18,21 @@ class User(AbstractUser):
             "email": self.email,
             "profile_pic": self.profile_pic.url if self.profile_pic else None,
             "date_joined": self.date_joined.strftime('%Y-%m-%d'),
-            'model_type' : 'user'
+            'model_type': 'user'
         }
 
     def get_messages(self):
         return list(self.sent_messages.all()) + list(self.received_messages.all())
-    
-    
+
+
 class Message(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    sender = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='sent_messages')
+    recipient = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='received_messages')
     body = models.TextField()
-    image = models.ImageField(upload_to='TBA/static/message_images', blank=True, null=True)
+    image = models.ImageField(
+        upload_to='TBA/static/message_images', blank=True, null=True)
     sent_at = models.DateTimeField(auto_now_add=True)
 
     def serialize(self):
@@ -40,9 +43,8 @@ class Message(models.Model):
             'body': self.body,
             'image': self.image.url if self.image else None,
             'sent_at': self.sent_at.strftime('%Y-%m-%d %H:%M:%S'),
-            'model_type' : 'message'
+            'model_type': 'message'
         }
-
 
 
 class Gear(models.Model):
@@ -62,18 +64,17 @@ class Gear(models.Model):
             'description': self.description,
             'image': self.image.url if self.image else None,
             'tonehunt_url': self.tonehunt_url,
-            'model_type' : 'gear'
+            'players': [player.minimal_serialize() for player in self.players.all()],
+            'model_type': 'gear'
         }
-
 
 
 class Player(models.Model):
     name = models.CharField(max_length=255)
     gear = models.ManyToManyField(Gear, related_name='players')
-    picture = models.ImageField(upload_to='TBA/static/player_pics/', null=True, blank=True)
+    picture = models.ImageField(
+        upload_to='TBA/static/player_pics/', null=True, blank=True)
     description = models.TextField(blank=True)
-
-
 
     def serialize(self):
         return {
@@ -84,14 +85,25 @@ class Player(models.Model):
             'description': self.description,
             'bands': [(band.name, band.id, band.picture.url) for band in self.bands.all()],
             'albums': [(album.name, album.id, album.cover_art.url) for album in self.albums.all()],
-            'model_type' : 'player'
+            'model_type': 'player'
 
         }
+
+    def minimal_serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'picture': self.picture.url if self.picture else None,
+            'description': self.description,
+            'model_type': 'player'
+        }
+
 
 class Band(models.Model):
     name = models.CharField(max_length=255)
     members = models.ManyToManyField(Player, related_name='bands')
-    picture = models.ImageField(upload_to='TBA/static/band_pics/', null=True, blank=True)
+    picture = models.ImageField(
+        upload_to='TBA/static/band_pics/', null=True, blank=True)
     description = models.TextField(blank=True)
 
     def serialize(self):
@@ -102,11 +114,8 @@ class Band(models.Model):
             'albums': [album.serialize() for album in self.albums.all()],
             'picture': self.picture.url if self.picture else None,
             'description': self.description,
-            'model_type' : 'band'
+            'model_type': 'band'
         }
-
-        
-
 
 
 class Album(models.Model):
@@ -115,9 +124,9 @@ class Album(models.Model):
         Band, on_delete=models.CASCADE, related_name='albums')
     guitar_players = models.ManyToManyField(
         Player, related_name='albums')
-    cover_art = models.ImageField(upload_to='TBA/static/album_covers/', blank=True, null=True)
+    cover_art = models.ImageField(
+        upload_to='TBA/static/album_covers/', blank=True, null=True)
     description = models.TextField(blank=True)
-
 
     def serialize(self):
         return {
@@ -130,10 +139,8 @@ class Album(models.Model):
             'reviews': [review.serialize() for review in self.reviews.all()],
             'comments': [comment.serialize() for comment in self.comments.all()],
             'description': self.description,
-            'model_type' : 'album'
+            'model_type': 'album'
         }
-
-
 
 
 class Review(models.Model):
@@ -165,15 +172,14 @@ class Review(models.Model):
             'gear': self.gear.name if self.gear else None,
             'stars': self.stars,
             'text': self.text,
-            'model_type' : 'review'
+            'model_type': 'review'
         }
-
 
 
 class Comment(models.Model):
     album = models.ForeignKey(
         Album, on_delete=models.CASCADE, related_name='comments', blank=True, null=True)
-    player= models.ForeignKey(
+    player = models.ForeignKey(
         Player, on_delete=models.CASCADE, related_name='comments', blank=True, null=True)
     gear = models.ForeignKey(
         Gear, on_delete=models.CASCADE, related_name='comments', blank=True, null=True)
@@ -188,12 +194,15 @@ class Comment(models.Model):
             'player': self.player.name if self.player else None,
             'text': self.text,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-            'model_type' : 'comment'
+            'model_type': 'comment'
         }
 
+
 class ProfileComment(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile_comments_posted')
-    profile_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile_comments_received', default=None)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile_comments_posted')
+    profile_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile_comments_received', default=None)
 
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -207,5 +216,5 @@ class ProfileComment(models.Model):
             'profile_user_id': self.profile_user.username,
             'user_picture_poster': self.user.profile_pic.url,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-            'model_type' : 'profile_comment'
+            'model_type': 'profile_comment'
         }

@@ -27,7 +27,7 @@ module.exports = {
         // => @media (max-width: 639px) { ... }
         'xs': {'max': '475px'},
         '2xl': '1175px',
-        'medium-large': '940px',
+        'medium-large': '900px',
       'xs': '475px',
       ...defaultTheme.screens,
     },

@@ -182,7 +182,7 @@ def get_all_entries(request):
     data = {
         'albums': serialized_albums,
         'bands': serialized_bands,
-        'artists': serialized_artists,
+        'players': serialized_artists,
         'gear': serialized_gear
     }
 
