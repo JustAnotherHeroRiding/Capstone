@@ -66,7 +66,7 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
             await fetchOtherUserData(result.id);
             setShowProfile(false);
             setShowOtherProfile(true);
-        } else if (result.model_type === 'gear' || result.model_type === 'band' || result.model_type === 'album') {
+        } else if (result.model_type === 'gear' || result.model_type === 'band' || result.model_type === 'album' || result.model_type === 'player') {
             fetchSingleEntry(result.model_type, result.id)
             setQuery('')
             setResults([])

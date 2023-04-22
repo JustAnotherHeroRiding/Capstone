@@ -30,14 +30,14 @@ A website where users can discuss guitar music, rate albums, list the gear used 
 ## Album/Gear/Player/Band view
 - Users should be able to upload pictures for each entry
 - Separate page for each entry, on the main page there should be a selection from each other these caterogies, ranked by various statictics that I need to determine, it can be by date at first #DONE 
-- All the links should load the correct view when clicked, when clicking on the player from the album view it should load the player's page 
+- All the links should load the correct view when clicked, when clicking on the player from the album view it should load the player's page  #DONE 
 - Each gear entry should have a list of players using it and albums it was used on
 - Each player should have a list of gear used, gear used per album
 - Each album page should have the tracklist, gear used and the guitar player
 - Tags and descriptors for albums, players and gear and bands
-## Browse Albums, Players or Gear
+## Browse Albums, Players or Gear #DONE 
 ## Leave Reviews for albums or gear, leave comments for players
-## Messaging between users
+## Messaging between users #DONE 
 ## Forum section
 Maybe use the spotify api to get data about an artist's album
 Fun Facts section with a description for each artist,album or gear

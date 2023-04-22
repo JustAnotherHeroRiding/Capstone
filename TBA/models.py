@@ -52,6 +52,7 @@ class Gear(models.Model):
     description = models.TextField(blank=True)
     image = models.ImageField(
         upload_to='TBA/static/gear_images/', blank=True, null=True)
+    tonehunt_url = models.URLField(blank=True, null=True)
 
     def serialize(self):
         return {
@@ -60,8 +61,10 @@ class Gear(models.Model):
             'category': self.category,
             'description': self.description,
             'image': self.image.url if self.image else None,
+            'tonehunt_url': self.tonehunt_url,
             'model_type' : 'gear'
         }
+
 
 
 class Player(models.Model):
@@ -79,6 +82,8 @@ class Player(models.Model):
             'gear': [gear.serialize() for gear in self.gear.all()],
             'picture': self.picture.url if self.picture else None,
             'description': self.description,
+            'bands': [(band.name, band.id, band.picture.url) for band in self.bands.all()],
+            'albums': [(album.name, album.id, album.cover_art.url) for album in self.albums.all()],
             'model_type' : 'player'
 
         }
@@ -119,7 +124,8 @@ class Album(models.Model):
             'id': self.id,
             'name': self.name,
             'band': self.band.name,
-            'guitar_players': [player.name for player in self.guitar_players.all()],
+            'band_id': self.band.id,
+            'guitar_players': [player.serialize() for player in self.guitar_players.all()],
             'cover_art_url': self.cover_art.url if self.cover_art else None,
             'reviews': [review.serialize() for review in self.reviews.all()],
             'comments': [comment.serialize() for comment in self.comments.all()],

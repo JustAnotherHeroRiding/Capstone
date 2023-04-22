@@ -116,21 +116,22 @@ function MainPageItems({ fetchSingleEntry, exitSingleView, singleView, singleVie
                             <>
                                 <div className='flex items-center flex-col border border-indigo px-6 py-4 rounded-3xl'>
                                     <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
-                                    <img src={`static/gear_images/${singleEntryData.image}`} className='object-cover w-60 h-60' />
+                                    <img src={`static/gear_images/${singleEntryData.image}`} className='object-cover w-60 h-60 mb-6' />
                                     <p className='w-80'>{singleEntryData.description}</p>
+                                    <a className='text-Intone-300 hover:underline ' href={singleEntryData.tonehunt_url}>Nam Capture</a>
                                 </div>
                             </>
                         )}
                         {singleViewType === 'band' && (
                             <>
-                                <div className='flex items-center flex-row'>
-                                    <div>
+                            <div className='flex items-center flex-row border border-indigo px-6 py-4 rounded-3xl'>
+                                    <div className='mb-auto'>
                                         <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
                                         <img src={`static/band_pics/${singleEntryData.picture}`} className='object-cover w-60 h-60' />
                                         <p className='w-80'>{singleEntryData.description}</p>
                                     </div>
-                                    <div>
-                                    <h1>Albums</h1>
+                                    <div className='mb-auto mr-6'>
+                                    <h1 className='flex justify-center my-4 text-2xl font-bold'>Albums</h1>
                                         {singleEntryData.albums.map((album) => (
                                             <div key={album.id} onClick={() => fetchSingleEntry(album.model_type, album.id)}
                                                 className='border border-indigo-200 px-4 py-6 rounded-2xl 
@@ -141,28 +142,79 @@ function MainPageItems({ fetchSingleEntry, exitSingleView, singleView, singleVie
                                             </div>
                                         ))}
                                     </div>
+                                    <div className='mb-auto'>
+                                    <h1 className='flex justify-center my-4 text-2xl font-bold'>Guitar Players</h1>
+                                        {singleEntryData.members.map((player) => (
+                                            <div key={player.id} onClick={() => fetchSingleEntry(player.model_type, player.id)}
+                                                className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                        hover:bg-Intone-100 cursor-pointer'>
+                                                <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                >{player.name}</h1>
+                                                <img src={`static/player_pics/${player.picture}`} className='object-cover mx-auto w-40 h-40' />
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </>
                         )}
                         {singleViewType === 'album' && (
                             <>
-                                <div className='flex items-center flex-col border border-indigo px-6 py-4 rounded-3xl'>
+                            <div className='flex items-center flex-row border border-indigo px-6 py-4 rounded-3xl'>
+                                <div className='mb-auto'>
 
                                     <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
-                                    <h1 className='text-2xl font-bold my-4'>{singleEntryData.band}</h1>
-
+                                    <h1 className='text-2xl font-bold my-4 cursor-pointer text-Intone-300 hover:underline' onClick={() => fetchSingleEntry('band', singleEntryData.band_id)}>
+                                    {singleEntryData.band}</h1>
                                     <img src={`static/album_covers/${singleEntryData.cover_art_url}`} className='object-cover w-40 h-40' />
                                     <p className='w-80'>{singleEntryData.description}</p>
                                 </div>
+                                <div className='mb-auto'>
+                                    <h1 className='flex justify-center my-4 text-2xl font-bold'>Guitar Players</h1>
+                                        {singleEntryData.guitar_players.map((player) => (
+                                            <div key={player.id} onClick={() => fetchSingleEntry(player.model_type, player.id)}
+                                                className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                        hover:bg-Intone-100 cursor-pointer'>
+                                                <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                >{player.name}</h1>
+                                                <img src={`static/player_pics/${player.picture}`} className='object-cover mx-auto w-40 h-40' />
+                                            </div>
+                                        ))}
+                                    </div>
+                                    </div>
                             </>
                         )}
                         {singleViewType === 'player' && (
                             <>
-                                <div className='flex items-center flex-col border border-indigo px-6 py-4 rounded-3xl'>
-
+                                <div className='flex items-center flex-row border border-indigo px-6 py-4 rounded-3xl'>
+                                    <div>
                                     <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
                                     <img src={`static/player_pics/${singleEntryData.picture}`} className='object-cover w-40 h-40' />
                                     <p className='w-80'>{singleEntryData.description}</p>
+                                    </div>
+                                    <div className='mb-auto mr-6'>
+                                    <h1 className='flex justify-center my-4 text-2xl font-bold'>Bands</h1>
+                                        {singleEntryData.bands.map((band) => (
+                                            <div key={band[1]} onClick={() => fetchSingleEntry('band', band[1])}
+                                                className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                        hover:bg-Intone-100 cursor-pointer'>
+                                                <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                >{band[0]}</h1>
+                                                <img src={`static/band_pics/${band[2]}`} className='object-cover mx-auto w-40 h-40' />
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className='mb-auto'>
+                                    <h1 className='flex justify-center my-4 text-2xl font-bold'>Albums</h1>
+                                        {singleEntryData.albums.map((album) => (
+                                            <div key={album[1]} onClick={() => fetchSingleEntry('album', album[1])}
+                                                className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                        hover:bg-Intone-100 cursor-pointer'>
+                                                <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                >{album[0]}</h1>
+                                                <img src={`static/album_covers/${album[2]}`} className='object-cover mx-auto w-40 h-40' />
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </>
                         )}
