@@ -40,6 +40,7 @@ A website where users can discuss guitar music, rate albums, list the gear used 
 - There should be a separate page that should be all about adding new entries
 - This can be an album, a connecting between a player and a piece of gear or anything in between.
 - Bunch of forms with post requests to the backend
+- Reactive nav menu inside the popup for selecting which type of entry to add
 ## Browse Albums, Players or Gear #DONE 
 ## Leave Reviews for albums or gear, leave comments for players
 ## Messaging between users #DONE 

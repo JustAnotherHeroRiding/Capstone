@@ -1,4 +1,26 @@
-body{
+body {
     font-family: 'Figtree', sans-serif;
 
+}
+
+
+.newentryparent {
+    background: rgba(0, 0, 0, 0.4);
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    min-height: 250px;
+    max-height: 750px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+    z-index: 999;
 }

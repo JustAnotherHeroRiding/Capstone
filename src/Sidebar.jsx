@@ -166,8 +166,8 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                 <div className="">
                     <ul className="max-md:flex max-md:justify-between max-md:mx-auto">
                         {userData && (
-                            <li className='mb-4 max-md:mx-2 flex flex-row justify-start'>
-                                <a className=" hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" onClick={handleProfileClick}>{userData.name}</a>
+                            <li className='mb-4 max-md:mx-2 flex flex-row max-md:flex-col justify-start'>
+                                <a className=" hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer max-md:hidden" onClick={handleProfileClick}>{userData.name}</a>
                                 {userData.profile_pic && (
                                     <img src={`static/profile_pictures/${userData.profile_pic}`} className='object-cover w-12 h-12 cursor-pointer rounded-2xl' onClick={handleProfileClick} />
 
@@ -210,7 +210,7 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                         value={query}
                         onChange={handleInputChange}></input>
                     {showResults && results && nrResults > 0 && (
-                        <div className='bg-gray-800 px-2 mt-2 py-2 rounded-2xl cursor-pointer'>
+                        <div className='bg-gray-800 px-2 mt-2 py-2 rounded-2xl cursor-pointer max-h-[300px] overflow-auto scrollbar-blue-thin'>
                             <>
                                 {results.map((result) => (
                                     <div key={`${result.id}-${result.model_type}`} className='flex justify-between hover:bg-gray-700 p-2 rounded-2xl'

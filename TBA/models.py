@@ -65,6 +65,7 @@ class Gear(models.Model):
             'image': self.image.url if self.image else None,
             'tonehunt_url': self.tonehunt_url,
             'players': [player.minimal_serialize() for player in self.players.all()],
+            'albums': [album.minimal_serialize() for album in self.albums.all()],
             'model_type': 'gear'
         }
 
@@ -124,6 +125,7 @@ class Album(models.Model):
         Band, on_delete=models.CASCADE, related_name='albums')
     guitar_players = models.ManyToManyField(
         Player, related_name='albums')
+    gear = models.ManyToManyField(Gear, related_name='albums')
     cover_art = models.ImageField(
         upload_to='TBA/static/album_covers/', blank=True, null=True)
     description = models.TextField(blank=True)
@@ -139,8 +141,17 @@ class Album(models.Model):
             'reviews': [review.serialize() for review in self.reviews.all()],
             'comments': [comment.serialize() for comment in self.comments.all()],
             'description': self.description,
+            'gear': [gear.serialize() for gear in self.gear.all()],
             'model_type': 'album'
         }
+    
+    def minimal_serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'cover_art_url': self.cover_art.url if self.cover_art else None,
+            'model_type': 'album'
+            }
 
 
 class Review(models.Model):
