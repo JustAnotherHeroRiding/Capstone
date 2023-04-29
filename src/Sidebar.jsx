@@ -261,6 +261,7 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                     singleEntryData={singleEntryData}
                     showEntryType={showEntryType}
                     showOnlyEntryType={showOnlyEntryType}
+                    AllEntriesData={data}
                 />
             )}
 

@@ -20,6 +20,9 @@ urlpatterns = [
     
     path('entries/get/all', views.get_all_entries, name='all_entries'),
     path('entries/<str:entry_type>/<int:entry_id>', views.get_single_entry, name='get_single_entry'),
+    
+    path('entries/add/<str:entry_type>', views.add_entry, name='add_entry'),
+    path('entries/delete/<str:entry_type>/<int:entry_id>', views.delete_entry, name='delete_entry'),
 
 
     

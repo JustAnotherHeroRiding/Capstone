@@ -12,6 +12,7 @@ from django.db.models import Q
 
 
 import json
+import os
 
 from .models import User,Album,Band,Gear,Message,Comment,ProfileComment,Player,Review
 
@@ -207,6 +208,60 @@ def get_single_entry(request, entry_type, entry_id):
 
 
 
+def add_entry(request, entry_type):
+    if entry_type == 'album':
+        # Retrieve the data from the request
+        name = request.POST.get('name')
+        band_id = request.POST.get('band')
+        guitar_player_ids = [int(player) for player in json.loads(request.POST.getlist('guitar_players')[0])]
+        gear_ids = [int(gear) for gear in json.loads(request.POST.getlist('gear')[0])]
+        cover_art = request.FILES.get('cover_art')
+        print(cover_art)
+        cover_art = os.path.basename(cover_art)
+        description = request.POST.get('description')
+
+        # Create the new album
+        try:
+            band = Band.objects.get(id=band_id)
+            guitar_players = Player.objects.filter(id__in=guitar_player_ids)
+            gear = Gear.objects.filter(id__in=gear_ids)
+            album = Album.objects.create(
+                name=name,
+                band=band,
+                cover_art=cover_art,
+                description=description
+            )
+            album.guitar_players.set(guitar_players)
+            album.gear.set(gear)
+            album.save()
+
+            # Return a success message
+            return JsonResponse({'message': 'Album added successfully'})
+        
+        except Exception as e:
+            # Return an error message
+            return JsonResponse({'message': f'Error adding album: {str(e)}'}, status=500)
+
+def delete_entry(request, entry_type, entry_id):        
+    # Map the model type to the corresponding model
+    model_mapping = {
+        'album': Album,
+        'band': Band,
+        'gear': Gear,
+        'player': Player,
+    }
+    Model = model_mapping[entry_type]
+        
+    # Check if the model exists
+    if Model is None:
+        return JsonResponse({'error': f'Invalid model type: {entry_type}'})
+        
+    # Get the object or return an error if it doesn't exist
+    obj = get_object_or_404(Model, pk=entry_id)
+        
+    # Delete the object and return a success message
+    obj.delete()
+    return JsonResponse({'message': f'{entry_type} {entry_id} deleted successfully'})
 
 
 

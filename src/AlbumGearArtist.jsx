@@ -3,9 +3,11 @@ import './App.css'
 import Cookies from 'js-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPaperclip, faCircleLeft, faFaceSmile } from '@fortawesome/free-solid-svg-icons'
+import { AddAlbumForm } from './Forms.jsx';
 
-
-function MainPageItems({ fetchSingleEntry, exitSingleView, singleView, singleViewType, singleEntryData, showEntryType, showOnlyEntryType }) {
+function MainPageItems({ 
+    fetchSingleEntry, exitSingleView, singleView, singleViewType, 
+    singleEntryData, showEntryType, showOnlyEntryType, AllEntriesData }) {
     const csrftoken = Cookies.get('csrftoken');
 
     const [AllEntries, setAllEntries] = useState([])
@@ -39,48 +41,35 @@ function MainPageItems({ fetchSingleEntry, exitSingleView, singleView, singleVie
     return (
         <div className='relative'>
             <div className={showForm ? 'newentryparent' : 'hidden'}>
-            <div className="max-w-md mx-auto mt-6 w-full px-6 py-12 right-1/2 popup
+                <div className="max-w-md mx-auto mt-6 w-full px-6 py-12 right-1/2 popup
         border border-indigo-200 rounded-3xl shadow-2xl z-10 bg-Intone-700">
-        <h1 className='flex justify-center mb-4'>What Would you like to add?</h1>
-            <ul className='flex flex-row justify-between mb-6'>
-                <li className={`border border-indigo-200 px-4 py-2 rounded-2xl hover:bg-Intone-100 cursor-pointer ${addEntryType === 'album' && 'bg-Intone-300'}`}
-                onClick={() => typeToBeAdded('album')}>
-                Album
-                </li>
-                <li className={`border border-indigo-200 px-4 py-2 rounded-2xl hover:bg-Intone-100 cursor-pointer ${addEntryType === 'band' && 'bg-Intone-300'}`}
-                onClick={() => typeToBeAdded('band')}>
-                Band
-                </li>
-                <li className={`border border-indigo-200 px-4 py-2 rounded-2xl hover:bg-Intone-100 cursor-pointer ${addEntryType === 'gear' && 'bg-Intone-300'}`}
-                onClick={() => typeToBeAdded('gear')}>
-                Gear
-                </li>
-                <li className={`border border-indigo-200 px-4 py-2 rounded-2xl hover:bg-Intone-100 cursor-pointer ${addEntryType === 'player' && 'bg-Intone-300'}`}
-                onClick={() => typeToBeAdded('player')}>
-                Player
-                </li>
-            </ul>
-            <form className=''>
-                    <a className="cursor-pointer border border-indigo-200 absolute top-4 right-4 rounded-2xl bg-Intone-300 px-2"
+                    <h1 className='flex justify-center mb-4'>What Would you like to add?</h1>
+                    <ul className='flex flex-row justify-between mb-6'>
+                        <li className={`border border-indigo-200 px-4 py-2 rounded-2xl cursor-pointer ${addEntryType === 'album' ? 'bg-Intone-300' : 'hover:bg-Intone-100'}`}
+                            onClick={() => typeToBeAdded('album')}>
+                            Album
+                        </li>
+                        <li className={`border border-indigo-200 px-4 py-2 rounded-2xl cursor-pointer ${addEntryType === 'band' ? 'bg-Intone-300' : 'hover:bg-Intone-100'}`}
+                            onClick={() => typeToBeAdded('band')}>
+                            Band
+                        </li>
+                        <li className={`border border-indigo-200 px-4 py-2 rounded-2xl cursor-pointer ${addEntryType === 'gear' ? 'bg-Intone-300' : 'hover:bg-Intone-100'}`}
+                            onClick={() => typeToBeAdded('gear')}>
+                            Gear
+                        </li>
+                        <li className={`border border-indigo-200 px-4 py-2 rounded-2xl cursor-pointer ${addEntryType === 'player' ? 'bg-Intone-300' : 'hover:bg-Intone-100'}`}
+                            onClick={() => typeToBeAdded('player')}>
+                            Player
+                        </li>
+                    </ul><a className="cursor-pointer border border-indigo-200 absolute top-4 right-4 rounded-2xl bg-Intone-300 px-2"
                         onClick={toggleAddForm} >X</a>
+                    {addEntryType === 'album' && (
+                        <AddAlbumForm AllEntriesData={AllEntriesData} />
+                        )}
 
-                    <div className="mb-4">
-                        <label htmlFor="email" className="block font-medium mb-1 text-Intone-600">Username:</label>
-                        <input id="username" autoFocus className="w-full border-solid border-2 rounded-lg py-2 px-4" type="username"
-                            name="username" placeholder="Username"></input>
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="password" className="block font-medium mb-1 text-Intone-600">Password:</label>
-                        <input id="password" className="w-full border-solid border-2 rounded-lg py-2 px-4" type="password"
-                            name="password" placeholder="Password"></input>
-                    </div>
-                    <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
 
-                    <input
-                        className="hover:bg-Intone-500 bg-white text-Intone-700 cursor-pointer font-bold py-2 px-4 rounded border "
-                        type="submit" value="Login"></input>
-                </form>
-        </div>
+
+                </div>
             </div>
             <button className='flex border border-indigo-200 px-4 py-2 rounded-3xl mx-auto mt-6' onClick={toggleAddForm}>Add</button>
             {showOnlyEntryType ? (

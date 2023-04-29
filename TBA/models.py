@@ -124,13 +124,14 @@ class Album(models.Model):
     band = models.ForeignKey(
         Band, on_delete=models.CASCADE, related_name='albums')
     guitar_players = models.ManyToManyField(
-        Player, related_name='albums')
-    gear = models.ManyToManyField(Gear, related_name='albums')
+        Player, related_name='albums', blank=True)
+    gear = models.ManyToManyField(Gear, related_name='albums', blank=True)
     cover_art = models.ImageField(
         upload_to='TBA/static/album_covers/', blank=True, null=True)
     description = models.TextField(blank=True)
 
     def serialize(self):
+        print(self.cover_art.url)
         return {
             'id': self.id,
             'name': self.name,
