@@ -257,11 +257,13 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                     fetchSingleEntry={fetchSingleEntry}
                     exitSingleView={exitSingleView}
                     singleView={singleView}
+                    setSingleView={setSingleView}
                     singleViewType={singleViewType}
                     singleEntryData={singleEntryData}
                     showEntryType={showEntryType}
                     showOnlyEntryType={showOnlyEntryType}
                     AllEntriesData={data}
+                    currentUserId={currentUserId}
                 />
             )}
 

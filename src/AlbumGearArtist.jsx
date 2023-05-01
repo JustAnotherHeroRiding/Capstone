@@ -3,11 +3,11 @@ import './App.css'
 import Cookies from 'js-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPaperclip, faCircleLeft, faFaceSmile } from '@fortawesome/free-solid-svg-icons'
-import { AddAlbumForm } from './Forms.jsx';
+import { AddAlbumForm, AddGearForm, AddPlayerForm, AddBandForm } from './Forms.jsx';
 
-function MainPageItems({ 
-    fetchSingleEntry, exitSingleView, singleView, singleViewType, 
-    singleEntryData, showEntryType, showOnlyEntryType, AllEntriesData }) {
+function MainPageItems({
+    fetchSingleEntry, exitSingleView, singleView, singleViewType,
+    singleEntryData, showEntryType, showOnlyEntryType, AllEntriesData, setSingleView, currentUserId }) {
     const csrftoken = Cookies.get('csrftoken');
 
     const [AllEntries, setAllEntries] = useState([])
@@ -36,11 +36,22 @@ function MainPageItems({
         setAddEntryType(type)
     }
 
+    const deleteEntry = (entryType, entryId) => {
+        fetch(`entries/delete/${entryType}/${entryId}`)
+            .then(response => response.json())
+            .then(data => {
+                fetchAllEntries()
+                setSingleView(false)
+            })
+            .catch(error => console.error(error));
+    }
+
+
 
 
     return (
         <div className='relative'>
-            <div className={showForm ? 'newentryparent' : 'hidden'}>
+            <div className={showForm ? 'newentryparent z-10' : 'hidden'}>
                 <div className="max-w-md mx-auto mt-6 w-full px-6 py-12 right-1/2 popup
         border border-indigo-200 rounded-3xl shadow-2xl z-10 bg-Intone-700">
                     <h1 className='flex justify-center mb-4'>What Would you like to add?</h1>
@@ -64,8 +75,17 @@ function MainPageItems({
                     </ul><a className="cursor-pointer border border-indigo-200 absolute top-4 right-4 rounded-2xl bg-Intone-300 px-2"
                         onClick={toggleAddForm} >X</a>
                     {addEntryType === 'album' && (
-                        <AddAlbumForm AllEntriesData={AllEntriesData} />
-                        )}
+                        <AddAlbumForm AllEntriesData={AllEntries} fetchAllEntries={fetchAllEntries} />
+                    )}
+                    {addEntryType === 'gear' && (
+                        <AddGearForm AllEntriesData={AllEntries} fetchAllEntries={fetchAllEntries} />
+                    )}
+                    {addEntryType === 'player' && (
+                        <AddPlayerForm AllEntriesData={AllEntries} fetchAllEntries={fetchAllEntries} />
+                    )}
+                    {addEntryType === 'band' && (
+                        <AddBandForm AllEntriesData={AllEntries} fetchAllEntries={fetchAllEntries} />
+                    )}
 
 
 
@@ -189,7 +209,12 @@ function MainPageItems({
                                 />
                                 {singleViewType === 'gear' && (
                                     <>
-                                        <div className='flex items-center md:flex-row max-md:flex-col border border-indigo px-6 py-4 rounded-3xl'>
+                                        <div className='flex items-center md:flex-row max-md:flex-col border border-indigo px-6 py-4 rounded-3xl pt-6 relative'>
+                                            {currentUserId === 2 && (
+                                                <a className="cursor-pointer border border-indigo-200 top-4 justify-end 
+                                        flex absolute ml-auto right-4 rounded-2xl hover:bg-Intone-300 px-2"
+                                                    onClick={() => deleteEntry(singleEntryData.model_type, singleEntryData.id)} >X</a>
+                                            )}
                                             <div className='mb-auto'>
                                                 <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
                                                 <img src={`static/gear_images/${singleEntryData.image}`} className='object-cover w-60 h-60 mb-6' />
@@ -200,7 +225,7 @@ function MainPageItems({
                                                 <h1 className='flex justify-center my-4 text-2xl font-bold'>Used By</h1>
                                                 {singleEntryData.players.map((player) => (
                                                     <div key={player.id} onClick={() => fetchSingleEntry(player.model_type, player.id)}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
                                                         <h1 className='text-2xl font-bold flex justify-center mb-4'
                                                         >{player.name}</h1>
@@ -212,7 +237,7 @@ function MainPageItems({
                                                 <h1 className='flex justify-center my-4 text-2xl font-bold'>Used On</h1>
                                                 {singleEntryData.albums.map((album) => (
                                                     <div key={album.id} onClick={() => fetchSingleEntry(album.model_type, album.id)}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl  mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
                                                         <h1 className='text-2xl font-bold flex justify-center mb-4'
                                                         >{album.name}</h1>
@@ -226,7 +251,12 @@ function MainPageItems({
                                 )}
                                 {singleViewType === 'band' && (
                                     <>
-                                        <div className='flex items-center md:flex-row max-md:flex-col border border-indigo px-6 py-4 rounded-3xl'>
+                                        <div className='flex items-center md:flex-row max-md:flex-col border border-indigo px-6 py-4 rounded-3xl pt-6 relative'>
+                                            {currentUserId === 2 && (
+                                                <a className="cursor-pointer border border-indigo-200 top-4 justify-end 
+                                        flex absolute ml-auto right-4 rounded-2xl hover:bg-Intone-300 px-2"
+                                                    onClick={() => deleteEntry(singleEntryData.model_type, singleEntryData.id)} >X</a>
+                                            )}
                                             <div className='mb-auto'>
                                                 <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
                                                 <img src={`static/band_pics/${singleEntryData.picture}`} className='object-cover w-60 h-60' />
@@ -236,9 +266,9 @@ function MainPageItems({
                                                 <h1 className='flex justify-center my-4 text-2xl font-bold'>Albums</h1>
                                                 {singleEntryData.albums.map((album) => (
                                                     <div key={album.id} onClick={() => fetchSingleEntry(album.model_type, album.id)}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                        <h1 className='text-2xl font-bold flex justify-center'
+                                                        <h1 className='text-2xl font-bold flex justify-center mb-4'
                                                         >{album.name}</h1>
                                                         <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
                                                     </div>
@@ -248,7 +278,7 @@ function MainPageItems({
                                                 <h1 className='flex justify-center my-4 text-2xl font-bold'>Guitar Players</h1>
                                                 {singleEntryData.members.map((player) => (
                                                     <div key={player.id} onClick={() => fetchSingleEntry(player.model_type, player.id)}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
                                                         <h1 className='text-2xl font-bold flex justify-center mb-4'
                                                         >{player.name}</h1>
@@ -261,7 +291,13 @@ function MainPageItems({
                                 )}
                                 {singleViewType === 'album' && (
                                     <>
-                                        <div className='flex items-center md:flex-row max-md:flex-col border border-indigo px-6 py-4 rounded-3xl'>
+
+                                        <div className='flex items-center md:flex-row max-md:flex-col border border-indigo px-6 py-4 rounded-3xl relative pt-6'>
+                                            {currentUserId === 2 && (
+                                                <a className="cursor-pointer border border-indigo-200 top-4 justify-end 
+                                        flex absolute ml-auto right-4 rounded-2xl hover:bg-Intone-300 px-2"
+                                                    onClick={() => deleteEntry(singleEntryData.model_type, singleEntryData.id)} >X</a>
+                                            )}
                                             <div className='mb-auto'>
 
                                                 <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
@@ -269,12 +305,13 @@ function MainPageItems({
                                                     {singleEntryData.band}</h1>
                                                 <img src={`static/album_covers/${singleEntryData.cover_art_url}`} className='object-cover w-40 h-40' />
                                                 <p className='w-80'>{singleEntryData.description}</p>
+
                                             </div>
                                             <div className='mb-auto mr-6'>
                                                 <h1 className='flex justify-center my-4 text-2xl font-bold'>Guitar Players</h1>
                                                 {singleEntryData.guitar_players.map((player) => (
                                                     <div key={player.id} onClick={() => fetchSingleEntry(player.model_type, player.id)}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
                                                         <h1 className='text-2xl font-bold flex justify-center mb-4'
                                                         >{player.name}</h1>
@@ -286,7 +323,7 @@ function MainPageItems({
                                                 <h1 className='flex justify-center my-4 text-2xl font-bold'>Gear Used</h1>
                                                 {singleEntryData.gear.map((gear) => (
                                                     <div key={gear.id} onClick={() => fetchSingleEntry(gear.model_type, gear.id)}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
                                                         <h1 className='text-2xl font-bold flex justify-center mb-4'
                                                         >{gear.name}</h1>
@@ -299,7 +336,12 @@ function MainPageItems({
                                 )}
                                 {singleViewType === 'player' && (
                                     <>
-                                        <div className='flex items-center md:flex-row max-md:flex-col border border-indigo px-6 py-4 rounded-3xl'>
+                                        <div className='flex items-center md:flex-row max-md:flex-col border border-indigo px-6 py-4 rounded-3xl pt-6 relative'>
+                                            {currentUserId === 2 && (
+                                                <a className="cursor-pointer border border-indigo-200 top-4 justify-end 
+                                        flex absolute ml-auto right-4 rounded-2xl hover:bg-Intone-300 px-2"
+                                                    onClick={() => deleteEntry(singleEntryData.model_type, singleEntryData.id)} >X</a>
+                                            )}
                                             <div>
                                                 <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
                                                 <img src={`static/player_pics/${singleEntryData.picture}`} className='object-cover w-40 h-40' />
@@ -309,7 +351,7 @@ function MainPageItems({
                                                 <h1 className='flex justify-center my-4 text-2xl font-bold'>Bands</h1>
                                                 {singleEntryData.bands.map((band) => (
                                                     <div key={band[1]} onClick={() => fetchSingleEntry('band', band[1])}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
                                                         <h1 className='text-2xl font-bold flex justify-center mb-4'
                                                         >{band[0]}</h1>
@@ -321,7 +363,7 @@ function MainPageItems({
                                                 <h1 className='flex justify-center my-4 text-2xl font-bold'>Albums</h1>
                                                 {singleEntryData.albums.map((album) => (
                                                     <div key={album[1]} onClick={() => fetchSingleEntry('album', album[1])}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
                                                         <h1 className='text-2xl font-bold flex justify-center mb-4'
                                                         >{album[0]}</h1>
@@ -333,7 +375,7 @@ function MainPageItems({
                                                 <h1 className='flex justify-center my-4 text-2xl font-bold'>Gear</h1>
                                                 {singleEntryData.gear.map((gear) => (
                                                     <div key={gear.id} onClick={() => fetchSingleEntry(gear.model_type, gear.id)}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl 
+                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
                                                         <h1 className='text-2xl font-bold flex justify-center mb-4'
                                                         >{gear.name}</h1>

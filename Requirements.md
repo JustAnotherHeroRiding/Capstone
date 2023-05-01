@@ -33,21 +33,28 @@
 
 ## Album/Gear/Player/Band view
 
-- Users should be able to upload pictures for each entry
+- Users should be able to upload pictures for each entry #DONE 
 - Separate page for each entry, on the main page there should be a selection from each other these caterogies, ranked by various statictics that I need to determine, it can be by date at first #DONE
 - All the links should load the correct view when clicked, when clicking on the player from the album view it should load the player's page  #DONE
 - Each gear entry should have a list of players using it and albums it was used on
-- Each player should have a list of gear used, gear used per album
-- Each album page should have the tracklist, gear used and the guitar player
+- Each player should have a list of gear used, gear used per album #DONE 
+- Each album page should have the tracklist, gear used and the guitar player #DONE 
 - Tags and descriptors for albums, players and gear and bands
 
 ## Adding New Entries
 
-- There should be a separate page that should be all about adding new entries
-- This can be an album, a connecting between a player and a piece of gear or anything in between.
-- Bunch of forms with post requests to the backend
-- Reactive nav menu inside the popup for selecting which type of entry to add
+- There should be a separate page that should be all about adding new entries #DONE 
+- This can be an album, a connection between a player and a piece of gear or anything in between. #DONE 
+- Bunch of forms with post requests to the backend #DONE 
+- Reactive nav menu inside the popup for selecting which type of entry to add #DONE 
 
+## Updating or editing already added entries
+- On the single view i can edit or add new gear, albums or any other connections
+- 
+## Reviews
+- Users should be able to leave reviews for albums and gear, one per user
+- Users can only leave comments for players and bands, which are not limited to one
+- 
 ## Browse Albums, Players or Gear #DONE
 
 ## Leave Reviews for albums or gear, leave comments for players
@@ -58,3 +65,4 @@
 
 Maybe use the spotify api to get data about an artist's album
 Fun Facts section with a description for each artist,album or gear
+Tonehunt links when there is one for amps and pedals
