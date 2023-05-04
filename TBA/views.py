@@ -266,7 +266,32 @@ def add_entry(request, entry_type):
                 {"message": f"Error adding album: {str(e)}"}, status=500
             )
     elif entry_type == "band":
-        pass
+        # Retrieve the data from the request
+        name = request.POST.get("name")
+        picture = request.FILES.get("picture")
+        filename = picture.name.split("/")[-1] if picture else ""
+        description = request.POST.get("description")
+
+        # Create the new album
+        try:
+            band = Band.objects.create(
+                name=name, picture=picture, description=description
+            )
+            band.save()
+
+            # Modify the cover_art field to only store the filename
+            if picture:
+                band.picture.name = filename
+                band.save(update_fields=["picture"])
+
+            # Return a success message
+            return JsonResponse({"message": "Band added successfully"})
+
+        except Exception as e:
+            # Return an error message
+            return JsonResponse(
+                {"message": f"Error adding band: {str(e)}"}, status=500
+            )
     elif entry_type == "player":
         # Retrieve the data from the request
         name = request.POST.get("name")
@@ -339,6 +364,29 @@ def add_entry(request, entry_type):
             return JsonResponse({"message": f"Error adding gear: {str(e)}"}, status=500)
     else:
         return JsonResponse({"message": f"Invalid entry type {str(e)}"}, status=500)
+    
+@login_required    
+def add_connections(request, origin_type, origin_id, connection_type):
+    if origin_type == 'player':
+        player = Player.objects.get(id=origin_id)
+        if connection_type == 'gear':
+            gear_id = request.POST.get('gear_id')
+            try:
+                gear = Gear.objects.get(id=gear_id)
+            except (Player.DoesNotExist, Gear.DoesNotExist):
+                return JsonResponse({'error': 'Invalid player or gear ID'}, status=400)
+            player.gear.add(gear)
+            return JsonResponse({'success': True})
+        elif connection_type == 'album':
+            album_id = request.POST.get('album_id')
+            try:
+                album = Album.objects.get(id=album_id)
+            except (Player.DoesNotExist, Album.DoesNotExist):
+                return JsonResponse({"error": "Invalid player or album ID"},status = 400)
+            player.albums.add(album)
+            return JsonResponse({'succes': True})
+    else:
+        return JsonResponse({'Message': "Invalid POST request."})
 
 
 @login_required

@@ -49,8 +49,8 @@
 - Reactive nav menu inside the popup for selecting which type of entry to add #DONE 
 
 ## Updating or editing already added entries
-- On the single view i can edit or add new gear, albums or any other connections
-- 
+- On the single view i can edit or add new gear, albums or any other connections #DONE 
+- I should also be able to delete connections
 ## Reviews
 - Users should be able to leave reviews for albums and gear, one per user
 - Users can only leave comments for players and bands, which are not limited to one

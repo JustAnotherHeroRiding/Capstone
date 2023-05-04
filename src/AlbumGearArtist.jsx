@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import Cookies from 'js-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPaperclip, faCircleLeft, faFaceSmile } from '@fortawesome/free-solid-svg-icons'
-import { AddAlbumForm, AddGearForm, AddPlayerForm, AddBandForm } from './Forms.jsx';
+import { faPaperclip, faCircleLeft, faFaceSmile, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { AddAlbumForm, AddGearForm, AddPlayerForm, AddBandForm, AddNewConnection } from './Forms.jsx';
 
 function MainPageItems({
     fetchSingleEntry, exitSingleView, singleView, singleViewType,
@@ -34,6 +34,23 @@ function MainPageItems({
 
     const typeToBeAdded = (type) => {
         setAddEntryType(type)
+    }
+
+    const [newConnection, setNewConnection] = useState(false)
+    const [connectionType, setConnectionType] = useState('')
+
+    const toggleConnectionForm = (connection_type) => {
+        setNewConnection(!newConnection)
+        setConnectionType(connection_type)
+    }
+
+    const addNewConnectionSubmit = (origin, origin_id, connection_type) => {
+        fetch(`entries/connection/${origin}/${origin_id}/${connection}`)
+            .then(response => response.json())
+            .then(data => {
+                fetchAllEntries()
+            })
+            .catch(error => console.error(error));
     }
 
     const deleteEntry = (entryType, entryId) => {
@@ -91,7 +108,9 @@ function MainPageItems({
 
                 </div>
             </div>
-            <button className='flex border border-indigo-200 px-4 py-2 rounded-3xl mx-auto mt-6' onClick={toggleAddForm}>Add</button>
+            {currentUserId && (
+                <button className='flex border border-indigo-200 px-4 py-2 rounded-3xl mx-auto mt-6' onClick={toggleAddForm}>Add</button>
+            )}
             {showOnlyEntryType ? (
                 <div className='flex justify-center flex-col'>
                     <h1 className='mx-auto mt-6 text-3xl text-Intone-500'>{showEntryType.charAt(0).toUpperCase() + showEntryType.slice(1).toLowerCase()}</h1>
@@ -201,6 +220,19 @@ function MainPageItems({
                     )}
                     {singleView && (
                         <div className='flex justify-center relative'>
+                            {newConnection && (
+                                <div className='newentryparent z-10'>
+                                    <div
+                                        className="max-w-md mx-auto mt-6 w-full px-6 py-12 right-1/2 popup
+                                                                border border-indigo-200 rounded-3xl shadow-2xl z-10 bg-Intone-700">
+                                        <a className="cursor-pointer border border-indigo-200 absolute top-4 right-4 rounded-2xl bg-Intone-300 px-2"
+                                            onClick={toggleConnectionForm} >X</a>
+                                        <AddNewConnection AllEntriesData={AllEntries}
+                                            fetchAllEntries={fetchAllEntries} origin={singleEntryData}
+                                            connection={connectionType} fetchSingleEntry={fetchSingleEntry} />
+                                    </div>
+                                </div>
+                            )}
                             <div className='flex flex-col'>
                                 <FontAwesomeIcon
                                     icon={faCircleLeft}
@@ -342,13 +374,18 @@ function MainPageItems({
                                         flex absolute ml-auto right-4 rounded-2xl hover:bg-Intone-300 px-2"
                                                     onClick={() => deleteEntry(singleEntryData.model_type, singleEntryData.id)} >X</a>
                                             )}
-                                            <div>
+                                            <div className='mb-auto'>
                                                 <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
                                                 <img src={`static/player_pics/${singleEntryData.picture}`} className='object-cover w-40 h-40' />
                                                 <p className='w-80'>{singleEntryData.description}</p>
                                             </div>
                                             <div className='mb-auto mr-6'>
-                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Bands</h1>
+                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Bands
+                                                    <FontAwesomeIcon icon={faPlus}
+                                                        className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
+                                                duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
+                                                        onClick={() => toggleConnectionForm('band')}
+                                                    /></h1>
                                                 {singleEntryData.bands.map((band) => (
                                                     <div key={band[1]} onClick={() => fetchSingleEntry('band', band[1])}
                                                         className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
@@ -360,7 +397,12 @@ function MainPageItems({
                                                 ))}
                                             </div>
                                             <div className='mb-auto mr-6'>
-                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Albums</h1>
+                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Albums
+                                                    <FontAwesomeIcon icon={faPlus}
+                                                        className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
+                                                duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
+                                                        onClick={() => toggleConnectionForm('album')}
+                                                    /></h1>
                                                 {singleEntryData.albums.map((album) => (
                                                     <div key={album[1]} onClick={() => fetchSingleEntry('album', album[1])}
                                                         className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
@@ -372,7 +414,13 @@ function MainPageItems({
                                                 ))}
                                             </div>
                                             <div className='mb-auto'>
-                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Gear</h1>
+                                                <h1 className='flex justify-center my-4 text-2xl font-bold items-center'>Gear
+                                                    <FontAwesomeIcon icon={faPlus}
+                                                        className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
+                                                duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
+                                                        onClick={() => toggleConnectionForm('gear')}
+                                                    />
+                                                </h1>
                                                 {singleEntryData.gear.map((gear) => (
                                                     <div key={gear.id} onClick={() => fetchSingleEntry(gear.model_type, gear.id)}
                                                         className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4

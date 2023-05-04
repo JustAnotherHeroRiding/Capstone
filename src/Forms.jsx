@@ -370,7 +370,7 @@ export function AddPlayerForm({ AllEntriesData, fetchAllEntries }) {
                             return null
                         }
                     })}
-                    </select>
+                </select>
             </label>
             <br />
             <label className='mr-4'>
@@ -405,53 +405,24 @@ export function AddPlayerForm({ AllEntriesData, fetchAllEntries }) {
 export function AddBandForm({ AllEntriesData, fetchAllEntries }) {
     const [name, setName] = useState('');
 
-    const [gear, setGear] = useState([]);
-    const [selectedGear, setSelectedGear] = useState([]);
-    const [albums, setAlbums] = useState([]);
-    const [selectedAlbums, setSelectedAlbums] = useState([]);
 
     const [picture, setPicture] = useState(null);
     const [description, setDescription] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const [band, setBand] = useState([]);
-    const [bands, setBands] = useState([]);
 
     const csrftoken = Cookies.get('csrftoken');
 
-    useEffect(() => {
-        setGear(AllEntriesData.gear)
-        setBands(AllEntriesData.bands)
-        setAlbums(AllEntriesData.albums)
-    }, [AllEntriesData]);
-
-    const handleAlbumChange = (e) => {
-        const selectedAlbum = Array.from(e.target.selectedOptions, (option) => option.value)
-        setSelectedAlbums(selectedAlbum)
-    }
-
-    const handleGearChange = (e) => {
-        const selectedGear = Array.from(e.target.selectedOptions, (option) => option.value);
-        setSelectedGear(selectedGear);
-    };
-
-    const handleBandChange = (e) => {
-        const selectedBand = Array.from(e.target.selectedOptions, (option) => option.value);
-        setBand(selectedBand);
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const formData = new FormData();
         formData.append('name', name);
-        formData.append('gear', JSON.stringify(selectedGear));
-        formData.append('band', JSON.stringify(band))
-        formData.append('album', JSON.stringify(selectedAlbums));
         formData.append('description', description);
         formData.append('picture', picture);
 
-        const response = await fetch(`entries/add/player`, {
+        const response = await fetch(`entries/add/band`, {
             method: 'POST',
             body: formData,
             headers: { 'X-CSRFToken': csrftoken },
@@ -461,11 +432,10 @@ export function AddBandForm({ AllEntriesData, fetchAllEntries }) {
         if (response.ok) {
 
             fetchAllEntries();
-            setSelectedGear([]);
-            setBand([]);
             setPicture(null);
             setDescription('');
             setErrorMessage('');
+            setName('');
         } else {
             const error = await response.json();
             setErrorMessage(error.message);
@@ -485,54 +455,6 @@ export function AddBandForm({ AllEntriesData, fetchAllEntries }) {
             </label>
             <br />
             <label className='mr-4'>
-                <p>
-                    Band:
-                </p>
-                <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black'
-                    value={band} multiple name='band_id' onChange={handleBandChange}>
-                    {bands.map((band) => (
-                        <option key={band.id} value={band.id}>
-                            {band.name}
-                        </option>
-                    ))}
-                </select>
-            </label>
-            <br />
-            <label className='mr-4'>
-                <p>
-                    Albums:
-                </p>
-                <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black'
-                    value={selectedAlbums} multiple name='album_ids' onChange={handleAlbumChange}>
-                    {albums.map((album) => {
-                        if (band.includes(album.band_id.toString())) {
-                            return (
-                                <option key={album.id} value={album.id}>
-                                    {album.name}
-                                </option>
-                            );
-                        } else {
-                            return null
-                        }
-                    })}
-                    </select>
-            </label>
-            <br />
-            <label className='mr-4'>
-                <p>
-                    Gear:
-                </p>
-                <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black'
-                    multiple value={selectedGear} onChange={handleGearChange}>
-                    {gear.map((gear) => (
-                        <option key={gear.id} value={gear.id}>
-                            {gear.name}
-                        </option>
-                    ))}
-                </select>
-            </label>
-            <br />
-            <label className='mr-4'>
                 Description:
                 <textarea value={description} className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black resize-none' onChange={(e) => setDescription(e.target.value)} />
             </label>
@@ -547,4 +469,149 @@ export function AddBandForm({ AllEntriesData, fetchAllEntries }) {
 }
 
 
+export function AddNewConnection({ AllEntriesData, fetchAllEntries, origin, connection, fetchSingleEntry }) {
+
+    const [gear, setGear] = useState([]);
+    const [selectedGear, setSelectedGear] = useState([]);
+
+    const [albums, setAlbums] = useState([]);
+    const [selectedAlbums, setSelectedAlbums] = useState([]);
+
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const [bands, setBands] = useState([]);
+    const [band, setBand] = useState([]);
+
+    const handleBandChange = (e) => {
+        const selectedBand = Array.from(e.target.selectedOptions, (option) => option.value);
+        setBand(selectedBand);
+    };
+
+
+    console.log()
+
+    const csrftoken = Cookies.get('csrftoken');
+
+
+    useEffect(() => {
+        if (connection === 'gear') {
+            setGear(AllEntriesData.gear)
+        } else if (connection === 'album') {
+            setAlbums(AllEntriesData.albums)
+        } else if (connection === 'band') {
+            setBands(AllEntriesData.bands)
+        }
+    }, [AllEntriesData]);
+
+    const handleGearChange = (e) => {
+        const selectedGear = Array.from(e.target.selectedOptions, (option) => option.value);
+        setSelectedGear(selectedGear);
+    };
+
+    const handleAlbumChange = (e) => {
+        const selectedAlbum = Array.from(e.target.selectedOptions, (option) => option.value)
+        setSelectedAlbums(selectedAlbum)
+    }
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        if (connection === 'gear') {
+            formData.append('gear_id', selectedGear);
+        } else if (connection === 'album') {
+            formData.append('album_id', selectedAlbums);
+        }
+
+        const response = await fetch(`entries/connection/${origin.model_type}/${parseInt(origin.id, 10)}/${connection}`, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-CSRFToken': csrftoken },
+
+        });
+
+        if (response.ok) {
+
+            fetchSingleEntry(origin.model_type, origin.id)
+            setErrorMessage('');
+        } else {
+            const error = await response.json();
+            setErrorMessage(error.message);
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className='flex flex-col overflow-auto max-h-[400px] scrollbar-blue-thin text-Intone-300'>
+            {connection === 'gear' && (
+                <label className='mr-4'>
+                    <p>
+                        Gear:
+                    </p>
+                    <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black scrollbar-blue-thin'
+                        multiple value={selectedGear} onChange={handleGearChange}>
+                        {gear.map((gear) => {
+                            if (!origin.gear.some((g) => g.id === gear.id)) {
+                                return (
+                                    <option key={gear.id} value={gear.id}>
+                                        {gear.name}
+                                    </option>
+                                );
+                            } else {
+                                return null;
+                            }
+                        })}
+                    </select>
+                </label>
+            )}
+            {connection === 'band' && (
+                <label className='mr-4'>
+                    <p>
+                        Bands:
+                    </p>
+                    <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black'
+                        value={band} multiple name='band_id' onChange={handleBandChange}>
+                        {bands.map((band) => {
+                            if (!origin.bands.some(a => a[1] === band.id)) {
+                                return (
+                                    <option key={band.id} value={band.id}>
+                                        {band.name}
+                                    </option>
+                                );
+                            } else {
+                                return null;
+                            }
+                        })}
+
+                    </select>
+                </label>
+            )}
+            {connection === 'album' && (
+                <label className='mr-4'>
+                    <p>
+                        Albums:
+                    </p>
+                    <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black scrollbar-blue-thin'
+                        value={selectedAlbums} multiple name='album_ids' onChange={handleAlbumChange}>
+                        {albums.map((album) => {
+                            if (!origin.albums.some(a => a[1] === album.id)) {
+                                return (
+                                    <option key={album.id} value={album.id}>
+                                        {album.name}
+                                    </option>
+                                );
+                            } else {
+                                return null;
+                            }
+                        })}
+                    </select>
+                </label>
+            )}
+            <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+
+            <button type="submit" className='border-indigo-200 px-4 py-2 border rounded-3xl
+             hover:bg-Intone-300 hover:text-black flex ml-auto mr-4 mt-6'>Add Connection</button>
+        </form>
+    )
+};
 

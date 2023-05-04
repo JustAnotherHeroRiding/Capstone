@@ -22,6 +22,7 @@ urlpatterns = [
     path('entries/<str:entry_type>/<int:entry_id>', views.get_single_entry, name='get_single_entry'),
     
     path('entries/add/<str:entry_type>', views.add_entry, name='add_entry'),
+    path('entries/connection/<str:origin_type>/<int:origin_id>/<str:connection_type>', views.add_connections, name='new_connection'),
     path('entries/delete/<str:entry_type>/<int:entry_id>', views.delete_entry, name='delete_entry'),
 
 
