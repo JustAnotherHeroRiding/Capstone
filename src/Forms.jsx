@@ -463,7 +463,7 @@ export function AddBandForm({ AllEntriesData, fetchAllEntries }) {
 
             {errorMessage && <p>{errorMessage}</p>}
             <button type="submit" className='border-indigo-200 px-4 py-2 border rounded-3xl
-             hover:bg-Intone-300 hover:text-black flex ml-auto mr-4'>Add Player</button>
+             hover:bg-Intone-300 hover:text-black flex ml-auto mr-4'>Add Band</button>
         </form>
     );
 }
@@ -482,10 +482,10 @@ export function AddNewConnection({ AllEntriesData, fetchAllEntries, origin, conn
     const [bands, setBands] = useState([]);
     const [band, setBand] = useState([]);
 
-    const handleBandChange = (e) => {
-        const selectedBand = Array.from(e.target.selectedOptions, (option) => option.value);
-        setBand(selectedBand);
-    };
+    const [guitarPlayers, setGuitarPlayers] = useState([]);
+    const [selectedPlayers, setSelectedPlayers] = useState([]);
+
+
 
 
     console.log()
@@ -500,6 +500,8 @@ export function AddNewConnection({ AllEntriesData, fetchAllEntries, origin, conn
             setAlbums(AllEntriesData.albums)
         } else if (connection === 'band') {
             setBands(AllEntriesData.bands)
+        } else if (connection === 'player') {
+            setGuitarPlayers(AllEntriesData.players)
         }
     }, [AllEntriesData]);
 
@@ -513,6 +515,16 @@ export function AddNewConnection({ AllEntriesData, fetchAllEntries, origin, conn
         setSelectedAlbums(selectedAlbum)
     }
 
+    const handleGuitarPlayersChange = (e) => {
+        const selectedPlayers = Array.from(e.target.selectedOptions, (option) => option.value);
+        setSelectedPlayers(selectedPlayers);
+    };
+
+    const handleBandChange = (e) => {
+        const selectedBand = Array.from(e.target.selectedOptions, (option) => option.value);
+        setBand(selectedBand);
+    };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -522,6 +534,10 @@ export function AddNewConnection({ AllEntriesData, fetchAllEntries, origin, conn
             formData.append('gear_id', selectedGear);
         } else if (connection === 'album') {
             formData.append('album_id', selectedAlbums);
+        } else if (connection === 'band') {
+            formData.append('band_id', band)
+        } else if (connection === 'player') {
+            formData.append('player_id', selectedPlayers)
         }
 
         const response = await fetch(`entries/connection/${origin.model_type}/${parseInt(origin.id, 10)}/${connection}`, {
@@ -594,7 +610,7 @@ export function AddNewConnection({ AllEntriesData, fetchAllEntries, origin, conn
                     <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black scrollbar-blue-thin'
                         value={selectedAlbums} multiple name='album_ids' onChange={handleAlbumChange}>
                         {albums.map((album) => {
-                            if (!origin.albums.some(a => a[1] === album.id)) {
+                            if (!origin.albums.some(a => a.id === album.id)) {
                                 return (
                                     <option key={album.id} value={album.id}>
                                         {album.name}
@@ -602,6 +618,26 @@ export function AddNewConnection({ AllEntriesData, fetchAllEntries, origin, conn
                                 );
                             } else {
                                 return null;
+                            }
+                        })}
+                    </select>
+                </label>
+            )}
+
+            {connection === 'player' && (
+                <label className='mr-4'>
+                    <p>
+                        Guitar Players:
+                    </p>
+                    <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black'
+                        multiple value={selectedPlayers} onChange={handleGuitarPlayersChange}>
+                        {guitarPlayers.map((player) => {
+                            if (!origin.players.some(p => p.id === player.id)) {
+                                return (
+                                    <option key={player.id} value={player.id}>
+                                        {player.name}
+                                    </option>
+                                )
                             }
                         })}
                     </select>

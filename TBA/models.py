@@ -85,7 +85,7 @@ class Player(models.Model):
             'picture': self.picture.url if self.picture else None,
             'description': self.description,
             'bands': [(band.name, band.id, band.picture.url) for band in self.bands.all()],
-            'albums': [(album.name, album.id, album.cover_art.url) for album in self.albums.all()],
+            'albums': [album.minimal_serialize() for album in self.albums.all()],
             'model_type': 'player'
 
         }
@@ -111,7 +111,7 @@ class Band(models.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'members': [member.serialize() for member in self.members.all()],
+            'players': [member.serialize() for member in self.members.all()],
             'albums': [album.serialize() for album in self.albums.all()],
             'picture': self.picture.url if self.picture else None,
             'description': self.description,
@@ -137,7 +137,7 @@ class Album(models.Model):
             'name': self.name,
             'band': self.band.name,
             'band_id': self.band.id,
-            'guitar_players': [player.serialize() for player in self.guitar_players.all()],
+            'players': [player.serialize() for player in self.guitar_players.all()],
             'cover_art_url': self.cover_art.url if self.cover_art else None,
             'reviews': [review.serialize() for review in self.reviews.all()],
             'comments': [comment.serialize() for comment in self.comments.all()],

@@ -365,8 +365,49 @@ def add_entry(request, entry_type):
     else:
         return JsonResponse({"message": f"Invalid entry type {str(e)}"}, status=500)
     
-@login_required    
+@login_required
 def add_connections(request, origin_type, origin_id, connection_type):
+    model_mapping = {
+        'Player': {
+            'gear': 'gear',
+            'album': 'albums',
+            'band': 'bands'
+        },
+        'Gear': {
+            'album':'albums',
+            'player':'players'
+        },
+        'Album': {
+            'gear': 'gear',
+            'player':'guitar_players',
+            'band':'band'
+        },
+        'Band': {
+            'album':'albums',
+            'player':'members'
+        }
+    }
+
+    try:
+        related_field_name = model_mapping[origin_type.capitalize()][connection_type]
+        model_class = globals()[origin_type.capitalize()]
+        origin = model_class.objects.get(id=origin_id)
+        related_field = getattr(origin, related_field_name)
+    except (KeyError, AttributeError, model_class.DoesNotExist):
+        return JsonResponse({'error': f'Invalid {origin_type} ID'}, status=400)
+
+    if request.method == 'POST':
+        item_id = request.POST.get(f'{connection_type}_id')
+        try:
+            item = related_field.model.objects.get(id=item_id)
+        except related_field.model.DoesNotExist:
+            return JsonResponse({'error': f'Invalid {connection_type} ID'}, status=400)
+        related_field.add(item)
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+    
+""" def add_connections(request, origin_type, origin_id, connection_type):
     if origin_type == 'player':
         player = Player.objects.get(id=origin_id)
         if connection_type == 'gear':
@@ -385,8 +426,16 @@ def add_connections(request, origin_type, origin_id, connection_type):
                 return JsonResponse({"error": "Invalid player or album ID"},status = 400)
             player.albums.add(album)
             return JsonResponse({'succes': True})
+        elif connection_type == 'band':
+            band_id = request.POST.get('band_id')
+            try:
+                band = Band.objects.get(id=band_id)
+            except (Player.DoesNotExist, Band.DoesNotExist):
+                return JsonResponse({'error': "Invalid player or band ID"},status=400)
+            player.bands.add(band)
+            return JsonResponse({'success':True})
     else:
-        return JsonResponse({'Message': "Invalid POST request."})
+        return JsonResponse({'Message': "Invalid POST request."}) """
 
 
 @login_required

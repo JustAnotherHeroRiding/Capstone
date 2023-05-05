@@ -44,14 +44,6 @@ function MainPageItems({
         setConnectionType(connection_type)
     }
 
-    const addNewConnectionSubmit = (origin, origin_id, connection_type) => {
-        fetch(`entries/connection/${origin}/${origin_id}/${connection}`)
-            .then(response => response.json())
-            .then(data => {
-                fetchAllEntries()
-            })
-            .catch(error => console.error(error));
-    }
 
     const deleteEntry = (entryType, entryId) => {
         fetch(`entries/delete/${entryType}/${entryId}`)
@@ -254,7 +246,12 @@ function MainPageItems({
                                                 <a className='text-Intone-300 hover:underline ' href={singleEntryData.tonehunt_url}>Nam Capture</a>
                                             </div>
                                             <div className='mb-auto mr-6'>
-                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Used By</h1>
+                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Used By
+                                                <FontAwesomeIcon icon={faPlus}
+                                                        className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
+                                                duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
+                                                        onClick={() => toggleConnectionForm('player')}
+                                                    /></h1>
                                                 {singleEntryData.players.map((player) => (
                                                     <div key={player.id} onClick={() => fetchSingleEntry(player.model_type, player.id)}
                                                         className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
@@ -266,7 +263,12 @@ function MainPageItems({
                                                 ))}
                                             </div>
                                             <div className='mb-auto'>
-                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Used On</h1>
+                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Used On
+                                                <FontAwesomeIcon icon={faPlus}
+                                                        className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
+                                                duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
+                                                        onClick={() => toggleConnectionForm('album')}
+                                                    /></h1>
                                                 {singleEntryData.albums.map((album) => (
                                                     <div key={album.id} onClick={() => fetchSingleEntry(album.model_type, album.id)}
                                                         className='border border-indigo-200 px-4 py-6 rounded-2xl  mb-4
@@ -295,7 +297,12 @@ function MainPageItems({
                                                 <p className='w-80'>{singleEntryData.description}</p>
                                             </div>
                                             <div className='mb-auto mr-6'>
-                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Albums</h1>
+                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Albums
+                                                <FontAwesomeIcon icon={faPlus}
+                                                        className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
+                                                duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
+                                                        onClick={() => toggleConnectionForm('album')}
+                                                    /></h1>
                                                 {singleEntryData.albums.map((album) => (
                                                     <div key={album.id} onClick={() => fetchSingleEntry(album.model_type, album.id)}
                                                         className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
@@ -307,8 +314,14 @@ function MainPageItems({
                                                 ))}
                                             </div>
                                             <div className='mb-auto'>
-                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Guitar Players</h1>
-                                                {singleEntryData.members.map((player) => (
+                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Guitar Players
+                                                <FontAwesomeIcon icon={faPlus}
+                                                        className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
+                                                duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
+                                                        onClick={() => toggleConnectionForm('player')}
+                                                    />
+                                                </h1>
+                                                {singleEntryData.players.map((player) => (
                                                     <div key={player.id} onClick={() => fetchSingleEntry(player.model_type, player.id)}
                                                         className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
@@ -333,15 +346,21 @@ function MainPageItems({
                                             <div className='mb-auto'>
 
                                                 <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
-                                                <h1 className='text-2xl font-bold my-4 cursor-pointer text-Intone-300 hover:underline' onClick={() => fetchSingleEntry('band', singleEntryData.band_id)}>
+                                                <h1 className='text-2xl font-bold my-4 cursor-pointer text-Intone-300 hover:underline'
+                                                 onClick={() => fetchSingleEntry('band', singleEntryData.band_id)}>
                                                     {singleEntryData.band}</h1>
                                                 <img src={`static/album_covers/${singleEntryData.cover_art_url}`} className='object-cover w-40 h-40' />
                                                 <p className='w-80'>{singleEntryData.description}</p>
 
                                             </div>
                                             <div className='mb-auto mr-6'>
-                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Guitar Players</h1>
-                                                {singleEntryData.guitar_players.map((player) => (
+                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Guitar Players
+                                                <FontAwesomeIcon icon={faPlus}
+                                                        className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
+                                                duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
+                                                        onClick={() => toggleConnectionForm('player')}
+                                                    /></h1>
+                                                {singleEntryData.players.map((player) => (
                                                     <div key={player.id} onClick={() => fetchSingleEntry(player.model_type, player.id)}
                                                         className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
@@ -352,7 +371,12 @@ function MainPageItems({
                                                 ))}
                                             </div>
                                             <div className='mb-auto'>
-                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Gear Used</h1>
+                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Gear Used
+                                                <FontAwesomeIcon icon={faPlus}
+                                                        className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
+                                                duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
+                                                        onClick={() => toggleConnectionForm('gear')}
+                                                    /></h1>
                                                 {singleEntryData.gear.map((gear) => (
                                                     <div key={gear.id} onClick={() => fetchSingleEntry(gear.model_type, gear.id)}
                                                         className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
@@ -404,12 +428,12 @@ function MainPageItems({
                                                         onClick={() => toggleConnectionForm('album')}
                                                     /></h1>
                                                 {singleEntryData.albums.map((album) => (
-                                                    <div key={album[1]} onClick={() => fetchSingleEntry('album', album[1])}
+                                                    <div key={album.id} onClick={() => fetchSingleEntry('album', album.id)}
                                                         className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
                                                         <h1 className='text-2xl font-bold flex justify-center mb-4'
-                                                        >{album[0]}</h1>
-                                                        <img src={`static/album_covers/${album[2]}`} className='object-cover mx-auto w-40 h-40' />
+                                                        >{album.name}</h1>
+                                                        <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
                                                     </div>
                                                 ))}
                                             </div>
