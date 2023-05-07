@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import Cookies from 'js-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPaperclip, faCircleLeft, faFaceSmile, faPlus } from '@fortawesome/free-solid-svg-icons'
-import { AddAlbumForm, AddGearForm, AddPlayerForm, AddBandForm, AddNewConnection } from './Forms.jsx';
+import { faPaperclip, faCircleLeft, faFaceSmile, faPlus, faStar, faStarHalfStroke } from '@fortawesome/free-solid-svg-icons'
+import {faStar as farStar} from '@fortawesome/free-regular-svg-icons'
+import { AddAlbumForm, AddGearForm, AddPlayerForm, AddBandForm, AddNewConnection, NewReviewForm } from './Forms.jsx';
 
 function MainPageItems({
     fetchSingleEntry, exitSingleView, singleView, singleViewType,
@@ -11,6 +12,15 @@ function MainPageItems({
     const csrftoken = Cookies.get('csrftoken');
 
     const [AllEntries, setAllEntries] = useState([])
+
+    const [reviews, setReviews] = useState([])
+
+    const fetchAllReviews = () => {
+        fetch('review/get/all')
+            .then(response => response.json())
+            .then(data => setReviews(data))
+            .catch(error => console.log(error))
+    }
 
     const fetchAllEntries = () => {
         fetch('entries/get/all')
@@ -21,6 +31,7 @@ function MainPageItems({
 
     useEffect(() => {
         fetchAllEntries()
+        fetchAllReviews()
     }, []);
 
 
@@ -51,6 +62,15 @@ function MainPageItems({
             .then(data => {
                 fetchAllEntries()
                 setSingleView(false)
+            })
+            .catch(error => console.error(error));
+    }
+
+    const deleteConnection = (origin, connection_type, connection_id) => {
+        fetch(`entries/connection/delete/${origin.model_type}/${parseInt(origin.id, 10)}/${connection_type}/${parseInt(connection_id, 10)}`)
+            .then(response => response.json())
+            .then(data => {
+                fetchSingleEntry(origin.model_type, origin.id)
             })
             .catch(error => console.error(error));
     }
@@ -101,7 +121,7 @@ function MainPageItems({
                 </div>
             </div>
             {currentUserId && (
-                <button className='flex border border-indigo-200 px-4 py-2 rounded-3xl mx-auto mt-6' onClick={toggleAddForm}>Add</button>
+                <button className='flex border border-indigo-200 px-4 py-2 rounded-3xl mx-auto mt-6 hover:bg-Intone-300 hover:text-black' onClick={toggleAddForm}>Add</button>
             )}
             {showOnlyEntryType ? (
                 <div className='flex justify-center flex-col'>
@@ -243,39 +263,54 @@ function MainPageItems({
                                                 <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
                                                 <img src={`static/gear_images/${singleEntryData.image}`} className='object-cover w-60 h-60 mb-6' />
                                                 <p className='w-80'>{singleEntryData.description}</p>
-                                                <a className='text-Intone-300 hover:underline ' href={singleEntryData.tonehunt_url}>Nam Capture</a>
+                                                {singleEntryData.tonehunt_url !== 'N/A' && (
+                                                    <a className='text-Intone-300 hover:underline' href={singleEntryData.tonehunt_url}>Nam Capture</a>
+                                                )}
                                             </div>
                                             <div className='mb-auto mr-6'>
                                                 <h1 className='flex justify-center my-4 text-2xl font-bold'>Used By
-                                                <FontAwesomeIcon icon={faPlus}
+                                                    <FontAwesomeIcon icon={faPlus}
                                                         className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
                                                 duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
                                                         onClick={() => toggleConnectionForm('player')}
                                                     /></h1>
                                                 {singleEntryData.players.map((player) => (
-                                                    <div key={player.id} onClick={() => fetchSingleEntry(player.model_type, player.id)}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
+                                                    <div key={player.id} className='flex flex-col'>
+                                                        {currentUserId === 2 && (
+                                                            <a className="cursor-pointer border border-indigo-200 rounded-2xl bg-Intone-300 hover:bg-Intone-900 px-2 ml-auto mb-2"
+                                                                onClick={() => deleteConnection(singleEntryData, player.model_type, player.id)} >X</a>
+                                                        )}
+                                                        <div onClick={() => fetchSingleEntry(player.model_type, player.id)}
+                                                            className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                        <h1 className='text-2xl font-bold flex justify-center mb-4'
-                                                        >{player.name}</h1>
-                                                        <img src={`static/player_pics/${player.picture}`} className='object-cover mx-auto w-40 h-40' />
+                                                            <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                            >{player.name}</h1>
+                                                            <img src={`static/player_pics/${player.picture}`} className='object-cover mx-auto w-40 h-40' />
+                                                        </div>
                                                     </div>
+
                                                 ))}
                                             </div>
                                             <div className='mb-auto'>
                                                 <h1 className='flex justify-center my-4 text-2xl font-bold'>Used On
-                                                <FontAwesomeIcon icon={faPlus}
+                                                    <FontAwesomeIcon icon={faPlus}
                                                         className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
                                                 duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
                                                         onClick={() => toggleConnectionForm('album')}
                                                     /></h1>
                                                 {singleEntryData.albums.map((album) => (
-                                                    <div key={album.id} onClick={() => fetchSingleEntry(album.model_type, album.id)}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl  mb-4
+                                                    <div key={album.id} className='flex flex-col'>
+                                                        {currentUserId === 2 && (
+                                                            <a className="cursor-pointer border border-indigo-200 rounded-2xl bg-Intone-300 hover:bg-Intone-900 px-2 ml-auto mb-2"
+                                                                onClick={() => deleteConnection(singleEntryData, album.model_type, album.id)} >X</a>
+                                                        )}
+                                                        <div onClick={() => fetchSingleEntry(album.model_type, album.id)}
+                                                            className='border border-indigo-200 px-4 py-6 rounded-2xl  mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                        <h1 className='text-2xl font-bold flex justify-center mb-4'
-                                                        >{album.name}</h1>
-                                                        <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
+                                                            <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                            >{album.name}</h1>
+                                                            <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
+                                                        </div>
                                                     </div>
                                                 ))}
                                             </div>
@@ -298,36 +333,44 @@ function MainPageItems({
                                             </div>
                                             <div className='mb-auto mr-6'>
                                                 <h1 className='flex justify-center my-4 text-2xl font-bold'>Albums
-                                                <FontAwesomeIcon icon={faPlus}
+                                                    <FontAwesomeIcon icon={faPlus}
                                                         className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
                                                 duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
                                                         onClick={() => toggleConnectionForm('album')}
                                                     /></h1>
                                                 {singleEntryData.albums.map((album) => (
-                                                    <div key={album.id} onClick={() => fetchSingleEntry(album.model_type, album.id)}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
+                                                    <div key={album.id} className='flex flex-col'>
+                                                        <div onClick={() => fetchSingleEntry(album.model_type, album.id)}
+                                                            className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                        <h1 className='text-2xl font-bold flex justify-center mb-4'
-                                                        >{album.name}</h1>
-                                                        <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
+                                                            <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                            >{album.name}</h1>
+                                                            <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
+                                                        </div>
                                                     </div>
                                                 ))}
                                             </div>
                                             <div className='mb-auto'>
                                                 <h1 className='flex justify-center my-4 text-2xl font-bold'>Guitar Players
-                                                <FontAwesomeIcon icon={faPlus}
+                                                    <FontAwesomeIcon icon={faPlus}
                                                         className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
                                                 duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
                                                         onClick={() => toggleConnectionForm('player')}
                                                     />
                                                 </h1>
                                                 {singleEntryData.players.map((player) => (
-                                                    <div key={player.id} onClick={() => fetchSingleEntry(player.model_type, player.id)}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
+                                                    <div key={player.id} className='flex flex-col'>
+                                                        {currentUserId === 2 && (
+                                                            <a className="cursor-pointer border border-indigo-200 rounded-2xl bg-Intone-300 hover:bg-Intone-900 px-2 ml-auto mb-2"
+                                                                onClick={() => deleteConnection(singleEntryData, player.model_type, player.id)} >X</a>
+                                                        )}
+                                                        <div onClick={() => fetchSingleEntry(player.model_type, player.id)}
+                                                            className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                        <h1 className='text-2xl font-bold flex justify-center mb-4'
-                                                        >{player.name}</h1>
-                                                        <img src={`static/player_pics/${player.picture}`} className='object-cover mx-auto w-40 h-40' />
+                                                            <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                            >{player.name}</h1>
+                                                            <img src={`static/player_pics/${player.picture}`} className='object-cover mx-auto w-40 h-40' />
+                                                        </div>
                                                     </div>
                                                 ))}
                                             </div>
@@ -336,56 +379,103 @@ function MainPageItems({
                                 )}
                                 {singleViewType === 'album' && (
                                     <>
-
-                                        <div className='flex items-center md:flex-row max-md:flex-col border border-indigo px-6 py-4 rounded-3xl relative pt-6'>
-                                            {currentUserId === 2 && (
-                                                <a className="cursor-pointer border border-indigo-200 top-4 justify-end 
+                                        <div className='flex flex-col'>
+                                            <div className='flex items-center md:flex-row max-md:flex-col border border-indigo px-6 py-4 rounded-3xl relative pt-6'>
+                                                {currentUserId === 2 && (
+                                                    <a className="cursor-pointer border border-indigo-200 top-4 justify-end 
                                         flex absolute ml-auto right-4 rounded-2xl hover:bg-Intone-300 px-2"
-                                                    onClick={() => deleteEntry(singleEntryData.model_type, singleEntryData.id)} >X</a>
-                                            )}
-                                            <div className='mb-auto'>
+                                                        onClick={() => deleteEntry(singleEntryData.model_type, singleEntryData.id)} >X</a>
+                                                )}
+                                                <div className='mb-auto'>
 
-                                                <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
-                                                <h1 className='text-2xl font-bold my-4 cursor-pointer text-Intone-300 hover:underline'
-                                                 onClick={() => fetchSingleEntry('band', singleEntryData.band_id)}>
-                                                    {singleEntryData.band}</h1>
-                                                <img src={`static/album_covers/${singleEntryData.cover_art_url}`} className='object-cover w-40 h-40' />
-                                                <p className='w-80'>{singleEntryData.description}</p>
+                                                    <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
+                                                    <h1 className='text-2xl font-bold my-4 cursor-pointer text-Intone-300 hover:underline'
+                                                        onClick={() => fetchSingleEntry('band', singleEntryData.band_id)}>
+                                                        {singleEntryData.band}</h1>
+                                                    <img src={`static/album_covers/${singleEntryData.cover_art_url}`} className='object-cover w-40 h-40' />
+                                                    <p className='w-80'>{singleEntryData.description}</p>
 
-                                            </div>
-                                            <div className='mb-auto mr-6'>
-                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Guitar Players
-                                                <FontAwesomeIcon icon={faPlus}
-                                                        className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
+                                                </div>
+                                                <div className='mb-auto mr-6'>
+                                                    <h1 className='flex justify-center my-4 text-2xl font-bold'>Guitar Players
+                                                        <FontAwesomeIcon icon={faPlus}
+                                                            className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
                                                 duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
-                                                        onClick={() => toggleConnectionForm('player')}
-                                                    /></h1>
-                                                {singleEntryData.players.map((player) => (
-                                                    <div key={player.id} onClick={() => fetchSingleEntry(player.model_type, player.id)}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
+                                                            onClick={() => toggleConnectionForm('player')}
+                                                        /></h1>
+                                                    {singleEntryData.players.map((player) => (
+                                                        <div key={player.id} className='flex flex-col'>
+                                                            {currentUserId === 2 && (
+                                                                <a className="cursor-pointer border border-indigo-200 rounded-2xl bg-Intone-300 hover:bg-Intone-900 px-2 ml-auto mb-2"
+                                                                    onClick={() => deleteConnection(singleEntryData, player.model_type, player.id)} >X</a>
+                                                            )}
+                                                            <div onClick={() => fetchSingleEntry(player.model_type, player.id)}
+                                                                className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                        <h1 className='text-2xl font-bold flex justify-center mb-4'
-                                                        >{player.name}</h1>
-                                                        <img src={`static/player_pics/${player.picture}`} className='object-cover mx-auto w-40 h-40' />
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            <div className='mb-auto'>
-                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Gear Used
-                                                <FontAwesomeIcon icon={faPlus}
-                                                        className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
+                                                                <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                                >{player.name}</h1>
+                                                                <img src={`static/player_pics/${player.picture}`} className='object-cover mx-auto w-40 h-40' />
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                <div className='mb-auto'>
+                                                    <h1 className='flex justify-center my-4 text-2xl font-bold'>Gear Used
+                                                        <FontAwesomeIcon icon={faPlus}
+                                                            className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
                                                 duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
-                                                        onClick={() => toggleConnectionForm('gear')}
-                                                    /></h1>
-                                                {singleEntryData.gear.map((gear) => (
-                                                    <div key={gear.id} onClick={() => fetchSingleEntry(gear.model_type, gear.id)}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
+                                                            onClick={() => toggleConnectionForm('gear')}
+                                                        /></h1>
+                                                    {singleEntryData.gear.map((gear) => (
+                                                        <div key={gear.id} className='flex flex-col'>
+                                                            {currentUserId === 2 && (
+                                                                <a className="cursor-pointer border border-indigo-200 rounded-2xl bg-Intone-300 hover:bg-Intone-900 px-2 ml-auto mb-2"
+                                                                    onClick={() => deleteConnection(singleEntryData, gear.model_type, gear.id)} >X</a>
+                                                            )}
+                                                            <div onClick={() => fetchSingleEntry(gear.model_type, gear.id)}
+                                                                className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                        <h1 className='text-2xl font-bold flex justify-center mb-4'
-                                                        >{gear.name}</h1>
-                                                        <img src={`static/gear_images/${gear.image}`} className='object-cover mx-auto w-40 h-40' />
+                                                                <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                                >{gear.name}</h1>
+                                                                <img src={`static/gear_images/${gear.image}`} className='object-cover mx-auto w-40 h-40' />
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div className='flex flex-col border border-indigo-200 rounded-2xl px-4 py-2 mt-6'>
+                                                <NewReviewForm singleEntryData={singleEntryData} />
+                                                <div className='px-2 py-4 md:ml-6'>
+                                                    <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto'>
+                                                        <div className='mr-4'>
+                                                            {reviews.map(review => (
+                                                                <div key={review.id} className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
+                                                                    <div className='flex'>
+                                                                        {[...Array(review.stars)].map((_, index) => (
+                                                                            <FontAwesomeIcon icon={faStar} className='text-yellow-400'/>
+                                                                        ))}
+                                                                        {review.stars % 1 !== 0 && (
+                                                                            <FontAwesomeIcon icon={faStarHalfStroke} className='text-yellow-400'/>)}
+                                                                        {[...Array(5 - review.stars)].map((_, index) => (
+                                                                            <FontAwesomeIcon icon={farStar} className='text-yellow-400'/>
+                                                                        ))}
+                                                                    </div>
+                                                                    <p className='whitespace-pre-line mb-2'>{review.text}</p>
+                                                                    <div className='flex justify-between'>
+                                                                        <div className='flex flex-row'>
+                                                                            <img src={`static/profile_pictures/${review.user.profile_pic}`}
+                                                                                className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                                                                            <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                                                                            >{review.user.name}</p>
+                                                                        </div>
+                                                                        <p>{review.created_at}</p>
+                                                                    </div>
+
+                                                                </div>
+                                                            ))}
+                                                        </div>
                                                     </div>
-                                                ))}
+                                                </div>
                                             </div>
                                         </div>
                                     </>
@@ -411,12 +501,18 @@ function MainPageItems({
                                                         onClick={() => toggleConnectionForm('band')}
                                                     /></h1>
                                                 {singleEntryData.bands.map((band) => (
-                                                    <div key={band[1]} onClick={() => fetchSingleEntry('band', band[1])}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
+                                                    <div key={band[1]} className='flex flex-col'>
+                                                        {currentUserId === 2 && (
+                                                            <a className="cursor-pointer border border-indigo-200 rounded-2xl bg-Intone-300 hover:bg-Intone-900 px-2 ml-auto mb-2"
+                                                                onClick={() => deleteConnection(singleEntryData, 'band', band[1])} >X</a>
+                                                        )}
+                                                        <div onClick={() => fetchSingleEntry('band', band[1])}
+                                                            className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                        <h1 className='text-2xl font-bold flex justify-center mb-4'
-                                                        >{band[0]}</h1>
-                                                        <img src={`static/band_pics/${band[2]}`} className='object-cover mx-auto w-40 h-40' />
+                                                            <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                            >{band[0]}</h1>
+                                                            <img src={`static/band_pics/${band[2]}`} className='object-cover mx-auto w-40 h-40' />
+                                                        </div>
                                                     </div>
                                                 ))}
                                             </div>
@@ -428,12 +524,18 @@ function MainPageItems({
                                                         onClick={() => toggleConnectionForm('album')}
                                                     /></h1>
                                                 {singleEntryData.albums.map((album) => (
-                                                    <div key={album.id} onClick={() => fetchSingleEntry('album', album.id)}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
+                                                    <div key={album.id} className='flex flex-col'>
+                                                        {currentUserId === 2 && (
+                                                            <a className="cursor-pointer border border-indigo-200 rounded-2xl bg-Intone-300 hover:bg-Intone-900 px-2 ml-auto mb-2"
+                                                                onClick={() => deleteConnection(singleEntryData, album.model_type, album.id)} >X</a>
+                                                        )}
+                                                        <div onClick={() => fetchSingleEntry('album', album.id)}
+                                                            className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                        <h1 className='text-2xl font-bold flex justify-center mb-4'
-                                                        >{album.name}</h1>
-                                                        <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
+                                                            <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                            >{album.name}</h1>
+                                                            <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
+                                                        </div>
                                                     </div>
                                                 ))}
                                             </div>
@@ -446,12 +548,18 @@ function MainPageItems({
                                                     />
                                                 </h1>
                                                 {singleEntryData.gear.map((gear) => (
-                                                    <div key={gear.id} onClick={() => fetchSingleEntry(gear.model_type, gear.id)}
-                                                        className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
+                                                    <div key={gear.id} className='flex flex-col'>
+                                                        {currentUserId === 2 && (
+                                                            <a className="cursor-pointer border border-indigo-200 rounded-2xl bg-Intone-300 hover:bg-Intone-900 px-2 ml-auto mb-2"
+                                                                onClick={() => deleteConnection(singleEntryData, gear.model_type, gear.id)} >X</a>
+                                                        )}
+                                                        <div onClick={() => fetchSingleEntry(gear.model_type, gear.id)}
+                                                            className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                        <h1 className='text-2xl font-bold flex justify-center mb-4'
-                                                        >{gear.name}</h1>
-                                                        <img src={`static/gear_images/${gear.image}`} className='object-cover mx-auto w-40 h-40' />
+                                                            <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                            >{gear.name}</h1>
+                                                            <img src={`static/gear_images/${gear.image}`} className='object-cover mx-auto w-40 h-40' />
+                                                        </div>
                                                     </div>
                                                 ))}
                                             </div>

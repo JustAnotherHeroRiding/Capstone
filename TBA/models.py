@@ -169,13 +169,16 @@ class Review(models.Model):
         (4.5, '4.5'),
         (5, '5'),
     ]
-
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reviews_posted')
     album = models.ForeignKey(
         Album, on_delete=models.CASCADE, related_name='reviews', blank=True, null=True)
     gear = models.ForeignKey(
         Gear, on_delete=models.CASCADE, related_name='reviews', blank=True, null=True)
     stars = models.FloatField(choices=STARS_CHOICES)
     text = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+
 
     def serialize(self):
         return {
@@ -184,6 +187,8 @@ class Review(models.Model):
             'gear': self.gear.name if self.gear else None,
             'stars': self.stars,
             'text': self.text,
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'user': self.user.serialize(),
             'model_type': 'review'
         }
 

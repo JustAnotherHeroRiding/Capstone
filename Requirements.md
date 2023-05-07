@@ -50,11 +50,11 @@
 
 ## Updating or editing already added entries
 - On the single view i can edit or add new gear, albums or any other connections #DONE 
-- I should also be able to delete connections
-## Reviews
+- I should also be able to delete connections #DONE 
+## Reviews and Comments
+- Albums are done, need to add it for gear done
 - Users should be able to leave reviews for albums and gear, one per user
 - Users can only leave comments for players and bands, which are not limited to one
-- 
 ## Browse Albums, Players or Gear #DONE
 
 ## Leave Reviews for albums or gear, leave comments for players

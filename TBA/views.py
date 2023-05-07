@@ -407,35 +407,81 @@ def add_connections(request, origin_type, origin_id, connection_type):
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
     
-""" def add_connections(request, origin_type, origin_id, connection_type):
-    if origin_type == 'player':
-        player = Player.objects.get(id=origin_id)
-        if connection_type == 'gear':
-            gear_id = request.POST.get('gear_id')
-            try:
-                gear = Gear.objects.get(id=gear_id)
-            except (Player.DoesNotExist, Gear.DoesNotExist):
-                return JsonResponse({'error': 'Invalid player or gear ID'}, status=400)
-            player.gear.add(gear)
-            return JsonResponse({'success': True})
-        elif connection_type == 'album':
-            album_id = request.POST.get('album_id')
-            try:
-                album = Album.objects.get(id=album_id)
-            except (Player.DoesNotExist, Album.DoesNotExist):
-                return JsonResponse({"error": "Invalid player or album ID"},status = 400)
-            player.albums.add(album)
-            return JsonResponse({'succes': True})
-        elif connection_type == 'band':
-            band_id = request.POST.get('band_id')
-            try:
-                band = Band.objects.get(id=band_id)
-            except (Player.DoesNotExist, Band.DoesNotExist):
-                return JsonResponse({'error': "Invalid player or band ID"},status=400)
-            player.bands.add(band)
-            return JsonResponse({'success':True})
-    else:
-        return JsonResponse({'Message': "Invalid POST request."}) """
+
+@login_required
+def delete_connections(request, origin_type, origin_id, connection_type, connection_id):
+    model_mapping = {
+        'Player': {
+            'gear': 'gear',
+            'album': 'albums',
+            'band': 'bands'
+        },
+        'Gear': {
+            'album':'albums',
+            'player':'players'
+        },
+        'Album': {
+            'gear': 'gear',
+            'player':'guitar_players',
+            'band':'band'
+        },
+        'Band': {
+            'album':'albums',
+            'player':'members'
+        }
+    }
+
+    try:
+        related_field_name = model_mapping[origin_type.capitalize()][connection_type]
+        model_class = globals()[origin_type.capitalize()]
+        origin = model_class.objects.get(id=origin_id)
+        related_field = getattr(origin, related_field_name)
+    except (KeyError, AttributeError, model_class.DoesNotExist):
+        return JsonResponse({'error': f'Invalid {origin_type} ID'}, status=400)
+
+    try:
+        item = related_field.model.objects.get(id=connection_id)
+        related_field.remove(item)
+        return JsonResponse({'success': True})
+    except related_field.model.DoesNotExist:
+        return JsonResponse({'error': f'Invalid {connection_type} ID'}, status=400)
+
+@login_required
+def post_review(request, entry_type, entry_id):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+    
+    data = request.POST
+    stars = data.get('stars')
+    text = data.get('text')
+    
+    if entry_type != 'album' and entry_type != 'gear':
+        return JsonResponse({'error': 'Album or gear ID is required'}, status=400)
+    
+    try:
+        stars = float(stars)
+        if not (0 <= stars <= 5):
+            raise ValueError
+    except ValueError:
+        return JsonResponse({'error': 'Stars must be a number between 0 and 5'}, status=400)
+    
+    review_data = {'stars': stars, 'text': text}
+    if entry_type == 'album':
+        review_data['album_id'] = entry_id
+    elif entry_type == 'gear':
+        review_data['gear_id'] = entry_id
+        
+    review_data['user'] = request.user
+        
+    review = Review.objects.create(**review_data)
+    review.save()
+    
+    return JsonResponse({'success': True, 'review': review.serialize()})
+
+def get_all_reviews(request):
+    reviews = Review.objects.all()
+    serialized_reviews = [review.serialize() for review in reviews]
+    return JsonResponse(serialized_reviews, safe=False)
 
 
 @login_required

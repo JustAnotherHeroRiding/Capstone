@@ -23,9 +23,11 @@ urlpatterns = [
     
     path('entries/add/<str:entry_type>', views.add_entry, name='add_entry'),
     path('entries/connection/<str:origin_type>/<int:origin_id>/<str:connection_type>', views.add_connections, name='new_connection'),
+    path('entries/connection/delete/<str:origin_type>/<int:origin_id>/<str:connection_type>/<int:connection_id>', views.delete_connections, name='delete_connection'),
     path('entries/delete/<str:entry_type>/<int:entry_id>', views.delete_entry, name='delete_entry'),
 
-
+    path('review/post/<str:entry_type>/<int:entry_id>', views.post_review, name='post_review'),
+    path('review/get/all', views.get_all_reviews, name='get_all_reviews'),
     
     path('search', views.search, name='search'),
     path('user/data/<int:user_id>', views.get_user_data, name='get_user_data')
