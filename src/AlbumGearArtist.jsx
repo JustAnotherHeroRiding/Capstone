@@ -535,7 +535,7 @@ function MainPageItems({
                                                                                     <img src={`static/profile_pictures/${review.user.profile_pic}`}
                                                                                         className='object-cover w-8 h-8 rounded-full mr-2'></img>
                                                                                     <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
-                                                                                    >{review.user.name}</p>
+                                                                                    onClick={() => handleUserMessageClick(review.user)}>{review.user.name}</p>
                                                                                 </div>
                                                                                 <p>{review.created_at}</p>
                                                                             </div>
