@@ -468,7 +468,14 @@ def post_review(request, entry_type, entry_id):
      # Check if the user has already reviewed the album or gear
     existing_review = Review.objects.filter(user=request.user, gear_id=entry_id if entry_type == 'gear' else None, album_id=entry_id if entry_type == 'album' else None).first()
     if existing_review:
-        return JsonResponse({'error': 'You have already reviewed this album or gear.'}, status=400)
+        print(existing_review.is_edited)
+        # Update the existing review object with the new data
+        existing_review.stars = stars
+        existing_review.text = text
+        existing_review.is_edited = True
+        existing_review.save()
+        return JsonResponse({'success': True, 'review': existing_review.serialize()})
+        #return JsonResponse({'error': 'You have already reviewed this album or gear.'}, status=400)
     
     review_data = {'stars': stars, 'text': text}
     if entry_type == 'album':

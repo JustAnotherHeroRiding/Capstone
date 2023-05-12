@@ -190,6 +190,8 @@ class Review(models.Model):
     stars = models.FloatField(choices=STARS_CHOICES)
     text = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    is_edited = models.BooleanField(default=False)
+
 
 
     def serialize(self):
@@ -202,6 +204,7 @@ class Review(models.Model):
             'text': self.text,
             'created_at': local_created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'user': self.user.serialize(),
+            'is_edited': self.is_edited,
             'model_type': 'review'
         }
 

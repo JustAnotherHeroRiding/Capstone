@@ -54,8 +54,22 @@
 ## Reviews and Comments
 - Albums are done, need to add it for gear #DONE 
 - Users should be able to leave reviews for albums and gear, one per user #DONE 
-- Users can edit their own reviews and change the star rating or text, if edited there will be a star next to the date to show it was edited after it's original date
-- Users can only leave comments for players and bands, which are not limited to one
+- Users can edit their own reviews and change the star rating or text, if edited there will be a star next to the date to show it was edited after it's original date #DONE 
+- If a user submits a review when there is already one review posted by them then the review will be edited with the new stars and text #DONE 
+- Users can only leave comments for players and bands, which are not limited to one but do not have stars
+
+## Going back to the profile
+- Finish the remaining functionality on the profile, which is the reactive menu: 
+- With all reviews posted by a user
+- Reviews posted by users I follow 
+- Gear on the wishlist 
+- Album charts
+
+## Finishing Touches
+- Pagination for the entries so I dont have to scroll a lot if there are a lot of entries
+- Testing the responsiveness of the UI and appearance on smaller screens
+- Smoothing out elements that don't fit the style or stick out
+- 
 ## Browse Albums, Players or Gear #DONE
 
 ## Leave Reviews for albums or gear, leave comments for players #DONE 

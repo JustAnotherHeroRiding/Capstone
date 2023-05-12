@@ -21,14 +21,14 @@ function MainPageItems({
             if (singleEntryData.reviews.length !== 0) {
                 const totalScore = singleEntryData.reviews.reduce((accumulator, review) => {
                     return accumulator + review.stars;
-                  }, 0);
-                  const averageScore = totalScore / singleEntryData.reviews.length;
-                  setReviewScore(averageScore);
+                }, 0);
+                const averageScore = totalScore / singleEntryData.reviews.length;
+                setReviewScore(averageScore);
             } else if (singleEntryData.reviews.length === 0) {
                 setReviewScore(0)
-            } 
-        }       
-      }
+            }
+        }
+    }
 
     const [reviewErrorMessage, setReviewErrorMessage] = useState('')
 
@@ -283,7 +283,7 @@ function MainPageItems({
                                                         onClick={() => deleteEntry(singleEntryData.model_type, singleEntryData.id)} >X</a>
                                                 )}
                                                 <div className='mb-auto'>
-                                                    <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
+                                                    <h1 className='text-2xl font-bold my-4 w-72'>{singleEntryData.name}</h1>
                                                     <img src={`static/gear_images/${singleEntryData.image}`} className='object-cover w-60 h-60 mb-6' />
                                                     <p className='w-80'>{singleEntryData.description}</p>
                                                     {singleEntryData.tonehunt_url !== 'N/A' && (
@@ -339,25 +339,26 @@ function MainPageItems({
                                                 </div>
                                             </div>
                                             <div className='flex flex-col border border-indigo-200 rounded-2xl px-4 py-2 mt-6'>
-                                            <p className='text-Intone-300 font-bold text-xl mx-auto'>
-                                            {reviewScore}<FontAwesomeIcon icon={faStar} className='text-yellow-400' /></p>
-                                                <NewReviewForm singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} setReviewErrorMessage={setReviewErrorMessage} />
+                                                <p className='text-Intone-300 font-bold text-xl mx-auto'>
+                                                    {reviewScore}<FontAwesomeIcon icon={faStar} className='text-yellow-400' /></p>
+                                                <NewReviewForm
+                                                    singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} setReviewErrorMessage={setReviewErrorMessage} />
                                                 <p className='mx-auto text-red-400'>{reviewErrorMessage}</p>
                                                 <div className='px-2 py-4 md:ml-6'>
                                                     <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto'>
                                                         <div className='mr-4'>
                                                             {singleEntryData.reviews.map(review => (
-                                                                <div>
+                                                                <div key={review.id}>
                                                                     {review.gear && review.gear.id === singleEntryData.id && (
-                                                                        <div key={review.id} className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
+                                                                        <div className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
                                                                             <div className='flex'>
                                                                                 {[...Array(Math.floor(review.stars))].map((_, index) => (
-                                                                                    <FontAwesomeIcon icon={faStar} className='text-yellow-400' />
+                                                                                    <FontAwesomeIcon icon={faStar} className='text-yellow-400' key={`full-star-${index}`} />
                                                                                 ))}
                                                                                 {review.stars % 1 !== 0 && (
-                                                                                    <FontAwesomeIcon icon={faStarHalfStroke} className='text-yellow-400' />)}
+                                                                                    <FontAwesomeIcon icon={faStarHalfStroke} className='text-yellow-400' key={`half-star-${review.id}`} />)}
                                                                                 {[...Array(5 - Math.ceil(review.stars))].map((_, index) => (
-                                                                                    <FontAwesomeIcon icon={farStar} className='text-yellow-400' />
+                                                                                    <FontAwesomeIcon icon={farStar} className='text-yellow-400' key={`empty-star-${index}`} />
                                                                                 ))}
                                                                             </div>
                                                                             <p className='whitespace-pre-line mb-2'>{review.text}</p>
@@ -366,11 +367,15 @@ function MainPageItems({
                                                                                     <img src={`static/profile_pictures/${review.user.profile_pic}`}
                                                                                         className='object-cover w-8 h-8 rounded-full mr-2'></img>
                                                                                     <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
-                                                                                    onClick={() => handleUserMessageClick(review.user)}>{review.user.name}</p>
+                                                                                        onClick={() => handleUserMessageClick(review.user)}>{review.user.name}</p>
                                                                                 </div>
-                                                                                <p>{review.created_at}</p>
+                                                                                <p>
+                                                                                    {review.is_edited && (
+                                                                                        <span className=' text-gray-500'>*</span>
+                                                                                    )}
+                                                                                    {review.created_at}
+                                                                                </p>
                                                                             </div>
-
                                                                         </div>
                                                                     )}
                                                                 </div>
@@ -391,7 +396,7 @@ function MainPageItems({
                                                     onClick={() => deleteEntry(singleEntryData.model_type, singleEntryData.id)} >X</a>
                                             )}
                                             <div className='mb-auto'>
-                                                <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
+                                                <h1 className='text-2xl font-bold my-4 w-72'>{singleEntryData.name}</h1>
                                                 <img src={`static/band_pics/${singleEntryData.picture}`} className='object-cover w-60 h-60' />
                                                 <p className='w-80'>{singleEntryData.description}</p>
                                             </div>
@@ -452,7 +457,7 @@ function MainPageItems({
                                                 )}
                                                 <div className='mb-auto'>
 
-                                                    <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
+                                                    <h1 className='text-2xl font-bold my-4 w-72'>{singleEntryData.name}</h1>
                                                     <h1 className='text-2xl font-bold my-4 cursor-pointer text-Intone-300 hover:underline'
                                                         onClick={() => fetchSingleEntry('band', singleEntryData.band_id)}>
                                                         {singleEntryData.band}</h1>
@@ -508,25 +513,26 @@ function MainPageItems({
                                                 </div>
                                             </div>
                                             <div className='flex flex-col border border-indigo-200 rounded-2xl px-4 py-2 mt-6'>
-                                            <p className='text-Intone-300 font-bold text-xl mx-auto'>
-                                            {reviewScore}<FontAwesomeIcon icon={faStar} className='text-yellow-400' /></p>
-                                                <NewReviewForm singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} setReviewErrorMessage={setReviewErrorMessage} />
+                                                <p className='text-Intone-300 font-bold text-xl mx-auto'>
+                                                    {reviewScore}<FontAwesomeIcon icon={faStar} className='text-yellow-400' /></p>
+                                                <NewReviewForm
+                                                    singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} setReviewErrorMessage={setReviewErrorMessage} />
                                                 <p className='mx-auto text-red-400'>{reviewErrorMessage}</p>
                                                 <div className='px-2 py-4 md:ml-6'>
                                                     <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto'>
                                                         <div className='mr-4'>
                                                             {singleEntryData.reviews.map(review => (
-                                                                <div>
+                                                                <div key={review.id}>
                                                                     {review.album && review.album.id === singleEntryData.id && (
-                                                                        <div key={review.id} className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
-                                                                        <div className='flex'>
+                                                                        <div className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
+                                                                            <div className='flex'>
                                                                                 {[...Array(Math.floor(review.stars))].map((_, index) => (
-                                                                                    <FontAwesomeIcon icon={faStar} className='text-yellow-400' />
+                                                                                    <FontAwesomeIcon icon={faStar} className='text-yellow-400' key={`full-star-${index}`} />
                                                                                 ))}
                                                                                 {review.stars % 1 !== 0 && (
-                                                                                    <FontAwesomeIcon icon={faStarHalfStroke} className='text-yellow-400' />)}
+                                                                                    <FontAwesomeIcon icon={faStarHalfStroke} className='text-yellow-400' key={`half-star-${review.id}`} />)}
                                                                                 {[...Array(5 - Math.ceil(review.stars))].map((_, index) => (
-                                                                                    <FontAwesomeIcon icon={farStar} className='text-yellow-400' />
+                                                                                    <FontAwesomeIcon icon={farStar} className='text-yellow-400' key={`empty-star-${index}`} />
                                                                                 ))}
                                                                             </div>
                                                                             <p className='whitespace-pre-line mb-2'>{review.text}</p>
@@ -535,9 +541,14 @@ function MainPageItems({
                                                                                     <img src={`static/profile_pictures/${review.user.profile_pic}`}
                                                                                         className='object-cover w-8 h-8 rounded-full mr-2'></img>
                                                                                     <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
-                                                                                    onClick={() => handleUserMessageClick(review.user)}>{review.user.name}</p>
+                                                                                        onClick={() => handleUserMessageClick(review.user)}>{review.user.name}</p>
                                                                                 </div>
-                                                                                <p>{review.created_at}</p>
+                                                                                <p>
+                                                                                    {review.is_edited && (
+                                                                                        <span className=' text-gray-500'>*</span>
+                                                                                    )}
+                                                                                    {review.created_at}
+                                                                                </p>
                                                                             </div>
 
                                                                         </div>
@@ -560,7 +571,7 @@ function MainPageItems({
                                                     onClick={() => deleteEntry(singleEntryData.model_type, singleEntryData.id)} >X</a>
                                             )}
                                             <div className='mb-auto'>
-                                                <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
+                                                <h1 className='text-2xl font-bold my-4 w-72'>{singleEntryData.name}</h1>
                                                 <img src={`static/player_pics/${singleEntryData.picture}`} className='object-cover w-40 h-40' />
                                                 <p className='w-80'>{singleEntryData.description}</p>
                                             </div>
