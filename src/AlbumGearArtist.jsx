@@ -3,17 +3,34 @@ import './App.css'
 import Cookies from 'js-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPaperclip, faCircleLeft, faFaceSmile, faPlus, faStar, faStarHalfStroke } from '@fortawesome/free-solid-svg-icons'
-import {faStar as farStar} from '@fortawesome/free-regular-svg-icons'
+import { faStar as farStar } from '@fortawesome/free-regular-svg-icons'
 import { AddAlbumForm, AddGearForm, AddPlayerForm, AddBandForm, AddNewConnection, NewReviewForm } from './Forms.jsx';
 
 function MainPageItems({
     fetchSingleEntry, exitSingleView, singleView, singleViewType,
-    singleEntryData, showEntryType, showOnlyEntryType, AllEntriesData, setSingleView, currentUserId }) {
+    singleEntryData, showEntryType, showOnlyEntryType, AllEntriesData, setSingleView, currentUserId, handleUserMessageClick }) {
     const csrftoken = Cookies.get('csrftoken');
 
     const [AllEntries, setAllEntries] = useState([])
 
     const [reviews, setReviews] = useState([])
+    const [reviewScore, setReviewScore] = useState(0);
+
+    const calculateReviewScore = () => {
+        if (singleEntryData.model_type === 'gear' | singleEntryData.model_type === 'album') {
+            if (singleEntryData.reviews.length !== 0) {
+                const totalScore = singleEntryData.reviews.reduce((accumulator, review) => {
+                    return accumulator + review.stars;
+                  }, 0);
+                  const averageScore = totalScore / singleEntryData.reviews.length;
+                  setReviewScore(averageScore);
+            } else if (singleEntryData.reviews.length === 0) {
+                setReviewScore(0)
+            } 
+        }       
+      }
+
+    const [reviewErrorMessage, setReviewErrorMessage] = useState('')
 
     const fetchAllReviews = () => {
         fetch('review/get/all')
@@ -33,6 +50,11 @@ function MainPageItems({
         fetchAllEntries()
         fetchAllReviews()
     }, []);
+
+    useEffect(() => {
+        setReviewErrorMessage('');
+        calculateReviewScore()
+    }, [singleEntryData]);
 
 
     const [showForm, setShowForm] = useState(false)
@@ -132,7 +154,7 @@ function MainPageItems({
                                 {AllEntries[showEntryType].map((entry) => (
                                     <div key={entry.id} onClick={() => fetchSingleEntry(entry.model_type, entry.id)}
                                         className='border cursor-pointer border-indigo-200 px-4 py-6 rounded-2xl hover:bg-Intone-100 mr-6 max-md:mb-6 max-md:mx-auto'>
-                                        <h1 className='text-2xl font-bold flex justify-center'
+                                        <h1 className='text-2xl font-bold flex justify-center w-40'
                                         >{entry.name}</h1>
                                         {entry.model_type === 'band' && (
                                             <img src={`static/band_pics/${entry.picture}`} className='object-cover w-40 h-40 mx-auto' />
@@ -164,7 +186,7 @@ function MainPageItems({
                                             {AllEntries.bands.map((band) => (
                                                 <div key={band.id} onClick={() => fetchSingleEntry(band.model_type, band.id)}
                                                     className='border cursor-pointer border-indigo-200 px-4 py-6 rounded-2xl hover:bg-Intone-100 mb-4 mr-4'>
-                                                    <h1 className='text-2xl font-bold flex justify-center'
+                                                    <h1 className='text-2xl font-bold flex justify-center w-40'
                                                     >{band.name}</h1>
                                                     <img src={`static/band_pics/${band.picture}`} className='object-cover w-40 h-40 mx-auto' />
                                                 </div>
@@ -182,7 +204,7 @@ function MainPageItems({
                                                 <div key={album.id} onClick={() => fetchSingleEntry(album.model_type, album.id)}
                                                     className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4 mr-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                    <h1 className='text-2xl font-bold flex justify-center'
+                                                    <h1 className='text-2xl font-bold flex justify-center w-40'
                                                     >{album.name}</h1>
                                                     <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
                                                 </div>
@@ -200,7 +222,7 @@ function MainPageItems({
                                             {AllEntries.gear.map((gear) => (
                                                 <div key={gear.id} onClick={() => fetchSingleEntry(gear.model_type, gear.id)}
                                                     className='border border-indigo-200 px-4 py-6 rounded-2xl hover:bg-Intone-100 cursor-pointer mb-4 mr-4'>
-                                                    <h1 className='text-2xl font-bold flex justify-center'
+                                                    <h1 className='text-2xl font-bold flex justify-center w-40'
                                                     >{gear.name}</h1>
                                                     <img src={`static/gear_images/${gear.image}`} className='object-cover mx-auto w-40 h-40' />
                                                 </div>
@@ -217,7 +239,7 @@ function MainPageItems({
                                                 <div key={player.id} onClick={() => fetchSingleEntry(player.model_type, player.id)}
                                                     className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer mr-4'>
-                                                    <h1 className='text-2xl font-bold flex justify-center'
+                                                    <h1 className='text-2xl font-bold flex justify-center w-40'
                                                     >{player.name}</h1>
                                                     <img src={`static/player_pics/${player.picture}`} className='object-cover mx-auto w-40 h-40' />
                                                 </div>
@@ -253,68 +275,110 @@ function MainPageItems({
                                 />
                                 {singleViewType === 'gear' && (
                                     <>
-                                        <div className='flex items-center md:flex-row max-md:flex-col border border-indigo px-6 py-4 rounded-3xl pt-6 relative'>
-                                            {currentUserId === 2 && (
-                                                <a className="cursor-pointer border border-indigo-200 top-4 justify-end 
+                                        <div className='flex flex-col'>
+                                            <div className='flex items-center md:flex-row max-md:flex-col border border-indigo px-6 py-4 rounded-3xl pt-6 relative'>
+                                                {currentUserId === 2 && (
+                                                    <a className="cursor-pointer border border-indigo-200 top-4 justify-end 
                                         flex absolute ml-auto right-4 rounded-2xl hover:bg-Intone-300 px-2"
-                                                    onClick={() => deleteEntry(singleEntryData.model_type, singleEntryData.id)} >X</a>
-                                            )}
-                                            <div className='mb-auto'>
-                                                <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
-                                                <img src={`static/gear_images/${singleEntryData.image}`} className='object-cover w-60 h-60 mb-6' />
-                                                <p className='w-80'>{singleEntryData.description}</p>
-                                                {singleEntryData.tonehunt_url !== 'N/A' && (
-                                                    <a className='text-Intone-300 hover:underline' href={singleEntryData.tonehunt_url}>Nam Capture</a>
+                                                        onClick={() => deleteEntry(singleEntryData.model_type, singleEntryData.id)} >X</a>
                                                 )}
-                                            </div>
-                                            <div className='mb-auto mr-6'>
-                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Used By
-                                                    <FontAwesomeIcon icon={faPlus}
-                                                        className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
+                                                <div className='mb-auto'>
+                                                    <h1 className='text-2xl font-bold my-4'>{singleEntryData.name}</h1>
+                                                    <img src={`static/gear_images/${singleEntryData.image}`} className='object-cover w-60 h-60 mb-6' />
+                                                    <p className='w-80'>{singleEntryData.description}</p>
+                                                    {singleEntryData.tonehunt_url !== 'N/A' && (
+                                                        <a className='text-Intone-300 hover:underline' href={singleEntryData.tonehunt_url}>Nam Capture</a>
+                                                    )}
+                                                </div>
+                                                <div className='mb-auto mr-6'>
+                                                    <h1 className='flex justify-center my-4 text-2xl font-bold'>Used By
+                                                        <FontAwesomeIcon icon={faPlus}
+                                                            className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
                                                 duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
-                                                        onClick={() => toggleConnectionForm('player')}
-                                                    /></h1>
-                                                {singleEntryData.players.map((player) => (
-                                                    <div key={player.id} className='flex flex-col'>
-                                                        {currentUserId === 2 && (
-                                                            <a className="cursor-pointer border border-indigo-200 rounded-2xl bg-Intone-300 hover:bg-Intone-900 px-2 ml-auto mb-2"
-                                                                onClick={() => deleteConnection(singleEntryData, player.model_type, player.id)} >X</a>
-                                                        )}
-                                                        <div onClick={() => fetchSingleEntry(player.model_type, player.id)}
-                                                            className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
+                                                            onClick={() => toggleConnectionForm('player')}
+                                                        /></h1>
+                                                    {singleEntryData.players.map((player) => (
+                                                        <div key={player.id} className='flex flex-col'>
+                                                            {currentUserId === 2 && (
+                                                                <a className="cursor-pointer border border-indigo-200 rounded-2xl bg-Intone-300 hover:bg-Intone-900 px-2 ml-auto mb-2"
+                                                                    onClick={() => deleteConnection(singleEntryData, player.model_type, player.id)} >X</a>
+                                                            )}
+                                                            <div onClick={() => fetchSingleEntry(player.model_type, player.id)}
+                                                                className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                            <h1 className='text-2xl font-bold flex justify-center mb-4'
-                                                            >{player.name}</h1>
-                                                            <img src={`static/player_pics/${player.picture}`} className='object-cover mx-auto w-40 h-40' />
+                                                                <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                                >{player.name}</h1>
+                                                                <img src={`static/player_pics/${player.picture}`} className='object-cover mx-auto w-40 h-40' />
+                                                            </div>
+                                                        </div>
+
+                                                    ))}
+                                                </div>
+                                                <div className='mb-auto'>
+                                                    <h1 className='flex justify-center my-4 text-2xl font-bold'>Used On
+                                                        <FontAwesomeIcon icon={faPlus}
+                                                            className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
+                                                duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
+                                                            onClick={() => toggleConnectionForm('album')}
+                                                        /></h1>
+                                                    {singleEntryData.albums.map((album) => (
+                                                        <div key={album.id} className='flex flex-col'>
+                                                            {currentUserId === 2 && (
+                                                                <a className="cursor-pointer border border-indigo-200 rounded-2xl bg-Intone-300 hover:bg-Intone-900 px-2 ml-auto mb-2"
+                                                                    onClick={() => deleteConnection(singleEntryData, album.model_type, album.id)} >X</a>
+                                                            )}
+                                                            <div onClick={() => fetchSingleEntry(album.model_type, album.id)}
+                                                                className='border border-indigo-200 px-4 py-6 rounded-2xl  mb-4
+                                        hover:bg-Intone-100 cursor-pointer'>
+                                                                <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                                >{album.name}</h1>
+                                                                <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div className='flex flex-col border border-indigo-200 rounded-2xl px-4 py-2 mt-6'>
+                                            <p className='text-Intone-300 font-bold text-xl mx-auto'>
+                                            {reviewScore}<FontAwesomeIcon icon={faStar} className='text-yellow-400' /></p>
+                                                <NewReviewForm singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} setReviewErrorMessage={setReviewErrorMessage} />
+                                                <p className='mx-auto text-red-400'>{reviewErrorMessage}</p>
+                                                <div className='px-2 py-4 md:ml-6'>
+                                                    <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto'>
+                                                        <div className='mr-4'>
+                                                            {singleEntryData.reviews.map(review => (
+                                                                <div>
+                                                                    {review.gear && review.gear.id === singleEntryData.id && (
+                                                                        <div key={review.id} className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
+                                                                            <div className='flex'>
+                                                                                {[...Array(Math.floor(review.stars))].map((_, index) => (
+                                                                                    <FontAwesomeIcon icon={faStar} className='text-yellow-400' />
+                                                                                ))}
+                                                                                {review.stars % 1 !== 0 && (
+                                                                                    <FontAwesomeIcon icon={faStarHalfStroke} className='text-yellow-400' />)}
+                                                                                {[...Array(5 - Math.ceil(review.stars))].map((_, index) => (
+                                                                                    <FontAwesomeIcon icon={farStar} className='text-yellow-400' />
+                                                                                ))}
+                                                                            </div>
+                                                                            <p className='whitespace-pre-line mb-2'>{review.text}</p>
+                                                                            <div className='flex justify-between'>
+                                                                                <div className='flex flex-row'>
+                                                                                    <img src={`static/profile_pictures/${review.user.profile_pic}`}
+                                                                                        className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                                                                                    <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                                                                                    onClick={() => handleUserMessageClick(review.user)}>{review.user.name}</p>
+                                                                                </div>
+                                                                                <p>{review.created_at}</p>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            ))}
                                                         </div>
                                                     </div>
-
-                                                ))}
+                                                </div>
                                             </div>
-                                            <div className='mb-auto'>
-                                                <h1 className='flex justify-center my-4 text-2xl font-bold'>Used On
-                                                    <FontAwesomeIcon icon={faPlus}
-                                                        className='cursor-pointer hover:scale-110 hover:text-Intone-300 transition-transform 
-                                                duration-200 ml-2 border border-indigo-200 p-1 rounded-2xl'
-                                                        onClick={() => toggleConnectionForm('album')}
-                                                    /></h1>
-                                                {singleEntryData.albums.map((album) => (
-                                                    <div key={album.id} className='flex flex-col'>
-                                                        {currentUserId === 2 && (
-                                                            <a className="cursor-pointer border border-indigo-200 rounded-2xl bg-Intone-300 hover:bg-Intone-900 px-2 ml-auto mb-2"
-                                                                onClick={() => deleteConnection(singleEntryData, album.model_type, album.id)} >X</a>
-                                                        )}
-                                                        <div onClick={() => fetchSingleEntry(album.model_type, album.id)}
-                                                            className='border border-indigo-200 px-4 py-6 rounded-2xl  mb-4
-                                        hover:bg-Intone-100 cursor-pointer'>
-                                                            <h1 className='text-2xl font-bold flex justify-center mb-4'
-                                                            >{album.name}</h1>
-                                                            <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-
                                         </div>
                                     </>
                                 )}
@@ -435,7 +499,7 @@ function MainPageItems({
                                                             <div onClick={() => fetchSingleEntry(gear.model_type, gear.id)}
                                                                 className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                                <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                                <h1 className='text-2xl font-bold flex justify-center mb-4 w-40'
                                                                 >{gear.name}</h1>
                                                                 <img src={`static/gear_images/${gear.image}`} className='object-cover mx-auto w-40 h-40' />
                                                             </div>
@@ -444,33 +508,40 @@ function MainPageItems({
                                                 </div>
                                             </div>
                                             <div className='flex flex-col border border-indigo-200 rounded-2xl px-4 py-2 mt-6'>
-                                                <NewReviewForm singleEntryData={singleEntryData} />
+                                            <p className='text-Intone-300 font-bold text-xl mx-auto'>
+                                            {reviewScore}<FontAwesomeIcon icon={faStar} className='text-yellow-400' /></p>
+                                                <NewReviewForm singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} setReviewErrorMessage={setReviewErrorMessage} />
+                                                <p className='mx-auto text-red-400'>{reviewErrorMessage}</p>
                                                 <div className='px-2 py-4 md:ml-6'>
                                                     <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto'>
                                                         <div className='mr-4'>
-                                                            {reviews.map(review => (
-                                                                <div key={review.id} className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
-                                                                    <div className='flex'>
-                                                                        {[...Array(review.stars)].map((_, index) => (
-                                                                            <FontAwesomeIcon icon={faStar} className='text-yellow-400'/>
-                                                                        ))}
-                                                                        {review.stars % 1 !== 0 && (
-                                                                            <FontAwesomeIcon icon={faStarHalfStroke} className='text-yellow-400'/>)}
-                                                                        {[...Array(5 - review.stars)].map((_, index) => (
-                                                                            <FontAwesomeIcon icon={farStar} className='text-yellow-400'/>
-                                                                        ))}
-                                                                    </div>
-                                                                    <p className='whitespace-pre-line mb-2'>{review.text}</p>
-                                                                    <div className='flex justify-between'>
-                                                                        <div className='flex flex-row'>
-                                                                            <img src={`static/profile_pictures/${review.user.profile_pic}`}
-                                                                                className='object-cover w-8 h-8 rounded-full mr-2'></img>
-                                                                            <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
-                                                                            >{review.user.name}</p>
-                                                                        </div>
-                                                                        <p>{review.created_at}</p>
-                                                                    </div>
+                                                            {singleEntryData.reviews.map(review => (
+                                                                <div>
+                                                                    {review.album && review.album.id === singleEntryData.id && (
+                                                                        <div key={review.id} className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
+                                                                        <div className='flex'>
+                                                                                {[...Array(Math.floor(review.stars))].map((_, index) => (
+                                                                                    <FontAwesomeIcon icon={faStar} className='text-yellow-400' />
+                                                                                ))}
+                                                                                {review.stars % 1 !== 0 && (
+                                                                                    <FontAwesomeIcon icon={faStarHalfStroke} className='text-yellow-400' />)}
+                                                                                {[...Array(5 - Math.ceil(review.stars))].map((_, index) => (
+                                                                                    <FontAwesomeIcon icon={farStar} className='text-yellow-400' />
+                                                                                ))}
+                                                                            </div>
+                                                                            <p className='whitespace-pre-line mb-2'>{review.text}</p>
+                                                                            <div className='flex justify-between'>
+                                                                                <div className='flex flex-row'>
+                                                                                    <img src={`static/profile_pictures/${review.user.profile_pic}`}
+                                                                                        className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                                                                                    <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                                                                                    >{review.user.name}</p>
+                                                                                </div>
+                                                                                <p>{review.created_at}</p>
+                                                                            </div>
 
+                                                                        </div>
+                                                                    )}
                                                                 </div>
                                                             ))}
                                                         </div>
@@ -556,7 +627,7 @@ function MainPageItems({
                                                         <div onClick={() => fetchSingleEntry(gear.model_type, gear.id)}
                                                             className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                            <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                            <h1 className='text-2xl font-bold flex justify-center mb-4 w-40'
                                                             >{gear.name}</h1>
                                                             <img src={`static/gear_images/${gear.image}`} className='object-cover mx-auto w-40 h-40' />
                                                         </div>

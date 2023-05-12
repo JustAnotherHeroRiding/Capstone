@@ -652,9 +652,8 @@ export function AddNewConnection({ AllEntriesData, fetchAllEntries, origin, conn
 };
 
 
-export function NewReviewForm({singleEntryData, fetchSingleEntry}) {
+export function NewReviewForm({singleEntryData, fetchSingleEntry, setReviewErrorMessage}) {
     const [stars, setStars] = useState(0);
-    const [errorMessage, setErrorMessage] = useState('');
 
     const MIN_TEXTAREA_HEIGHT = 32;
 
@@ -691,12 +690,12 @@ export function NewReviewForm({singleEntryData, fetchSingleEntry}) {
 
         if (response.ok) {
             fetchSingleEntry(singleEntryData.model_type, singleEntryData.id)
-            setStars(null);
-            setText('');
-            setErrorMessage('');
+            setStars(0);
+            setReviewErrorMessage('');
+            setValue('');
         } else {
             const error = await response.json();
-            setErrorMessage(error.message);
+            setReviewErrorMessage(error.error);
         }
     };
 
@@ -706,7 +705,7 @@ export function NewReviewForm({singleEntryData, fetchSingleEntry}) {
         <form onSubmit={handleSubmit} className='flex flex-col overflow-auto max-h-[400px] scrollbar-blue-thin text-Intone-300'>
             <label>
             <p>Stars:</p>               
-                <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black scrollbar-blue-thin'
+                <select className='w-1/4 border-solid border-2 rounded-lg py-2 px-4 text-black scrollbar-blue-thin'
                     value={stars} onChange={(e) => setStars(e.target.value)}>
                     <option value="">Select a rating</option>
                     <option value="0">0</option>
@@ -739,10 +738,9 @@ export function NewReviewForm({singleEntryData, fetchSingleEntry}) {
                     id="body-textarea"
                     placeholder="What did you think about it?"
                     rows='4'
-                    className='bg-Intone-200 px-6 placeholder:text-gray-500 outline-none resize-none border rounded-xl w-3/4 mx-auto py-2 scrollbar-blue-thin' />
+                    className='bg-Intone-200 px-6 placeholder:text-gray-500 outline-none resize-none border rounded-xl w-3/4 mx-auto py-2 scrollbar-blue-thin text-Intone-600' />
             </label>
             <br />
-            {errorMessage && <p>{errorMessage}</p>}
             <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
             <button type="submit" className='border-indigo-200 px-4 py-2 border rounded-3xl
              hover:bg-Intone-300 hover:text-black flex ml-auto mr-4 mt-6'>Submit</button>

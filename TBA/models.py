@@ -12,12 +12,13 @@ class User(AbstractUser):
         upload_to='TBA/static/profile_pics', blank=True, null=True)
 
     def serialize(self):
+        local_date_joined = timezone.localtime(self.date_joined)
         return {
             "id": self.id,
             "name": self.username,
             "email": self.email,
             "profile_pic": self.profile_pic.url if self.profile_pic else None,
-            "date_joined": self.date_joined.strftime('%Y-%m-%d'),
+            "date_joined": local_date_joined.strftime('%Y-%m-%d'),
             'model_type': 'user'
         }
 
@@ -36,13 +37,14 @@ class Message(models.Model):
     sent_at = models.DateTimeField(auto_now_add=True)
 
     def serialize(self):
+        local_sent_at = timezone.localtime(self.sent_at)
         return {
             'id': self.id,
             'sender': self.sender.serialize(),
             'recipient': self.recipient.serialize(),
             'body': self.body,
             'image': self.image.url if self.image else None,
-            'sent_at': self.sent_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'created_at': local_sent_at.strftime('%Y-%m-%d %H:%M:%S'),
             'model_type': 'message'
         }
 
@@ -64,8 +66,18 @@ class Gear(models.Model):
             'description': self.description,
             'image': self.image.url if self.image else None,
             'tonehunt_url': self.tonehunt_url,
+            'reviews': [review.serialize() for review in self.reviews.all()],
             'players': [player.minimal_serialize() for player in self.players.all()],
             'albums': [album.minimal_serialize() for album in self.albums.all()],
+            'model_type': 'gear'
+        }
+        
+    def minimal_serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'picture': self.image.url if self.image else None,
+            'description': self.description,
             'model_type': 'gear'
         }
 
@@ -181,13 +193,14 @@ class Review(models.Model):
 
 
     def serialize(self):
+        local_created_at = timezone.localtime(self.created_at)
         return {
             'id': self.id,
-            'album': self.album.name if self.album else None,
-            'gear': self.gear.name if self.gear else None,
+            'album': self.album.minimal_serialize() if self.album else None,
+            'gear': self.gear.minimal_serialize() if self.gear else None,
             'stars': self.stars,
             'text': self.text,
-            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'created_at': local_created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'user': self.user.serialize(),
             'model_type': 'review'
         }
@@ -204,13 +217,14 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def serialize(self):
+        local_created_at = timezone.localtime(self.created_at)
         return {
             'id': self.id,
             'album': self.album.name if self.album else None,
             'gear': self.gear.name if self.gear else None,
             'player': self.player.name if self.player else None,
             'text': self.text,
-            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'created_at': local_created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'model_type': 'comment'
         }
 
@@ -225,6 +239,7 @@ class ProfileComment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def serialize(self):
+        local_created_at = timezone.localtime(self.created_at)
         return {
             'id': self.id,
             'text': self.text,
@@ -232,6 +247,6 @@ class ProfileComment(models.Model):
             'user': self.user.serialize(),
             'profile_user_id': self.profile_user.username,
             'user_picture_poster': self.user.profile_pic.url,
-            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'created_at': local_created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'model_type': 'profile_comment'
         }

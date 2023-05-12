@@ -21,6 +21,8 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
         setShowLogIn(false)
     };
 
+    
+
 
 
     const [showProfile, setShowProfile] = useState(false)
@@ -73,6 +75,15 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
             setShowResults(false)
         };
     };
+
+    const handleUserMessageClick = (entry) => {
+        if (currentUser && entry.id === userData.id) {
+            handleProfileClick()
+        } else {
+          handleSearchResultClick(entry)
+        }
+      }
+    
 
     const [singleView, setSingleView] = useState(false)
     const [singleViewType, setSingleViewType] = useState('')
@@ -264,6 +275,7 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                     showOnlyEntryType={showOnlyEntryType}
                     AllEntriesData={data}
                     currentUserId={currentUserId}
+                    handleUserMessageClick={handleUserMessageClick}
                 />
             )}
 

@@ -465,6 +465,11 @@ def post_review(request, entry_type, entry_id):
     except ValueError:
         return JsonResponse({'error': 'Stars must be a number between 0 and 5'}, status=400)
     
+     # Check if the user has already reviewed the album or gear
+    existing_review = Review.objects.filter(user=request.user, gear_id=entry_id if entry_type == 'gear' else None, album_id=entry_id if entry_type == 'album' else None).first()
+    if existing_review:
+        return JsonResponse({'error': 'You have already reviewed this album or gear.'}, status=400)
+    
     review_data = {'stars': stars, 'text': text}
     if entry_type == 'album':
         review_data['album_id'] = entry_id
@@ -472,7 +477,7 @@ def post_review(request, entry_type, entry_id):
         review_data['gear_id'] = entry_id
         
     review_data['user'] = request.user
-        
+ 
     review = Review.objects.create(**review_data)
     review.save()
     

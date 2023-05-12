@@ -52,12 +52,13 @@
 - On the single view i can edit or add new gear, albums or any other connections #DONE 
 - I should also be able to delete connections #DONE 
 ## Reviews and Comments
-- Albums are done, need to add it for gear done
-- Users should be able to leave reviews for albums and gear, one per user
+- Albums are done, need to add it for gear #DONE 
+- Users should be able to leave reviews for albums and gear, one per user #DONE 
+- Users can edit their own reviews and change the star rating or text, if edited there will be a star next to the date to show it was edited after it's original date
 - Users can only leave comments for players and bands, which are not limited to one
 ## Browse Albums, Players or Gear #DONE
 
-## Leave Reviews for albums or gear, leave comments for players
+## Leave Reviews for albums or gear, leave comments for players #DONE 
 
 ## Messaging between users #DONE
 
