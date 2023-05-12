@@ -3,7 +3,8 @@ import './App.css'
 import Cookies from 'js-cookie';
 import _ from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPaperclip, faCircleLeft, faFaceSmile } from '@fortawesome/free-solid-svg-icons'
+import { faPaperclip, faCircleLeft, faFaceSmile, faPlus, faStar, faStarHalfStroke } from '@fortawesome/free-solid-svg-icons'
+import { faStar as farStar } from '@fortawesome/free-regular-svg-icons'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 
@@ -11,8 +12,14 @@ import Picker from '@emoji-mart/react'
 const MIN_TEXTAREA_HEIGHT = 32;
 
 
-function Profile({ userData, fetchUserData, current_user, handleProfileClick, handleSearchResultClick, currentUserId }) {
+function Profile({ userData, fetchUserData, current_user, handleProfileClick, handleSearchResultClick, currentUserId, fetchSingleEntry }) {
   const csrftoken = Cookies.get('csrftoken');
+
+  const [showReviews, setShowReviews] = useState(false)
+
+  const handleReviewsClick = () => {
+    setShowReviews(showReviews => !showReviews);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -277,7 +284,7 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
   function handleEmojiSelect(emoji, origin) {
     if (origin === 'message') {
       setMessageValue(prevValue => prevValue + emoji.native);
-    } else if (origin === 'profile_comment'){
+    } else if (origin === 'profile_comment') {
       setValue(prevValue => prevValue + emoji.native)
     }
   }
@@ -325,7 +332,7 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
       <h1 className='text-Intone-600'> Member since {userData.date_joined}</h1>
       <div className='border border-indigo-200 rounded-2xl px-2 mt-12 py-2'>
         <ul className='flex flex-row justify-center'>
-          <li className='mr-6 cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl'
+          <li className='mr-6 cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl' onClick={handleReviewsClick}
           >Reviews</li>
           <li className='mr-6 cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl'>
             Following</li>
@@ -351,6 +358,60 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
 
 
         </ul>
+        {showReviews && (
+          <div className='flex flex-col border border-indigo-200 rounded-2xl px-4 py-2 mt-6'>
+            <div className='px-2 py-4 md:ml-6'>
+              <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto'>
+                <div className='mr-4'>
+                  {userData.reviews.map(review => (
+                    <div key={review.id}>
+                    {review.gear || review.album ? (
+                        <div className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
+                          <div className='flex'>
+                            {[...Array(Math.floor(review.stars))].map((_, index) => (
+                              <FontAwesomeIcon icon={faStar} className='text-yellow-400' key={`full-star-${index}`} />
+                            ))}
+                            {review.stars % 1 !== 0 && (
+                              <FontAwesomeIcon icon={faStarHalfStroke} className='text-yellow-400' key={`half-star-${review.id}`} />)}
+                            {[...Array(5 - Math.ceil(review.stars))].map((_, index) => (
+                              <FontAwesomeIcon icon={farStar} className='text-yellow-400' key={`empty-star-${index}`} />
+                            ))}
+                          </div>
+                          <p className='whitespace-pre-line mb-2'>{review.text}</p>
+                          <div className='flex justify-between'>
+                            {review.gear && (
+                              <div className='flex flex-row'>
+                              <img src={`static/gear_images/${review.gear.picture}`}
+                                className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                              <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                                onClick={() => fetchSingleEntry(review.gear.model_type, review.gear.id)}>{review.gear.name}</p>
+                            </div>
+                            )}
+                            {review.album && (
+                              <div className='flex flex-row'>
+                              <img src={`static/album_covers/${review.album.cover_art_url}`}
+                                className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                              <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                                onClick={() => fetchSingleEntry(review.album.model_type, review.album.id)}>{review.album.name}</p>
+                            </div>
+                            )}
+                              
+                            <p>
+                              {review.is_edited && (
+                                <span className=' text-gray-500'>*</span>
+                              )}
+                              {review.created_at}
+                            </p>
+                          </div>
+                        </div>
+                      ): null}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         {showChat && (
           <div className='border border-indigo-200 z-50 bg-Intone-100 rounded-2xl px-2 mt-4 py-2 bottom-0 fixed right-0 w-96 h-[600px] m-4'>
 
@@ -476,8 +537,8 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
               className='bg-Intone-200 px-6 placeholder:text-gray-500 outline-none resize-none' />
             <hr className="border-gray-500" />
             <div>
-                <FontAwesomeIcon icon={faFaceSmile} onClick={() => handleEmojiShow('profile_comment')}
-                  className='cursor-pointer w-6 h-6 hover:scale-125 transition-transform duration-200 z-10 mt-6' />
+              <FontAwesomeIcon icon={faFaceSmile} onClick={() => handleEmojiShow('profile_comment')}
+                className='cursor-pointer w-6 h-6 hover:scale-125 transition-transform duration-200 z-10 mt-6' />
             </div>
             <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
             <input type="submit" id="post-submit" className="cursor-pointer	hover:bg-Intone-500 bg-Intone-300 text-white font-semibold py-2 px-6 rounded-3xl shadow mb-10 w-24 ml-auto mr-6 resize-none" value="Send" />

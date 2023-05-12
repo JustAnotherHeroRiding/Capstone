@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST, require_http_methods
 from django.core.files.storage import FileSystemStorage
-from django.db.models import Q
+from django.db.models import Q, F
 
 
 import json
@@ -491,7 +491,7 @@ def post_review(request, entry_type, entry_id):
     return JsonResponse({'success': True, 'review': review.serialize()})
 
 def get_all_reviews(request):
-    reviews = Review.objects.all()
+    reviews = Review.objects.all().order_by(F('created_at').desc())
     serialized_reviews = [review.serialize() for review in reviews]
     return JsonResponse(serialized_reviews, safe=False)
 

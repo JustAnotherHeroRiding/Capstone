@@ -60,12 +60,13 @@
 
 ## Going back to the profile
 - Finish the remaining functionality on the profile, which is the reactive menu: 
-- With all reviews posted by a user
+- With all reviews posted by a user #DONE 
 - Reviews posted by users I follow 
 - Gear on the wishlist 
 - Album charts
 
 ## Finishing Touches
+- Reviews sorted in reverse chronological order #DONE 
 - Pagination for the entries so I dont have to scroll a lot if there are a lot of entries
 - Testing the responsiveness of the UI and appearance on smaller screens
 - Smoothing out elements that don't fit the style or stick out

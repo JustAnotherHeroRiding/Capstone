@@ -10,6 +10,10 @@ class User(AbstractUser):
         Permission, related_name='tba_users')
     profile_pic = models.ImageField(
         upload_to='TBA/static/profile_pics', blank=True, null=True)
+    
+    @property
+    def sorted_reviews_posted(self):
+        return self.reviews_posted.order_by('-created_at')
 
     def serialize(self):
         local_date_joined = timezone.localtime(self.date_joined)
@@ -19,6 +23,7 @@ class User(AbstractUser):
             "email": self.email,
             "profile_pic": self.profile_pic.url if self.profile_pic else None,
             "date_joined": local_date_joined.strftime('%Y-%m-%d'),
+            "reviews": [review.minimal_serialize() for review in self.sorted_reviews_posted if self.reviews_posted],
             'model_type': 'user'
         }
 
@@ -57,6 +62,10 @@ class Gear(models.Model):
     image = models.ImageField(
         upload_to='TBA/static/gear_images/', blank=True, null=True)
     tonehunt_url = models.URLField(blank=True, null=True)
+    
+    @property
+    def sorted_reviews(self):
+        return self.reviews.order_by('-created_at')
 
     def serialize(self):
         return {
@@ -66,7 +75,7 @@ class Gear(models.Model):
             'description': self.description,
             'image': self.image.url if self.image else None,
             'tonehunt_url': self.tonehunt_url,
-            'reviews': [review.serialize() for review in self.reviews.all()],
+            "reviews": [review.serialize() for review in self.sorted_reviews if self.reviews],
             'players': [player.minimal_serialize() for player in self.players.all()],
             'albums': [album.minimal_serialize() for album in self.albums.all()],
             'model_type': 'gear'
@@ -141,6 +150,10 @@ class Album(models.Model):
     cover_art = models.ImageField(
         upload_to='TBA/static/album_covers/', blank=True, null=True)
     description = models.TextField(blank=True)
+    
+    @property
+    def sorted_reviews(self):
+        return self.reviews.order_by('-created_at')
 
     def serialize(self):
         print(self.cover_art.url)
@@ -151,7 +164,7 @@ class Album(models.Model):
             'band_id': self.band.id,
             'players': [player.serialize() for player in self.guitar_players.all()],
             'cover_art_url': self.cover_art.url if self.cover_art else None,
-            'reviews': [review.serialize() for review in self.reviews.all()],
+            "reviews": [review.serialize() for review in self.sorted_reviews if self.reviews],
             'comments': [comment.serialize() for comment in self.comments.all()],
             'description': self.description,
             'gear': [gear.serialize() for gear in self.gear.all()],
@@ -204,6 +217,18 @@ class Review(models.Model):
             'text': self.text,
             'created_at': local_created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'user': self.user.serialize(),
+            'is_edited': self.is_edited,
+            'model_type': 'review'
+        }
+    def minimal_serialize(self):
+        local_created_at = timezone.localtime(self.created_at)
+        return {
+            'id': self.id,
+            'album': self.album.minimal_serialize() if self.album else None,
+            'gear': self.gear.minimal_serialize() if self.gear else None,
+            'stars': self.stars,
+            'text': self.text,
+            'created_at': local_created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'is_edited': self.is_edited,
             'model_type': 'review'
         }
