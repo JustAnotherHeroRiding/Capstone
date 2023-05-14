@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPaperclip, faCircleLeft, faFaceSmile, faPlus, faStar, faStarHalfStroke } from '@fortawesome/free-solid-svg-icons'
 import { faStar as farStar } from '@fortawesome/free-regular-svg-icons'
-import { AddAlbumForm, AddGearForm, AddPlayerForm, AddBandForm, AddNewConnection, NewReviewForm } from './Forms.jsx';
+import { AddAlbumForm, AddGearForm, AddPlayerForm, AddBandForm, AddNewConnection, NewReviewForm, NewEntryComment } from './Forms.jsx';
 
 function MainPageItems({
     fetchSingleEntry, exitSingleView, singleView, singleViewType,
@@ -47,9 +47,12 @@ function MainPageItems({
     }
 
     useEffect(() => {
-        fetchAllEntries()
         fetchAllReviews()
     }, []);
+
+    useEffect(() =>{
+        setAllEntries(AllEntriesData)
+    }, [AllEntriesData]);
 
     useEffect(() => {
         setReviewErrorMessage('');
@@ -384,6 +387,8 @@ function MainPageItems({
                                                     </div>
                                                 </div>
                                             </div>
+                                            <NewEntryComment singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} handleUserMessageClick={handleUserMessageClick} />
+
                                         </div>
                                     </>
                                 )}
@@ -442,8 +447,10 @@ function MainPageItems({
                                                         </div>
                                                     </div>
                                                 ))}
-                                            </div>
+                                            </div>                                   
                                         </div>
+                                        <NewEntryComment singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} handleUserMessageClick={handleUserMessageClick} />
+
                                     </>
                                 )}
                                 {singleViewType === 'album' && (
@@ -559,6 +566,7 @@ function MainPageItems({
                                                     </div>
                                                 </div>
                                             </div>
+                                            <NewEntryComment singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} handleUserMessageClick={handleUserMessageClick} />
                                         </div>
                                     </>
                                 )}
@@ -645,7 +653,8 @@ function MainPageItems({
                                                     </div>
                                                 ))}
                                             </div>
-                                        </div>
+                                        </div>                                            
+                                        <NewEntryComment singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} handleUserMessageClick={handleUserMessageClick} />
                                     </>
                                 )}
                             </div>

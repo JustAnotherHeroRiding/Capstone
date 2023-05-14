@@ -26,6 +26,10 @@ class User(AbstractUser):
             "reviews": [review.minimal_serialize() for review in self.sorted_reviews_posted if self.reviews_posted],
             'model_type': 'user'
         }
+    def minimal_serialize(self):
+        return{
+            "id": self.id
+        }
 
     def get_messages(self):
         return list(self.sent_messages.all()) + list(self.received_messages.all())
@@ -66,6 +70,10 @@ class Gear(models.Model):
     @property
     def sorted_reviews(self):
         return self.reviews.order_by('-created_at')
+    
+    @property
+    def sorted_comments(self):
+        return self.comments.order_by('-created_at')
 
     def serialize(self):
         return {
@@ -78,6 +86,7 @@ class Gear(models.Model):
             "reviews": [review.serialize() for review in self.sorted_reviews if self.reviews],
             'players': [player.minimal_serialize() for player in self.players.all()],
             'albums': [album.minimal_serialize() for album in self.albums.all()],
+            'comments': [comment.serialize() for comment in self.sorted_comments if self.sorted_comments],
             'model_type': 'gear'
         }
         
@@ -97,6 +106,10 @@ class Player(models.Model):
     picture = models.ImageField(
         upload_to='TBA/static/player_pics/', null=True, blank=True)
     description = models.TextField(blank=True)
+    
+    @property
+    def sorted_comments(self):
+        return self.comments.order_by('-created_at')
 
     def serialize(self):
         return {
@@ -105,6 +118,7 @@ class Player(models.Model):
             'gear': [gear.serialize() for gear in self.gear.all()],
             'picture': self.picture.url if self.picture else None,
             'description': self.description,
+            'comments': [comment.serialize() for comment in self.sorted_comments if self.sorted_comments],
             'bands': [(band.name, band.id, band.picture.url) for band in self.bands.all()],
             'albums': [album.minimal_serialize() for album in self.albums.all()],
             'model_type': 'player'
@@ -127,6 +141,10 @@ class Band(models.Model):
     picture = models.ImageField(
         upload_to='TBA/static/band_pics/', null=True, blank=True)
     description = models.TextField(blank=True)
+    
+    @property
+    def sorted_comments(self):
+        return self.comments.order_by('-created_at')
 
     def serialize(self):
         return {
@@ -135,6 +153,7 @@ class Band(models.Model):
             'players': [member.serialize() for member in self.members.all()],
             'albums': [album.serialize() for album in self.albums.all()],
             'picture': self.picture.url if self.picture else None,
+            'comments': [comment.serialize() for comment in self.sorted_comments if self.sorted_comments],
             'description': self.description,
             'model_type': 'band'
         }
@@ -154,6 +173,10 @@ class Album(models.Model):
     @property
     def sorted_reviews(self):
         return self.reviews.order_by('-created_at')
+    
+    @property
+    def sorted_comments(self):
+        return self.comments.order_by('-created_at')
 
     def serialize(self):
         print(self.cover_art.url)
@@ -165,7 +188,7 @@ class Album(models.Model):
             'players': [player.serialize() for player in self.guitar_players.all()],
             'cover_art_url': self.cover_art.url if self.cover_art else None,
             "reviews": [review.serialize() for review in self.sorted_reviews if self.reviews],
-            'comments': [comment.serialize() for comment in self.comments.all()],
+            'comments': [comment.serialize() for comment in self.sorted_comments if self.sorted_comments],
             'description': self.description,
             'gear': [gear.serialize() for gear in self.gear.all()],
             'model_type': 'album'
@@ -235,12 +258,16 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='entry_comments_posted', blank=True, null=True)
     album = models.ForeignKey(
         Album, on_delete=models.CASCADE, related_name='comments', blank=True, null=True)
     player = models.ForeignKey(
         Player, on_delete=models.CASCADE, related_name='comments', blank=True, null=True)
     gear = models.ForeignKey(
         Gear, on_delete=models.CASCADE, related_name='comments', blank=True, null=True)
+    band = models.ForeignKey(
+        Band, on_delete=models.CASCADE, related_name='comments', blank=True, null=True)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -248,9 +275,12 @@ class Comment(models.Model):
         local_created_at = timezone.localtime(self.created_at)
         return {
             'id': self.id,
-            'album': self.album.name if self.album else None,
-            'gear': self.gear.name if self.gear else None,
-            'player': self.player.name if self.player else None,
+            'username': self.user.username,
+            'user': self.user.minimal_serialize(),
+            'user_profile_pic': self.user.profile_pic.url,
+            #'album': self.album.name if self.album else None,
+            #'gear': self.gear.name if self.gear else None,
+            #'player': self.player.name if self.player else None,
             'text': self.text,
             'created_at': local_created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'model_type': 'comment'

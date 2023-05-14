@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import Cookies from 'js-cookie';
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFaceSmile } from '@fortawesome/free-solid-svg-icons'
+
 
 
 
@@ -652,7 +657,7 @@ export function AddNewConnection({ AllEntriesData, fetchAllEntries, origin, conn
 };
 
 
-export function NewReviewForm({singleEntryData, fetchSingleEntry, setReviewErrorMessage}) {
+export function NewReviewForm({ singleEntryData, fetchSingleEntry, setReviewErrorMessage }) {
     const [stars, setStars] = useState(0);
 
     const MIN_TEXTAREA_HEIGHT = 32;
@@ -699,12 +704,12 @@ export function NewReviewForm({singleEntryData, fetchSingleEntry, setReviewError
         }
     };
 
-   
+
 
     return (
         <form onSubmit={handleSubmit} className='flex flex-col overflow-auto max-h-[400px] scrollbar-blue-thin text-Intone-300'>
             <label>
-            <p>Stars:</p>               
+                <p>Stars:</p>
                 <select className='w-1/4 border-solid border-2 rounded-lg py-2 px-4 text-black scrollbar-blue-thin'
                     value={stars} onChange={(e) => setStars(e.target.value)}>
                     <option value="">Select a rating</option>
@@ -723,8 +728,8 @@ export function NewReviewForm({singleEntryData, fetchSingleEntry, setReviewError
             </label>
             <br />
             <label className='flex flex-col'>
-                <p className='font-bold mx-auto mb-4'>                
-                Text:
+                <p className='font-bold mx-auto mb-4'>
+                    Text:
                 </p>
                 <textarea type="text"
                     onChange={onChange}
@@ -746,6 +751,131 @@ export function NewReviewForm({singleEntryData, fetchSingleEntry, setReviewError
              hover:bg-Intone-300 hover:text-black flex ml-auto mr-4 mt-6'>Submit</button>
         </form>
     );
+}
+
+
+export function NewEntryComment({ singleEntryData, fetchSingleEntry, handleUserMessageClick }) {
+
+    const MIN_TEXTAREA_HEIGHT = 32;
+    const csrftoken = Cookies.get('csrftoken');
+
+
+
+    // Consts for the new post textarea
+    const textareaRef = useRef(null);
+    const [value, setValue] = useState("");
+    const onChange = (event) => setValue(event.target.value);
+
+    // Logic for the resizing textarea
+    useLayoutEffect(() => {
+        // Reset height - important to shrink on delete
+        textareaRef.current.style.height = "inherit";
+        // Set height
+        textareaRef.current.style.height = `${Math.max(
+            textareaRef.current.scrollHeight,
+            MIN_TEXTAREA_HEIGHT
+        )}px`;
+    }, [value]);
+
+    function send_comment(event) {
+        event.preventDefault();
+
+        const formData = new FormData();
+        formData.append('text', value);
+
+        fetch(`entries/add/comment/${singleEntryData.model_type}/${singleEntryData.id}`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to send comment.');
+                }
+            })
+            .then(data => {
+                setValue("")
+                fetchSingleEntry(singleEntryData.model_type, singleEntryData.id)
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
+    function handleEmojiSelect(emoji) {
+        setValue(prevValue => prevValue + emoji.native)
+      }
+    
+      const [showEntryCommentEmoji, setShowEntryCommentEmoji] = useState(false)
+    
+      function handleEmojiShow() {
+        setShowEntryCommentEmoji(!showEntryCommentEmoji)
+        
+      }
+
+
+    return (
+
+        <div>
+            <h1 className='mt-12 mb-6 text-3xl font-bold'>Comments</h1>
+            <div className='flex flex-row max-md:flex-col justify-between border border-indigo-200 px-6 py-4 rounded-2xl'>
+                <div className=''>
+                    {showEntryCommentEmoji && (
+                        <div className='absolute top-28'>
+                            <Picker data={data} onEmojiSelect={(emoji) => handleEmojiSelect(emoji)} />
+                        </div>
+                    )}
+                    <form id='newpost' onSubmit={send_comment} className='flex-col flex my-6 border px-4 rounded-3xl border-indigo-200 pt-6 w-96'>
+                        <textarea type="text"
+                            onChange={onChange}
+                            ref={textareaRef}
+                            style={{
+                                minHeight: MIN_TEXTAREA_HEIGHT,
+                                maxHeight: 400
+                            }}
+                            value={value}
+                            name="postbody"
+                            id="postbody"
+                            placeholder={`What did you think about ${singleEntryData.name}`}
+                            rows='3'
+                            className='bg-Intone-200 px-6 placeholder:text-gray-500 outline-none resize-none' />
+                        <hr className="border-gray-500" />
+                        <div>
+                            <FontAwesomeIcon icon={faFaceSmile} onClick={() => handleEmojiShow('profile_comment')}
+                                className='cursor-pointer w-6 h-6 hover:scale-125 transition-transform duration-200 z-10 mt-6' />
+                        </div>
+                        <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+                        <button type="submit" className='border-indigo-200 px-4 py-2 border rounded-3xl
+             hover:bg-Intone-300 hover:text-black flex ml-auto mr-4 mb-6'>Submit</button>
+                    </form>
+                </div>
+                <div className='px-2 py-4 md:ml-6'>
+                    <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto'>
+                        <div className='mr-4'>
+                            {singleEntryData.comments.map(comment => (
+                                <div key={comment.id} className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
+                                    <p className='whitespace-pre-line mb-2'>{comment.text}</p>
+                                    <div className='flex justify-between'>
+                                        <div className='flex flex-row'>
+                                            <img src={`static/profile_pictures/${comment.user_profile_pic}`} className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                                            <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                                                onClick={() => handleUserMessageClick(comment.user)}>{comment.username}</p>
+                                        </div>
+                                        <p>{comment.created_at}</p>
+                                    </div>
+
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
 }
 
 

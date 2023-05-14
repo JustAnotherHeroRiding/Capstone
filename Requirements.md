@@ -56,7 +56,7 @@
 - Users should be able to leave reviews for albums and gear, one per user #DONE 
 - Users can edit their own reviews and change the star rating or text, if edited there will be a star next to the date to show it was edited after it's original date #DONE 
 - If a user submits a review when there is already one review posted by them then the review will be edited with the new stars and text #DONE 
-- Users can only leave comments for players and bands, which are not limited to one but do not have stars
+- Users can only leave comments for players and bands, which are not limited to one but do not have stars, comments can also be left on albums and gear #DONE 
 
 ## Going back to the profile
 - Finish the remaining functionality on the profile, which is the reactive menu: 

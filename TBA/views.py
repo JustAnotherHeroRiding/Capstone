@@ -105,6 +105,38 @@ def send_profile_comment(request, profile_id):
     else:
         return JsonResponse({"error": "HTTP method not allowed."}, status=405)
 
+@login_required
+def send_entry_comment(request, entry_type, entry_id):
+    if request.method == 'POST':
+        user = request.user
+        print(request.POST)
+        text = request.POST.get('text')
+
+        # Determine the entry type and retrieve the corresponding entry
+        if entry_type == 'album':
+            entry = Album.objects.get(pk=entry_id)
+        elif entry_type == 'player':
+            entry = Player.objects.get(pk=entry_id)
+        elif entry_type == 'gear':
+            entry = Gear.objects.get(pk=entry_id)
+        elif entry_type == 'band':
+            entry = Band.objects.get(pk=entry_id)
+        else:
+            return JsonResponse({'error': 'Invalid entry type'})
+
+        # Create the new comment
+        comment = Comment.objects.create(
+            user=user,
+            text=text,
+            **{f'{entry_type}': entry}
+        )
+
+        # Return the serialized comment as a JSON response
+        return JsonResponse(comment.serialize())
+
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
+
 
 def get_profile_comments(request, profile_id):
     if request.method == "GET":
