@@ -5,6 +5,7 @@ import LogIn from './LogIn'
 import Profile from './Profile'
 import Entry from './AlbumGearArtist'
 import MainPageItems from './AlbumGearArtist'
+import { faL } from '@fortawesome/free-solid-svg-icons'
 
 function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, currentUserId }) {
 
@@ -30,7 +31,7 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
     const [showOtherProfile, setShowOtherProfile] = useState(false)
     const [otherUserData, setOtherUserData] = useState(null);
 
-    const [currentUser, setCurrentUser] = useState(true)
+    const [currentUser, setCurrentUser] = useState(false)
 
 
 
@@ -80,12 +81,15 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
     };
 
     const handleUserMessageClick = (entry) => {
-        if (currentUser && entry.id === userData.id) {
-            handleProfileClick()
+        if (!currentUser) {
+            handleSearchResultClick(entry);
+        } else if (userData && entry.id === userData.id) {
+            handleProfileClick();
         } else {
-          handleSearchResultClick(entry)
+            handleSearchResultClick(entry);
         }
-      }
+    };
+    
     
 
     const [singleView, setSingleView] = useState(false)
@@ -168,6 +172,7 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
             setShowResults(false);
         }
     };
+
 
 
     return (

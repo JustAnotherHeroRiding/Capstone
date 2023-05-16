@@ -15,7 +15,9 @@ urlpatterns = [
     path('profile/messages', views.get_all_messages, name='get_messages'),
     path('profile/messages/user', views.get_all_users, name='user_messages'),
     path('profile/messages/conversation/<int:user_id>', views.get_message_history, name='message_history'),
-    
+    path('profile/follow/<int:user_id>', views.follow_user, name='follow_user'),
+    path('profile/unfollow/<int:user_id>', views.unfollow_user, name='unfollow_user'),
+
     path('send/profile/message/<int:recipient_id>', views.send_message, name='send_message'),
     
     path('entries/get/all', views.get_all_entries, name='all_entries'),

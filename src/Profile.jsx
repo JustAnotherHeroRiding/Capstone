@@ -300,13 +300,99 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
     }
   }
 
+  function checkIfFollowing(current_user_id, followers_users) {
+    return followers_users.includes(current_user_id);
+  }
+
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  useEffect(() => {
+    setIsFollowing(checkIfFollowing(currentUserId, userData.followers_users));
+  }, [currentUserId, userData.followers_users]);
+
+
+
+  function handleFollowSubmit(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    // Send the follow request using AJAX
+    fetch(`profile/follow/${userData.id}`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrftoken
+      }
+    })
+      .then(response => {
+        if (response.ok) {
+          // Handle a successful follow request
+          setIsFollowing(true)
+          if (current_user) {
+            fetchUserData()
+          } else {
+            fetchUserData(userData.id)
+          }
+          return response.json(); // Parse the response data as JSON
+        } else {
+          // Handle an error in the follow request
+          console.error('Failed to follow user.');
+        }
+      })
+      .then(data => {
+        // Log the response data
+        console.log(data.message);
+      })
+      .catch(error => {
+        // Handle a network or other error
+        console.error('An error occurred:', error);
+      });
+  }
+
+  function handleUnfollowSubmit(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    // Send the follow request using AJAX
+    fetch(`profile/unfollow/${userData.id}`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrftoken
+      }
+    })
+      .then(response => {
+        if (response.ok) {
+          // Handle a successful follow request
+          if (current_user) {
+            fetchUserData()
+          } else {
+            fetchUserData(userData.id)
+          }
+          setIsFollowing(false)
+          return response.json(); // Parse the response data as JSON
+        } else {
+          // Handle an error in the follow request
+          console.error('Failed to unfollow user.');
+        }
+      })
+      .then(data => {
+        // Log the response data
+        console.log(data.message);
+      })
+      .catch(error => {
+        // Handle a network or other error
+        console.error('An error occurred:', error);
+      });
+  }
+
+
 
   return (
 
     <div className='mx-auto h-screen flex flex-col items-center relative'>
       {current_user && <h1 className='text-Intone-600 items-center font-bold text-3xl'>Welcome {userData.name}</h1>}
       {!current_user && <h1 className='text-intone-600 items-center font-bold text-3xl'> {userData.name}</h1>}
-
+      <div className='flex flex-row justify-between'>
+        <h4 className='mr-4'>Followers<p className='flex justify-center'>{userData.followers_count}</p></h4>
+        <h4 className='ml-4'>Following<p className='flex justify-center'>{userData.following_count}</p></h4>
+      </div>
 
       <div className='flex flex-row justify-between mt-12'>
         {current_user && <div className='text-Intone-600 border border-indigo-200 rounded-xl px-6 py-4 mr-12'>
@@ -330,6 +416,33 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
         <img src={`static/profile_pictures/${userData.profile_pic}`} className='object-cover w-40 h-40 rounded-full' />
       </div>
       <h1 className='text-Intone-600'> Member since {userData.date_joined}</h1>
+      {currentUserId !== userData.id && (
+        <>
+          {!isFollowing ? (
+            <form onSubmit={handleFollowSubmit}>
+              <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+              <button
+                type="submit"
+                className="border-indigo-200 px-4 py-2 border rounded-3xl hover:bg-Intone-300 hover:text-black mr-4 mt-6"
+              >
+                Follow
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleUnfollowSubmit}>
+              <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+              <button
+                type="submit"
+                className="border-red-200 px-4 py-2 border rounded-3xl hover:bg-red-300 hover:text-black mr-4 mt-6"
+              >
+                Unfollow
+              </button>
+            </form>
+          )}
+        </>
+      )}
+
+
       <div className='border border-indigo-200 rounded-2xl px-2 mt-12 py-2'>
         <ul className='flex flex-row justify-center'>
           <li className='mr-6 cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl' onClick={handleReviewsClick}
@@ -365,7 +478,7 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
                 <div className='mr-4'>
                   {userData.reviews.map(review => (
                     <div key={review.id}>
-                    {review.gear || review.album ? (
+                      {review.gear || review.album ? (
                         <div className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
                           <div className='flex'>
                             {[...Array(Math.floor(review.stars))].map((_, index) => (
@@ -381,21 +494,21 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
                           <div className='flex justify-between'>
                             {review.gear && (
                               <div className='flex flex-row'>
-                              <img src={`static/gear_images/${review.gear.picture}`}
-                                className='object-cover w-8 h-8 rounded-full mr-2'></img>
-                              <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
-                                onClick={() => fetchSingleEntry(review.gear.model_type, review.gear.id)}>{review.gear.name}</p>
-                            </div>
+                                <img src={`static/gear_images/${review.gear.picture}`}
+                                  className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                                <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                                  onClick={() => fetchSingleEntry(review.gear.model_type, review.gear.id)}>{review.gear.name}</p>
+                              </div>
                             )}
                             {review.album && (
                               <div className='flex flex-row'>
-                              <img src={`static/album_covers/${review.album.cover_art_url}`}
-                                className='object-cover w-8 h-8 rounded-full mr-2'></img>
-                              <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
-                                onClick={() => fetchSingleEntry(review.album.model_type, review.album.id)}>{review.album.name}</p>
-                            </div>
+                                <img src={`static/album_covers/${review.album.cover_art_url}`}
+                                  className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                                <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                                  onClick={() => fetchSingleEntry(review.album.model_type, review.album.id)}>{review.album.name}</p>
+                              </div>
                             )}
-                              
+
                             <p>
                               {review.is_edited && (
                                 <span className=' text-gray-500'>*</span>
@@ -404,7 +517,7 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
                             </p>
                           </div>
                         </div>
-                      ): null}
+                      ) : null}
                     </div>
                   ))}
                 </div>

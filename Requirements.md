@@ -22,7 +22,7 @@
 - Messages should have pictures as well as text and emoji #DONE
 - Users can upload their profile pictures #DONE
 - If i follow a user i can see all of their reviews
-- The user view will have a reactive second nav menu allowing me to select my reviews, reviews from follower users, gear on my wishlist etc
+- The user view will have a reactive second nav menu allowing me to select my reviews, reviews from followed users, gear on my wishlist etc
 - Create Lists
 - Pagination for comments, infinite scroll for messages where messages get loaded when scrolling up
 
@@ -59,10 +59,13 @@
 - Users can only leave comments for players and bands, which are not limited to one but do not have stars, comments can also be left on albums and gear #DONE 
 
 ## Going back to the profile
-- Finish the remaining functionality on the profile, which is the reactive menu: 
+- Finish the remaining functionality on the profile, which is the reactive menu: #DONE 
 - With all reviews posted by a user #DONE 
-- Reviews posted by users I follow 
-- Gear on the wishlist 
+- Users can follow each other #DONE 
+- I need a way to fetch all reviews posted by the users that I am following whose Ids are currently stored in following_users, either a new endpoint or an extension to following_users
+- Reviews posted by users I follow in the following tab on the profile nav menu
+- Adding gear to the wishlist
+- Gear on the wishlist on the profile view
 - Album charts
 
 ## Finishing Touches

@@ -551,6 +551,52 @@ def delete_entry(request, entry_type, entry_id):
     return JsonResponse({"message": f"{entry_type} {entry_id} deleted successfully"})
 
 
+@login_required
+def follow_user(request, user_id):
+    if request.method == "POST":
+        user_to_follow = User.objects.get(id=user_id)
+        current_user = request.user
+        
+        if user_to_follow == current_user:
+        # The user is trying to follow themselves
+            return JsonResponse({'message': 'You cannot follow yourself'})
+        
+        if current_user.following.filter(id=user_to_follow.id).exists():
+        # The user is already following the target user
+            return JsonResponse({'message': 'You are already following this user'})
+
+        if current_user.is_authenticated:
+            current_user.following.add(user_to_follow)
+            return JsonResponse({"message": f"You are now following {user_to_follow.username}"})
+
+        return JsonResponse({"error": "User is not authenticated."}, status=401)
+
+    return JsonResponse({"error": "Invalid request method."}, status=400)
+
+
+@login_required
+def unfollow_user(request, user_id):
+    if request.method == "POST":
+        user_to_unfollow = User.objects.get(id=user_id)
+        current_user = request.user
+        
+        if user_to_unfollow == current_user:
+        # The user is trying to unfollow themselves
+            return JsonResponse({'message': 'You cannot unfollow yourself'})
+        
+        if not current_user.following.filter(id=user_to_unfollow.id).exists():
+        # The user is not currently following the target user
+            return JsonResponse({'message': 'You are not currently following this user'})
+
+        if current_user.is_authenticated:
+            current_user.following.remove(user_to_unfollow)
+            return JsonResponse({"message": f"You have unfollowed {user_to_unfollow.username}"})
+
+        return JsonResponse({"error": "User is not authenticated."}, status=401)
+
+    return JsonResponse({"error": "Invalid request method."}, status=400)
+
+
 @csrf_protect
 def login_view(request):
     if request.method == "POST":
