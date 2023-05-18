@@ -23,6 +23,7 @@ from .models import (
     ProfileComment,
     Player,
     Review,
+    Wishlist
 )
 
 
@@ -595,6 +596,32 @@ def unfollow_user(request, user_id):
         return JsonResponse({"error": "User is not authenticated."}, status=401)
 
     return JsonResponse({"error": "Invalid request method."}, status=400)
+
+
+@login_required
+def add_to_wishlist(request, gear_id):
+    print(request)
+    try:
+        wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+        gear = Gear.objects.get(id=gear_id)
+        wishlist.add_gear_item(gear)
+        return JsonResponse({"message": "Gear item added to wishlist successfully."})
+    except Gear.DoesNotExist:
+        return JsonResponse({"error": "Gear item not found."}, status=404)
+    finally:
+        return JsonResponse({'error': "Unsuccessful request"})
+
+@login_required
+def remove_from_wishlist(request, gear_id):
+    try:
+        wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+        gear = Gear.objects.get(id=gear_id)
+        wishlist.remove_gear_item(gear)
+        return JsonResponse({"message": "Gear item removed from wishlist successfully."})
+    except Gear.DoesNotExist:
+        return JsonResponse({"error": "Gear item not found."}, status=404)
+    finally:
+        return JsonResponse({'error': "Unsuccessful request"})
 
 
 @csrf_protect

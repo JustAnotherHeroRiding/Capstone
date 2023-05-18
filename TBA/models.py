@@ -41,6 +41,7 @@ class User(AbstractUser):
             "following_count": self.following.count(),
             "followers_users": [user.id for user in self.followers.all()],
             "following_users": [user.id for user in self.following.all()],
+            "wishlist": [w.serialize() for w in self.wishlist.all()] if self.wishlist.all() else None,
             "model_type": "user",
         }
 
@@ -134,6 +135,29 @@ class Gear(models.Model):
             "description": self.description,
             "model_type": "gear",
         }
+        
+        
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlist', blank=True)
+    gear_items = models.ManyToManyField(Gear, related_name='wishlists')
+
+    def add_gear_item(self, gear):
+        self.gear_items.add(gear)
+
+    def remove_gear_item(self, gear):
+        self.gear_items.remove(gear)
+
+    def has_gear_item(self, gear):
+        return self.gear_items.filter(id=gear.id).exists()
+    
+    def serialize(self):
+        gear_items = self.gear_items.values_list('id', flat=True)
+        return {
+            "id": self.id,
+            #"user": self.user.serialize(),  # Serialize the user object if needed
+            "gear_items": list(gear_items),
+        }
+
 
 
 class Player(models.Model):

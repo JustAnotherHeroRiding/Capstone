@@ -28,6 +28,9 @@ urlpatterns = [
     path('entries/connection/delete/<str:origin_type>/<int:origin_id>/<str:connection_type>/<int:connection_id>', views.delete_connections, name='delete_connection'),
     path('entries/delete/<str:entry_type>/<int:entry_id>', views.delete_entry, name='delete_entry'),
     path('entries/add/comment/<str:entry_type>/<int:entry_id>', views.send_entry_comment, name='send_entry_comment'),
+    
+    path('wishlist/add/<int:gear_id', views.add_to_wishlist, name='add_to_wishlist'),
+    path('wishlist/remove/<int:gear_id', views.remove_from_wishlist, name='remove_to_wishlist'),
 
     path('review/post/<str:entry_type>/<int:entry_id>', views.post_review, name='post_review'),
     path('review/get/all', views.get_all_reviews, name='get_all_reviews'),
