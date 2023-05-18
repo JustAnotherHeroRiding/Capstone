@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { debounce } from 'lodash'
 import './App.css'
 import Register from './Register'
 import LogIn from './LogIn'
@@ -144,16 +145,33 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
 
     const [data, setData] = useState([]);
 
-    function FetchSearchData() {
+    const FetchSearchData = debounce(() => {
         fetch(`/search`)
-            .then(response => response.json())
-            .then(data => {
-                setData(data);
-            });
-    }
-    useEffect(() => {
-        FetchSearchData()
-    }, []);
+          .then(response => response.json())
+          .then(data => {
+            setData(data);
+          });
+      }, 50); // Adjust the debounce delay as needed
+
+
+    const [reviews, setReviews] = useState([])
+
+    const fetchAllReviews = debounce(() => {
+        fetch('review/get/all')
+          .then(response => response.json())
+          .then(data => setReviews(data))
+          .catch(error => console.log(error))
+      }, 50); // Adjust the debounce delay as needed
+
+      useEffect(() => {
+        FetchSearchData();
+        fetchAllReviews();
+      }, []);
+      
+      
+      
+
+    
 
 
     const handleInputChange = (event) => {
@@ -177,7 +195,7 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
 
     return (
         <div>
-            <nav className="z-10 md:left-0 md:top-0 md:fixed md:h-screen md:flex lg:w-72 md:w-48 md:flex-col text-Intone-600 px-2 text-xl bg-Intone-100">
+            <nav className="z-10 md:left-0 md:top-0 md:fixed md:h-screen md:flex lg:w-60 md:w-40 md:flex-col text-Intone-600 px-2 text-xl bg-Intone-100">
 
                 <h1 className="mb-12 md:mt-4 hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer">
                     <a className="text-4xl font-bold mx-auto text-Intone-500" href=''>inTone</a></h1>
@@ -257,6 +275,7 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                             handleSearchResultClick={handleSearchResultClick}
                             currentUserId={currentUserId}
                             fetchSingleEntry={fetchSingleEntry}
+                            reviews={reviews}
                         />
                     )}
 
@@ -269,6 +288,7 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                             handleSearchResultClick={handleSearchResultClick}
                             currentUserId={currentUserId}
                             fetchSingleEntry={fetchSingleEntry}
+                            reviews={reviews}
                         />
                     )}
                 </>

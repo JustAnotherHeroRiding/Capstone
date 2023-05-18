@@ -12,14 +12,25 @@ import Picker from '@emoji-mart/react'
 const MIN_TEXTAREA_HEIGHT = 32;
 
 
-function Profile({ userData, fetchUserData, current_user, handleProfileClick, handleSearchResultClick, currentUserId, fetchSingleEntry }) {
+function Profile({
+  userData, fetchUserData, current_user, handleProfileClick,
+  handleSearchResultClick, currentUserId, fetchSingleEntry,
+  reviews }) {
   const csrftoken = Cookies.get('csrftoken');
 
   const [showReviews, setShowReviews] = useState(false)
+  const [showFollowingReviews, setShowFollowingReviews] = useState(false)
 
   const handleReviewsClick = () => {
+    setShowFollowingReviews(false)
     setShowReviews(showReviews => !showReviews);
   };
+
+
+  const handleFollowingClick = () => {
+    setShowFollowingReviews(showFollowingReviews => !showFollowingReviews)
+    setShowReviews(false)
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -383,7 +394,6 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
   }
 
 
-
   return (
 
     <div className='mx-auto h-screen flex flex-col items-center relative'>
@@ -447,7 +457,7 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
         <ul className='flex flex-row justify-center'>
           <li className='mr-6 cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl' onClick={handleReviewsClick}
           >Reviews</li>
-          <li className='mr-6 cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl'>
+          <li className='mr-6 cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl' onClick={handleFollowingClick}>
             Following</li>
           <li className='mr-6 cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl'>
             Wishlist</li>
@@ -471,10 +481,73 @@ function Profile({ userData, fetchUserData, current_user, handleProfileClick, ha
 
 
         </ul>
+        {showFollowingReviews && (
+          <div className='flex flex-col border border-indigo-200 rounded-2xl px-4 py-2 mt-6'>
+            <div className='px-2 py-4 md:ml-6'>
+              <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto mx-auto'>
+                <div className='mr-4'>
+                  {reviews.map(review => (
+                    <>
+                      {userData.following_users.includes(review.user.id) && (
+                        <div key={review.id}>
+                        {review.gear || review.album ? (
+                          <div className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
+                            <div className='flex'>
+                              {[...Array(Math.floor(review.stars))].map((_, index) => (
+                                <FontAwesomeIcon icon={faStar} className='text-yellow-400' key={`full-star-${index}`} />
+                              ))}
+                              {review.stars % 1 !== 0 && (
+                                <FontAwesomeIcon icon={faStarHalfStroke} className='text-yellow-400' key={`half-star-${review.id}`} />)}
+                              {[...Array(5 - Math.ceil(review.stars))].map((_, index) => (
+                                <FontAwesomeIcon icon={farStar} className='text-yellow-400' key={`empty-star-${index}`} />
+                              ))}
+                            </div>
+                            <p className='whitespace-pre-line mb-2'>{review.text}</p>
+                            <div className='flex justify-between'>
+                              {review.gear && (
+                                <div className='flex flex-row'>
+                                  <img src={`static/gear_images/${review.gear.picture}`}
+                                    className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                                  <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                                    onClick={() => fetchSingleEntry(review.gear.model_type, review.gear.id)}>{review.gear.name}</p>
+                                </div>
+                              )}
+                              {review.album && (
+                                <div className='flex flex-row'>
+                                  <img src={`static/album_covers/${review.album.cover_art_url}`}
+                                    className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                                  <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                                    onClick={() => fetchSingleEntry(review.album.model_type, review.album.id)}>{review.album.name}</p>
+                                </div>
+                              )}
+
+                              <p>
+                                {review.is_edited && (
+                                  <span className=' text-gray-500'>*</span>
+                                )}
+                                {review.created_at}
+                              </p>
+                            </div>
+                            <div className='flex flex-row justify-end'>
+                              <img src={`static/profile_pictures/${review.user.profile_pic}`} className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                              <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                                onClick={() => handleUserMessageClick(review.user)}>{review.user.username}</p>
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
+                      )}
+                    </>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         {showReviews && (
           <div className='flex flex-col border border-indigo-200 rounded-2xl px-4 py-2 mt-6'>
             <div className='px-2 py-4 md:ml-6'>
-              <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto'>
+              <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto mx-auto'>
                 <div className='mr-4'>
                   {userData.reviews.map(review => (
                     <div key={review.id}>

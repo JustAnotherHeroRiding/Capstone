@@ -12,8 +12,6 @@ function MainPageItems({
     const csrftoken = Cookies.get('csrftoken');
 
     const [AllEntries, setAllEntries] = useState([])
-
-    const [reviews, setReviews] = useState([])
     const [reviewScore, setReviewScore] = useState(0);
 
     const calculateReviewScore = () => {
@@ -32,12 +30,6 @@ function MainPageItems({
 
     const [reviewErrorMessage, setReviewErrorMessage] = useState('')
 
-    const fetchAllReviews = () => {
-        fetch('review/get/all')
-            .then(response => response.json())
-            .then(data => setReviews(data))
-            .catch(error => console.log(error))
-    }
 
     const fetchAllEntries = () => {
         fetch('entries/get/all')
@@ -45,10 +37,6 @@ function MainPageItems({
             .then(data => setAllEntries(data))
             .catch(error => console.error(error));
     }
-
-    useEffect(() => {
-        fetchAllReviews()
-    }, []);
 
     useEffect(() =>{
         setAllEntries(AllEntriesData)
@@ -181,7 +169,7 @@ function MainPageItems({
                 <div>
                     {!singleView && (
                         <ul className='flex md:flex-row max-md:flex-col justify-center mt-6 md:ml-[600px] max-md:ml-0 medium-large:ml-[500px] 2xl:ml-[100px]'>
-                            <li className='mr-12 min-w-[200px] max-md:mx-auto'>
+                            <li className='mr-12 min-w-[200px] max-md:mx-auto max-w-[80%] overflow-auto scrollbar-blue-thin'>
                                 <h1 className='flex justify-center text-3xl text-Intone-500'>Bands</h1>
                                 <div className='mt-6 '>
                                     {AllEntries.bands && (
@@ -198,7 +186,7 @@ function MainPageItems({
                                     )}
                                 </div>
                             </li>
-                            <li className='mr-12 min-w-[200px] max-md:mx-auto'>
+                            <li className='mr-12 min-w-[200px] max-md:mx-auto max-w-[80%] overflow-auto scrollbar-blue-thin'>
                                 <h1 className='flex justify-center text-3xl text-Intone-500'>Albums</h1>
                                 <div className='mt-6'>
                                     {AllEntries.albums && (
@@ -216,7 +204,7 @@ function MainPageItems({
                                     )}
                                 </div>
                             </li>
-                            <li className='mr-12 min-w-[200px] max-md:mx-auto'>
+                            <li className='mr-12 min-w-[200px] max-md:mx-auto max-w-[80%] overflow-auto scrollbar-blue-thin'>
                                 <h1 className='flex justify-center text-3xl text-Intone-500'>Gear</h1>
 
                                 <div className='mt-6'>
@@ -233,11 +221,11 @@ function MainPageItems({
                                         </div>
                                     )}
                                 </div></li>
-                            <li className='mr-12 min-w-[200px] max-md:mx-auto'>
+                            <li className='mr-12 min-w-[200px] max-md:mx-auto max-w-[80%] overflow-auto scrollbar-blue-thin'>
                                 <h1 className='flex justify-center text-3xl text-Intone-500'>Players</h1>
-                                <div className='mt-6'>
+                                <div className='mt-6 '>
                                     {AllEntries.players && (
-                                        <div className='flex flex-row md:flex-col overflow-x-auto'>
+                                        <div className='flex flex-row md:flex-col'>
                                             {AllEntries.players.map((player) => (
                                                 <div key={player.id} onClick={() => fetchSingleEntry(player.model_type, player.id)}
                                                     className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
@@ -274,7 +262,7 @@ function MainPageItems({
                                 <FontAwesomeIcon
                                     icon={faCircleLeft}
                                     onClick={exitSingleView}
-                                    className='cursor-pointer h-8 w-8 hover:scale-110 transition-transform duration-200 my-6'
+                                    className='cursor-pointer h-8 w-8 ml-auto hover:scale-110 transition-transform duration-200 my-6'
                                 />
                                 {singleViewType === 'gear' && (
                                     <>

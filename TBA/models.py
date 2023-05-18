@@ -45,7 +45,10 @@ class User(AbstractUser):
         }
 
     def minimal_serialize(self):
-        return {"id": self.id, "model_type": "user"}
+        return {"id": self.id,
+                "username":self.username, 
+                "profile_pic": self.profile_pic.url if self.profile_pic else None,
+                "model_type": "user"}
 
     def get_messages(self):
         return list(self.sent_messages.all()) + list(self.received_messages.all())
@@ -291,7 +294,7 @@ class Review(models.Model):
             "stars": self.stars,
             "text": self.text,
             "created_at": local_created_at.strftime("%Y-%m-%d %H:%M:%S"),
-            "user": self.user.serialize(),
+            "user": self.user.minimal_serialize(),
             "is_edited": self.is_edited,
             "model_type": "review",
         }

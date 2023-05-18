@@ -21,8 +21,8 @@
 - The user's whose history is showing is the one that will receive the message when sending the new message #DONE
 - Messages should have pictures as well as text and emoji #DONE
 - Users can upload their profile pictures #DONE
-- If i follow a user i can see all of their reviews
-- The user view will have a reactive second nav menu allowing me to select my reviews, reviews from followed users, gear on my wishlist etc
+- If i follow a user i can see all of their reviews #DONE 
+- The user view will have a reactive second nav menu allowing me to select my reviews, reviews from followed users, gear on my wishlist etc #DONE 
 - Create Lists
 - Pagination for comments, infinite scroll for messages where messages get loaded when scrolling up
 
@@ -62,8 +62,8 @@
 - Finish the remaining functionality on the profile, which is the reactive menu: #DONE 
 - With all reviews posted by a user #DONE 
 - Users can follow each other #DONE 
-- I need a way to fetch all reviews posted by the users that I am following whose Ids are currently stored in following_users, either a new endpoint or an extension to following_users
-- Reviews posted by users I follow in the following tab on the profile nav menu
+- I need a way to fetch all reviews posted by the users that I am following whose Ids are currently stored in following_users, either a new endpoint or an extension to following_users #DONE 
+- Reviews posted by users I follow in the following tab on the profile nav menu #DONE 
 - Adding gear to the wishlist
 - Gear on the wishlist on the profile view
 - Album charts
