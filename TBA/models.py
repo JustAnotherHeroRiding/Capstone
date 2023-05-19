@@ -124,6 +124,7 @@ class Gear(models.Model):
                 for comment in self.sorted_comments
                 if self.sorted_comments
             ],
+            "wishlist": [w.serialize() for w in self.wishlists.all()] if self.wishlists.all() else None,
             "model_type": "gear",
         }
 
@@ -154,7 +155,8 @@ class Wishlist(models.Model):
         gear_items = self.gear_items.values_list('id', flat=True)
         return {
             "id": self.id,
-            #"user": self.user.serialize(),  # Serialize the user object if needed
+            #"user": self.user.minimal_serialize(),  # Serialize the user object if needed
+            'user_id': self.user.id,
             "gear_items": list(gear_items),
         }
 

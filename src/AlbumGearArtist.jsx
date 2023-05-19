@@ -99,13 +99,13 @@ function MainPageItems({
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
+                console.log(data.message)
             });
         }
     ;
     function handleWishlistRemoveRequest(event) {
         event.preventDefault();
-        fetch(`wishlist/add/${parseInt(singleEntryData.id, 10)}`, {
+        fetch(`wishlist/remove/${parseInt(singleEntryData.id, 10)}`, {
             method: 'POST',
             headers: {
                 'X-CSRFToken': csrftoken
@@ -113,7 +113,7 @@ function MainPageItems({
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
+                console.log(data.message)
             });
     };
 

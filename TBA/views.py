@@ -600,7 +600,6 @@ def unfollow_user(request, user_id):
 
 @login_required
 def add_to_wishlist(request, gear_id):
-    print(gear_id)
     try:
         wishlist, created = Wishlist.objects.get_or_create(user=request.user)
         gear = Gear.objects.get(id=gear_id)
