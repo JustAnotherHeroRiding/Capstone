@@ -600,7 +600,7 @@ def unfollow_user(request, user_id):
 
 @login_required
 def add_to_wishlist(request, gear_id):
-    print(request)
+    print(gear_id)
     try:
         wishlist, created = Wishlist.objects.get_or_create(user=request.user)
         gear = Gear.objects.get(id=gear_id)
@@ -608,8 +608,8 @@ def add_to_wishlist(request, gear_id):
         return JsonResponse({"message": "Gear item added to wishlist successfully."})
     except Gear.DoesNotExist:
         return JsonResponse({"error": "Gear item not found."}, status=404)
-    finally:
-        return JsonResponse({'error': "Unsuccessful request"})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 @login_required
 def remove_from_wishlist(request, gear_id):
@@ -620,8 +620,8 @@ def remove_from_wishlist(request, gear_id):
         return JsonResponse({"message": "Gear item removed from wishlist successfully."})
     except Gear.DoesNotExist:
         return JsonResponse({"error": "Gear item not found."}, status=404)
-    finally:
-        return JsonResponse({'error': "Unsuccessful request"})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 @csrf_protect
