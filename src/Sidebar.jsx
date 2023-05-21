@@ -23,7 +23,7 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
         setShowLogIn(false)
     };
 
-    
+
 
 
 
@@ -90,8 +90,8 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
             handleSearchResultClick(entry);
         }
     };
-    
-    
+
+
 
     const [singleView, setSingleView] = useState(false)
     const [singleViewType, setSingleViewType] = useState('')
@@ -122,7 +122,7 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
         }
     }
 
-   
+
 
     const ShowAllX = (type) => {
         setShowEntryType(type)
@@ -147,31 +147,30 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
 
     const FetchSearchData = debounce(() => {
         fetch(`/search`)
-          .then(response => response.json())
-          .then(data => {
-            setData(data);
-          });
-      }, 50); // Adjust the debounce delay as needed
+            .then(response => response.json())
+            .then(data => {
+                setData(data);
+            });
+    }, 50); // Adjust the debounce delay as needed
 
 
     const [reviews, setReviews] = useState([])
 
     const fetchAllReviews = debounce(() => {
         fetch('review/get/all')
-          .then(response => response.json())
-          .then(data => setReviews(data))
-          .catch(error => console.log(error))
-      }, 50); // Adjust the debounce delay as needed
+            .then(response => response.json())
+            .then(data => setReviews(data))
+            .catch(error => console.log(error))
+    }, 50); // Adjust the debounce delay as needed
 
-      useEffect(() => {
+    useEffect(() => {
         FetchSearchData();
         fetchAllReviews();
-      }, []);
-      
-      
-      
+    }, []);
 
-    
+
+
+
 
 
     const handleInputChange = (event) => {
@@ -193,72 +192,77 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
 
 
 
+
     return (
         <div>
-            <nav className="z-10 md:left-0 md:top-0 md:fixed md:h-screen md:flex lg:w-60 md:w-40 md:flex-col text-Intone-600 px-2 text-xl bg-Intone-100">
-
-                <h1 className="mb-12 md:mt-4 hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer">
-                    <a className="text-4xl font-bold mx-auto text-Intone-500" href=''>inTone</a></h1>
+            <nav className="z-10 3xl:left-0 3xl:top-0 3xl:fixed 3xl:h-screen 3xl:flex 3xl:w-60 3xl:flex-col text-Intone-600 px-2 text-xl bg-Intone-100 ">
+                <div className='flex 3xl:flex-col max-2xl:justify-between relative'>
+                    <h1 className="3xl:my-4 hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer">
+                        <a className="text-4xl font-bold mx-auto text-Intone-500" href=''>inTone</a></h1>
+                    <input type='text'
+                        placeholder='Search Albums,Gear,Players and more' name='sidebar-search'
+                        className='text-sm h-10 my-auto 3xl:w-full max-2xl:w-1/2 rounded-3xl px-4 py-2 3xl:mb-4 text-black'
+                        value={query}
+                        onChange={handleInputChange}
+                        autoComplete='off'
+                        ></input>
+                    {showResults && results && nrResults > 0 && (
+                        <div className='bg-gray-800 absolute 3xl:top-[134px] max-2xl:top-12 right-4 z-50 px-2 mt-2 py-2 rounded-2xl cursor-pointer max-h-[300px] overflow-auto scrollbar-blue-thin'>
+                            <>
+                                {results.map((result) => (
+                                    <div key={`${result.id}-${result.model_type}`} className='flex justify-between hover:bg-gray-700 p-2 rounded-2xl'
+                                        onClick={() => handleSearchResultClick(result)}>
+                                        <p>{result.name}</p>
+                                        <p className='ml-2 text-Intone-300'>{result.model_type.charAt(0).toUpperCase() + result.model_type.slice(1).toLowerCase()}</p>
+                                    </div>
+                                ))}
+                            </>
+                        </div>
+                    )}
+                </div>
 
                 <div className="">
-                    <ul className="max-md:flex max-md:justify-between max-md:mx-auto">
+                    <ul className="max-2xl:flex max-2xl:justify-between max-2xl:mx-auto ">
                         {userData && (
-                            <li className='mb-4 max-md:mx-2 flex flex-row max-md:flex-col justify-start'>
-                                <a className=" hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer max-md:hidden" onClick={handleProfileClick}>{userData.name}</a>
+                            <li className='3xl:mb-4 max-2xl:mx-2 flex flex-row max-2xl:flex-col justify-start max-2xl:mb-2'>
+                                <a className=" hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer max-2xl:hidden" onClick={handleProfileClick}>{userData.name}</a>
                                 {userData.profile_pic && (
                                     <img src={`static/profile_pictures/${userData.profile_pic}`} className='object-cover w-12 h-12 cursor-pointer rounded-2xl' onClick={handleProfileClick} />
 
                                 )}
                             </li>
                         )}
-                        <li className="mb-4 max-md:mx-2">
+                        <li className="3xl:mb-4 max-2xl:mx-2 max-2xl:mb-2">
                             <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" id='sidebar-all-posts' onClick={() => ShowAllX('albums')}>Albums</a>
                         </li>
-                        <li className="mb-4 max-md:mx-2">
+                        <li className="3xl:mb-4 max-2xl:mx-2 max-2xl:mb-2">
                             <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" id='sidebar-following' onClick={() => ShowAllX('bands')}>Bands</a>
                         </li>
-                        <li className="mb-4 max-md:mx-2">
+                        <li className="3xl:mb-4 max-2xl:mx-2 max-2xl:mb-2">
                             <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" id='sidebar-following' onClick={() => ShowAllX('gear')}>Gear</a>
                         </li>
-                        <li className="mb-4 max-md:mx-2">
+                        <li className="3xl:mb-4 max-2xl:mx-2 max-2xl:mb-2">
                             <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" id='sidebar-following' onClick={() => ShowAllX('players')}>Players</a>
                         </li>
                         {isLoggedIn ? (
-                            <li className="mb-4 max-md:mx-2">
+                            <li className="3xl:mb-4 max-2xl:mx-2 max-2xl:mb-2">
                                 <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3" href="/logout">Log Out</a>
                             </li>
                         ) : null}
                         {!isLoggedIn && (
-                            <div className="max-md:flex max-md:justify-between">
-                                <li className="mb-4 max-md:mx-2">
+                            <div className="max-2xl:flex max-2xl:justify-between">
+                                <li className="3xl:mb-4 max-md:mx-2 max-2xl:mb-2">
                                     <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer"
                                         onClick={handleLogInClick}>Log In</a>
                                 </li>
-                                <li className="mb-4 max-md:mx-2">
+                                <li className="3xl:mb-4 max-2xl:mx-2 max-2xl:mb-2">
                                     <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer"
                                         onClick={handleRegisterClick}>Register</a>
                                 </li>
                             </div>
                         )}
                     </ul>
-                    <input type='text'
-                        placeholder='Search Albums,Gear,Players and more' name='sidebar-search'
-                        className='text-sm w-full rounded-3xl px-4 py-2 text-black'
-                        value={query}
-                        onChange={handleInputChange}></input>
-                    {showResults && results && nrResults > 0 && (
-                        <div className='bg-gray-800 px-2 mt-2 py-2 rounded-2xl cursor-pointer max-h-[300px] overflow-auto scrollbar-blue-thin'>
-                            <>
-                                {results.map((result) => (
-                                    <div key={`${result.id}-${result.model_type}`} className='flex justify-between hover:bg-gray-700 p-2 rounded-2xl'
-                                        onClick={() => handleSearchResultClick(result)}>
-                                        <p>{result.name}</p>
-                                        <p>{result.model_type.charAt(0).toUpperCase() + result.model_type.slice(1).toLowerCase()}</p>
-                                    </div>
-                                ))}
-                            </>
-                        </div>
-                    )}
+
                 </div>
 
             </nav>

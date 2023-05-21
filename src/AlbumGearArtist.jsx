@@ -150,16 +150,16 @@ function MainPageItems({
                                         <h1 className='text-2xl font-bold flex justify-center w-40'
                                         >{entry.name}</h1>
                                         {entry.model_type === 'band' && (
-                                            <img src={`static/band_pics/${entry.picture}`} className='object-cover w-40 h-40 mx-auto' />
+                                            <img src={`static/band_pics/${entry.picture}`} className='object-cover w-40 h-40 mx-auto ' />
                                         )}
                                         {entry.model_type === 'gear' && (
-                                            <img src={`static/gear_images/${entry.image}`} className='object-cover mx-auto w-40 h-40' />
+                                            <img src={`static/gear_images/${entry.picture}`} className='object-cover mx-auto w-40 h-40' />
                                         )}
                                         {entry.model_type === 'player' && (
                                             <img src={`static/player_pics/${entry.picture}`} className='object-cover mx-auto w-40 h-40' />
                                         )}
                                         {entry.model_type === 'album' && (
-                                            <img src={`static/album_covers/${entry.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
+                                            <img src={`static/album_covers/${entry.cover_art_url}`} className='object-cover mx-auto w-40 h-40 flex' />
                                         )}
                                     </div>
                                 ))}
@@ -170,7 +170,7 @@ function MainPageItems({
             ) : (
                 <div>
                     {!singleView && (
-                        <ul className='flex md:flex-row max-md:flex-col justify-center mt-6 md:ml-[600px] max-md:ml-0 medium-large:ml-[500px] 2xl:ml-[100px]'>
+                        <ul className='flex md:flex-row max-md:flex-col justify-center mt-6 '>
                             <li className='mr-12 min-w-[200px] max-md:mx-auto max-w-[80%] overflow-auto scrollbar-blue-thin'>
                                 <h1 className='flex justify-center text-3xl text-Intone-500'>Bands</h1>
                                 <div className='mt-6 '>
@@ -217,7 +217,7 @@ function MainPageItems({
                                                     className='border border-indigo-200 px-4 py-6 rounded-2xl hover:bg-Intone-100 cursor-pointer mb-4 mr-4'>
                                                     <h1 className='text-2xl font-bold flex justify-center w-40'
                                                     >{gear.name}</h1>
-                                                    <img src={`static/gear_images/${gear.image}`} className='object-cover mx-auto w-40 h-40' />
+                                                    <img src={`static/gear_images/${gear.picture}`} className='object-cover mx-auto w-40 h-40' />
                                                 </div>
                                             ))}
                                         </div>
@@ -279,7 +279,7 @@ function MainPageItems({
                                                 )}
                                                 <div className='mb-auto'>
                                                     <h1 className='text-2xl font-bold my-4 w-72'>{singleEntryData.name}</h1>
-                                                    <img src={`static/gear_images/${singleEntryData.image}`} className='object-cover w-60 h-60 mb-6' />
+                                                    <img src={`static/gear_images/${singleEntryData.picture}`} className='object-cover w-60 h-60 mb-6' />
                                                     <p className='w-80'>{singleEntryData.description}</p>
                                                     {singleEntryData.tonehunt_url !== 'N/A' && (
                                                         <a className='text-Intone-300 hover:underline' href={singleEntryData.tonehunt_url}>Nam Capture</a>
@@ -409,7 +409,7 @@ function MainPageItems({
                                                         <div onClick={() => fetchSingleEntry(album.model_type, album.id)}
                                                             className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                            <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                            <h1 className='text-2xl font-bold flex justify-center mb-4 w-40'
                                                             >{album.name}</h1>
                                                             <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
                                                         </div>
@@ -505,7 +505,7 @@ function MainPageItems({
                                         hover:bg-Intone-100 cursor-pointer'>
                                                                 <h1 className='text-2xl font-bold flex justify-center mb-4 w-40'
                                                                 >{gear.name}</h1>
-                                                                <img src={`static/gear_images/${gear.image}`} className='object-cover mx-auto w-40 h-40' />
+                                                                <img src={`static/gear_images/${gear.picture}`} className='object-cover mx-auto w-40 h-40' />
                                                             </div>
                                                         </div>
                                                     ))}
@@ -640,7 +640,7 @@ function MainPageItems({
                                         hover:bg-Intone-100 cursor-pointer'>
                                                             <h1 className='text-2xl font-bold flex justify-center mb-4 w-40'
                                                             >{gear.name}</h1>
-                                                            <img src={`static/gear_images/${gear.image}`} className='object-cover mx-auto w-40 h-40' />
+                                                            <img src={`static/gear_images/${gear.picture}`} className='object-cover mx-auto w-40 h-40' />
                                                         </div>
                                                     </div>
                                                 ))}

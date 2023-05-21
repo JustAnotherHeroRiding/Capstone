@@ -9,7 +9,7 @@ module.exports = {
   theme: {
 
     screens: {
-        '2xl': {'max': '1500px'},
+        '2xl': {'max': '1535px'},
         // => @media (max-width: 1535px) { ... }
   
         'xl': {'max': '1279px'},
@@ -26,7 +26,7 @@ module.exports = {
         'sm': {'max': '639px'},
         // => @media (max-width: 639px) { ... }
         'xs': {'max': '475px'},
-        '3xl': '1500px',
+        '3xl': '1536px',
         '2xl': '1175px',
         'medium-large': '900px',
       'xs': '475px',

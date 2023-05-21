@@ -51,23 +51,23 @@ def search(request):
 
     # Search Users
     users = User.objects.all()
-    results["users"] = [user.serialize() for user in users]
+    results["users"] = [user.minimal_serialize() for user in users]
 
     # Search Albums
     albums = Album.objects.all()
-    results["albums"] = [album.serialize() for album in albums]
+    results["albums"] = [album.minimal_serialize() for album in albums]
 
     # Search Gear
     gear = Gear.objects.all()
-    results["gear"] = [g.serialize() for g in gear]
+    results["gear"] = [g.minimal_serialize() for g in gear]
 
     # Search Players
     players = Player.objects.all()
-    results["players"] = [player.serialize() for player in players]
+    results["players"] = [player.minimal_serialize() for player in players]
 
     # Search Bands
     bands = Band.objects.all()
-    results["bands"] = [band.serialize() for band in bands]
+    results["bands"] = [band.minimal_serialize() for band in bands]
 
     return JsonResponse(results)
 
@@ -110,7 +110,6 @@ def send_profile_comment(request, profile_id):
 def send_entry_comment(request, entry_type, entry_id):
     if request.method == 'POST':
         user = request.user
-        print(request.POST)
         text = request.POST.get('text')
 
         # Determine the entry type and retrieve the corresponding entry
@@ -268,6 +267,7 @@ def add_entry(request, entry_type):
     if entry_type == "album":
         # Retrieve the data from the request
         name = request.POST.get("name")
+        print(request.POST)
         band_id = request.POST.get("band")
         guitar_player_ids = [
             int(player)

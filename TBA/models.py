@@ -48,6 +48,7 @@ class User(AbstractUser):
     def minimal_serialize(self):
         return {
             "id": self.id,
+            "name":self.username,
                 "username":self.username, 
                 "profile_pic": self.profile_pic.url if self.profile_pic else None,
                 "model_type": "user"
@@ -114,7 +115,7 @@ class Gear(models.Model):
             "name": self.name,
             "category": self.category,
             "description": self.description,
-            "image": self.image.url if self.image else None,
+            "picture": self.image.url if self.image else None,
             "tonehunt_url": self.tonehunt_url,
             "reviews": [
                 review.serialize() for review in self.sorted_reviews if self.reviews
@@ -186,7 +187,7 @@ class Player(models.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "gear": [gear.serialize() for gear in self.gear.all()],
+            "gear": [gear.minimal_serialize() for gear in self.gear.all()],
             "picture": self.picture.url if self.picture else None,
             "description": self.description,
             "comments": [
@@ -227,8 +228,8 @@ class Band(models.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "players": [member.serialize() for member in self.members.all()],
-            "albums": [album.serialize() for album in self.albums.all()],
+            "players": [member.minimal_serialize() for member in self.members.all()],
+            "albums": [album.minimal_serialize() for album in self.albums.all()],
             "picture": self.picture.url if self.picture else None,
             "comments": [
                 comment.serialize()
@@ -238,6 +239,14 @@ class Band(models.Model):
             "description": self.description,
             "model_type": "band",
         }
+    def minimal_serialize(self):
+        return {
+           "id": self.id,
+            "name": self.name,
+            "picture": self.picture.url if self.picture else None,
+            "description": self.description,
+            "model_type": "band", 
+            }
 
 
 class Album(models.Model):
@@ -265,7 +274,7 @@ class Album(models.Model):
             "name": self.name,
             "band": self.band.name,
             "band_id": self.band.id,
-            "players": [player.serialize() for player in self.guitar_players.all()],
+            "players": [player.minimal_serialize() for player in self.guitar_players.all()],
             "cover_art_url": self.cover_art.url if self.cover_art else None,
             "reviews": [
                 review.serialize() for review in self.sorted_reviews if self.reviews
@@ -276,7 +285,7 @@ class Album(models.Model):
                 if self.sorted_comments
             ],
             "description": self.description,
-            "gear": [gear.serialize() for gear in self.gear.all()],
+            "gear": [gear.minimal_serialize() for gear in self.gear.all()],
             "model_type": "album",
         }
 
@@ -285,6 +294,7 @@ class Album(models.Model):
             "id": self.id,
             "name": self.name,
             "cover_art_url": self.cover_art.url if self.cover_art else None,
+            "gear": [gear.minimal_serialize() for gear in self.gear.all()],
             "model_type": "album",
         }
 
@@ -408,7 +418,7 @@ class ProfileComment(models.Model):
             "id": self.id,
             "text": self.text,
             "username": self.user.username,
-            "user": self.user.serialize(),
+            "user": self.user.minimal_serialize(),
             "profile_user_id": self.profile_user.username,
             "user_picture_poster": self.user.profile_pic.url,
             "created_at": local_created_at.strftime("%Y-%m-%d %H:%M:%S"),
