@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFaceSmile } from '@fortawesome/free-solid-svg-icons'
+import { fa0, faFaceSmile } from '@fortawesome/free-solid-svg-icons'
 
 
 
@@ -879,4 +879,76 @@ export function NewEntryComment({ singleEntryData, fetchSingleEntry, handleUserM
 }
 
 
-
+export function WishlistAddRemove({ singleEntryData, currentUserId }) {
+    const [isInWishlist, setIsInWishlist] = useState(false);
+    const csrftoken = Cookies.get('csrftoken');
+  
+    useEffect(() => {
+      if (singleEntryData.wishlist && singleEntryData.wishlist.some(wishlist => wishlist.user_id === currentUserId && wishlist.gear_items.includes(singleEntryData.id))) {
+        setIsInWishlist(true);
+      } else {
+        setIsInWishlist(false);
+      }
+    }, [singleEntryData, currentUserId]);
+  
+    function handleWishlistAddRequest(event) {
+        event.preventDefault();
+        fetch(`wishlist/add/${parseInt(singleEntryData.id, 10)}`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrftoken
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            setIsInWishlist(true);
+          })
+          .catch(error => {
+            console.log('Error:', error.message);
+          });
+      }
+      
+      function handleWishlistRemoveRequest(event) {
+        event.preventDefault();
+        fetch(`wishlist/remove/${parseInt(singleEntryData.id, 10)}`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrftoken
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            setIsInWishlist(false);
+          })
+          .catch(error => {
+            console.log('Error:', error.message);
+          });
+      }
+  
+    if (isInWishlist) {
+      return (
+        <form onSubmit={handleWishlistRemoveRequest} className='mx-auto mb-4'>
+          <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+          <button
+            type="submit"
+            className="border-indigo-200 px-4 py-2 border rounded-3xl hover:bg-Intone-300 hover:text-black mr-4 mt-6"
+          >
+            Remove from wishlist
+          </button>
+        </form>
+      );
+    }
+  
+    return (
+      <form onSubmit={handleWishlistAddRequest} className='mx-auto mb-4'>
+        <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+        <button
+          type="submit"
+          className="border-indigo-200 px-4 py-2 border rounded-3xl hover:bg-Intone-300 hover:text-black mr-4 mt-6"
+        >
+          Add to wishlist
+        </button>
+      </form>
+    );
+  }
+  

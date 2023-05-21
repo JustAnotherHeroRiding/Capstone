@@ -64,9 +64,9 @@
 - Users can follow each other #DONE 
 - I need a way to fetch all reviews posted by the users that I am following whose Ids are currently stored in following_users, either a new endpoint or an extension to following_users #DONE 
 - Reviews posted by users I follow in the following tab on the profile nav menu #DONE 
-- Adding gear to the wishlist
-- There is something wrong with the endpoints or the requests, the error is always method not allowed
-- Gear on the wishlist on the profile view
+- Adding gear to the wishlist #DONE 
+- There is something wrong with the endpoints or the requests, the error is always method not allowed #DONE it was a typo in urls.py
+- Gear on the wishlist on the profile view #DONE 
 - Album charts
 
 ## Finishing Touches

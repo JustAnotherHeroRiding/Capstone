@@ -198,7 +198,7 @@ def get_message_history(request, user_id):
     messages.sort(key=lambda message: message.sent_at)
     serialized_messages = [message.serialize() for message in messages]
     serialized_user = (
-        user.serialize()
+        user.minimal_serialize()
     )  # assuming you have a `serialize()` method defined on the User model
     data = {
         "messages": serialized_messages,

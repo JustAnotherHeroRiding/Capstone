@@ -41,15 +41,17 @@ class User(AbstractUser):
             "following_count": self.following.count(),
             "followers_users": [user.id for user in self.followers.all()],
             "following_users": [user.id for user in self.following.all()],
-            "wishlist": [w.serialize() for w in self.wishlist.all()] if self.wishlist.all() else None,
+            "wishlist": [w.profile_serialize() for w in self.wishlist.all()] if self.wishlist.all() else None,
             "model_type": "user",
         }
 
     def minimal_serialize(self):
-        return {"id": self.id,
+        return {
+            "id": self.id,
                 "username":self.username, 
                 "profile_pic": self.profile_pic.url if self.profile_pic else None,
-                "model_type": "user"}
+                "model_type": "user"
+                }
 
     def get_messages(self):
         return list(self.sent_messages.all()) + list(self.received_messages.all())
@@ -72,8 +74,8 @@ class Message(models.Model):
         local_sent_at = timezone.localtime(self.sent_at)
         return {
             "id": self.id,
-            "sender": self.sender.serialize(),
-            "recipient": self.recipient.serialize(),
+            "sender": self.sender.minimal_serialize(),
+            "recipient": self.recipient.minimal_serialize(),
             "body": self.body,
             "image": self.image.url if self.image else None,
             "created_at": local_sent_at.strftime("%Y-%m-%d %H:%M:%S"),
@@ -159,7 +161,13 @@ class Wishlist(models.Model):
             'user_id': self.user.id,
             "gear_items": list(gear_items),
         }
-
+    def profile_serialize(self):
+        gear_items = [gear_item.minimal_serialize() for gear_item in self.gear_items.all()]
+        return {
+            "id": self.id,
+            "user_id": self.user.id,
+            "gear_items": gear_items,
+        }
 
 
 class Player(models.Model):
