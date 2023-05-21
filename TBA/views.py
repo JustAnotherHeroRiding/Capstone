@@ -194,8 +194,13 @@ def get_message_history(request, user_id):
     user = User.objects.get(id=user_id)
     sent_messages = Message.objects.filter(sender=request.user, recipient=user)
     received_messages = Message.objects.filter(sender=user, recipient=request.user)
-    messages = list(sent_messages) + list(received_messages)
-    messages.sort(key=lambda message: message.sent_at)
+    
+    #messages = list(sent_messages) + list(received_messages)
+    messages = (sent_messages | received_messages).distinct()
+    #messages.sort(key=lambda message: message.sent_at)
+    messages = messages.order_by('sent_at')
+
+    
     serialized_messages = [message.serialize() for message in messages]
     serialized_user = (
         user.minimal_serialize()

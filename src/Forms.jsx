@@ -96,7 +96,7 @@ export function AddAlbumForm({ AllEntriesData, fetchAllEntries }) {
             <label className='mr-4'>
                 <p>Album Name:</p>
                 <input className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' type="text"
-                    value={name} onChange={handleNameChange} name='name' />
+                    value={name} onChange={handleNameChange} name='name' id='name' autoComplete='off'/>
             </label>
             <br />
             <label className='mr-4'>
@@ -104,7 +104,7 @@ export function AddAlbumForm({ AllEntriesData, fetchAllEntries }) {
                     Band:
                 </p>
                 <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black'
-                    value={band} name='band_id' onChange={handleBandChange}>
+                    value={band} name='band_id' onChange={handleBandChange} id='band_id'>
                     {bands.map((band) => (
                         <option key={band.id} value={band.id}>
                             {band.name}
@@ -118,7 +118,7 @@ export function AddAlbumForm({ AllEntriesData, fetchAllEntries }) {
                     Guitar Players:
                 </p>
                 <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black'
-                    multiple value={selectedPlayers} onChange={handleGuitarPlayersChange}>
+                    multiple value={selectedPlayers} onChange={handleGuitarPlayersChange} name='player_id' id='player_id'>
                     {guitarPlayers.map((player) => (
                         <option key={player.id} value={player.id}>
                             {player.name}
@@ -132,7 +132,7 @@ export function AddAlbumForm({ AllEntriesData, fetchAllEntries }) {
                     Gear:
                 </p>
                 <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black'
-                    multiple value={selectedGear} onChange={handleGearChange}>
+                    multiple value={selectedGear} onChange={handleGearChange} name='gear_id' id='gear_id'>
                     {gear.map((gear) => (
                         <option key={gear.id} value={gear.id}>
                             {gear.name}
@@ -145,21 +145,21 @@ export function AddAlbumForm({ AllEntriesData, fetchAllEntries }) {
                 <p>
                     Cover Art:
                 </p>
-                <input type="file" accept="image/*" onChange={handleCoverArtChange} />
+                <input type="file" accept="image/*" name='image' id='image' onChange={handleCoverArtChange} />
             </label>
             <br />
             <label className='mr-4'>
                 <p>
                     Description:
                 </p>
-                <textarea value={description} onChange={handleDescriptionChange}
+                <textarea value={description} onChange={handleDescriptionChange} id='description' name='description'
                     className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black resize-none'></textarea>
             </label>
             <br />
             {errorMessage && <div>{errorMessage}</div>}
-            <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+            <input type="hidden" name="csrfmiddlewaretoken" id='csrf' value={csrftoken} />
 
-            <button type="submit" className='border-indigo-200 px-4 py-2 border rounded-3xl
+            <button type="submit" name='submit' id='submit' className='border-indigo-200 px-4 py-2 border rounded-3xl
              hover:bg-Intone-300 hover:text-black flex ml-auto mr-4'>Add Album</button>
 
         </form>
@@ -222,7 +222,8 @@ export function AddGearForm({ AllEntriesData, fetchAllEntries }) {
         <form onSubmit={handleSubmit} className='flex flex-col overflow-auto max-h-[400px] scrollbar-blue-thin text-Intone-300'>
             <label className='mr-4'>
                 Category:
-                <select value={category} onChange={handleCategoryChange} className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black'>
+                <select value={category} onChange={handleCategoryChange} 
+                className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' name='category' id='category'>
                     <option value="">Select a category</option>
                     {categories.map((category) => (
                         <option key={category.value} value={category.value}>
@@ -234,25 +235,30 @@ export function AddGearForm({ AllEntriesData, fetchAllEntries }) {
             <br />
             <label className='mr-4'>
                 Name:
-                <input type="text" className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' value={name} onChange={(e) => setName(e.target.value)} />
+                <input type="text" name='name' id='name' 
+                className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' 
+                value={name} onChange={(e) => setName(e.target.value)} autoComplete='off'/>
             </label>
             <br />
             <label className='mr-4'>
                 Tonehunt URL:
-                <input type="text" className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' value={tonehunt} onChange={(e) => setTonehunt(e.target.value)} />
+                <input type="text" name='tonehunt_url' id='tonehunt_url' 
+                className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' value={tonehunt} onChange={(e) => setTonehunt(e.target.value)} />
             </label>
             <br />
             <label className='mr-4'>
                 Image:
-                <input type="file" onChange={(e) => setImage(e.target.files[0])} />
+                <input type="file" name='image' id='image' 
+                onChange={(e) => setImage(e.target.files[0])} />
             </label>
             <br />
             <label className='mr-4'>
                 Description:
-                <textarea value={description} className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black resize-none' onChange={(e) => setDescription(e.target.value)} />
+                <textarea value={description}  name='description' id='description'
+                className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black resize-none' onChange={(e) => setDescription(e.target.value)} />
             </label>
             <br />
-            <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+            <input type="hidden" name="csrfmiddlewaretoken" id='csrf' value={csrftoken} />
 
             {errorMessage && <p>{errorMessage}</p>}
             <button type="submit" className='border-indigo-200 px-4 py-2 border rounded-3xl
@@ -336,12 +342,13 @@ export function AddPlayerForm({ AllEntriesData, fetchAllEntries }) {
         <form onSubmit={handleSubmit} className='flex flex-col overflow-auto max-h-[400px] scrollbar-blue-thin text-Intone-300'>
             <label className='mr-4'>
                 Name:
-                <input type="text" className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' value={name} onChange={(e) => setName(e.target.value)} />
+                <input type="text" className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' name='name' id='name' autoComplete='off' 
+                value={name} onChange={(e) => setName(e.target.value)} />
             </label>
             <br />
             <label className='mr-4'>
                 Image:
-                <input type="file" onChange={(e) => setPicture(e.target.files[0])} />
+                <input type="file" id='image' name='image' onChange={(e) => setPicture(e.target.files[0])} />
             </label>
             <br />
             <label className='mr-4'>
@@ -349,7 +356,7 @@ export function AddPlayerForm({ AllEntriesData, fetchAllEntries }) {
                     Band:
                 </p>
                 <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black'
-                    value={band} multiple name='band_id' onChange={handleBandChange}>
+                    value={band} multiple name='band_id' id='band_id' onChange={handleBandChange}>
                     {bands.map((band) => (
                         <option key={band.id} value={band.id}>
                             {band.name}
@@ -363,7 +370,7 @@ export function AddPlayerForm({ AllEntriesData, fetchAllEntries }) {
                     Albums:
                 </p>
                 <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black'
-                    value={selectedAlbums} multiple name='album_ids' onChange={handleAlbumChange}>
+                    value={selectedAlbums} multiple name='album_ids' id='album_ids' onChange={handleAlbumChange}>
                     {albums.map((album) => {
                         if (band.includes(album.band_id.toString())) {
                             return (
@@ -383,7 +390,7 @@ export function AddPlayerForm({ AllEntriesData, fetchAllEntries }) {
                     Gear:
                 </p>
                 <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black'
-                    multiple value={selectedGear} onChange={handleGearChange}>
+                    multiple value={selectedGear} onChange={handleGearChange} name='gear_id' id='gear_id'>
                     {gear.map((gear) => (
                         <option key={gear.id} value={gear.id}>
                             {gear.name}
@@ -394,13 +401,14 @@ export function AddPlayerForm({ AllEntriesData, fetchAllEntries }) {
             <br />
             <label className='mr-4'>
                 Description:
-                <textarea value={description} className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black resize-none' onChange={(e) => setDescription(e.target.value)} />
+                <textarea value={description} name='description' id='description'
+                className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black resize-none' onChange={(e) => setDescription(e.target.value)} />
             </label>
             <br />
-            <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+            <input type="hidden" name="csrfmiddlewaretoken" id='csrf' value={csrftoken} />
 
             {errorMessage && <p>{errorMessage}</p>}
-            <button type="submit" className='border-indigo-200 px-4 py-2 border rounded-3xl
+            <button type="submit" id='submit' className='border-indigo-200 px-4 py-2 border rounded-3xl
              hover:bg-Intone-300 hover:text-black flex ml-auto mr-4'>Add Player</button>
         </form>
     );
@@ -451,23 +459,26 @@ export function AddBandForm({ AllEntriesData, fetchAllEntries }) {
         <form onSubmit={handleSubmit} className='flex flex-col overflow-auto max-h-[400px] scrollbar-blue-thin text-Intone-300'>
             <label className='mr-4'>
                 Name:
-                <input type="text" className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' value={name} onChange={(e) => setName(e.target.value)} />
+                <input type="text" className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' name='name' id='name' autoComplete='off'
+                value={name} onChange={(e) => setName(e.target.value)} />
             </label>
             <br />
             <label className='mr-4'>
                 Image:
-                <input type="file" onChange={(e) => setPicture(e.target.files[0])} />
+                <input type="file" name='image' id='image'
+                onChange={(e) => setPicture(e.target.files[0])} />
             </label>
             <br />
             <label className='mr-4'>
                 Description:
-                <textarea value={description} className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black resize-none' onChange={(e) => setDescription(e.target.value)} />
+                <textarea value={description} name='description' id='description'
+                className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black resize-none' onChange={(e) => setDescription(e.target.value)} />
             </label>
             <br />
-            <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+            <input type="hidden" name="csrfmiddlewaretoken" id='csrf' value={csrftoken} />
 
             {errorMessage && <p>{errorMessage}</p>}
-            <button type="submit" className='border-indigo-200 px-4 py-2 border rounded-3xl
+            <button type="submit" id='submit' className='border-indigo-200 px-4 py-2 border rounded-3xl
              hover:bg-Intone-300 hover:text-black flex ml-auto mr-4'>Add Band</button>
         </form>
     );
@@ -570,7 +581,7 @@ export function AddNewConnection({ AllEntriesData, fetchAllEntries, origin, conn
                         Gear:
                     </p>
                     <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black scrollbar-blue-thin'
-                        multiple value={selectedGear} onChange={handleGearChange}>
+                        multiple value={selectedGear} onChange={handleGearChange} id='gear_id' name='gear_id'>
                         {gear.map((gear) => {
                             if (!origin.gear.some((g) => g.id === gear.id)) {
                                 return (
@@ -591,7 +602,7 @@ export function AddNewConnection({ AllEntriesData, fetchAllEntries, origin, conn
                         Bands:
                     </p>
                     <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black'
-                        value={band} multiple name='band_id' onChange={handleBandChange}>
+                        value={band} multiple name='band_id' onChange={handleBandChange} id='band_id'>
                         {bands.map((band) => {
                             if (!origin.bands.some(a => a[1] === band.id)) {
                                 return (
@@ -613,7 +624,7 @@ export function AddNewConnection({ AllEntriesData, fetchAllEntries, origin, conn
                         Albums:
                     </p>
                     <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black scrollbar-blue-thin'
-                        value={selectedAlbums} multiple name='album_ids' onChange={handleAlbumChange}>
+                        value={selectedAlbums} multiple name='album_ids' onChange={handleAlbumChange} id='album_ids'>
                         {albums.map((album) => {
                             if (!origin.albums.some(a => a.id === album.id)) {
                                 return (
@@ -635,7 +646,7 @@ export function AddNewConnection({ AllEntriesData, fetchAllEntries, origin, conn
                         Guitar Players:
                     </p>
                     <select className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black'
-                        multiple value={selectedPlayers} onChange={handleGuitarPlayersChange}>
+                        multiple value={selectedPlayers} onChange={handleGuitarPlayersChange} name='player_id' id='player_id'>
                         {guitarPlayers.map((player) => {
                             if (!origin.players.some(p => p.id === player.id)) {
                                 return (
@@ -648,9 +659,9 @@ export function AddNewConnection({ AllEntriesData, fetchAllEntries, origin, conn
                     </select>
                 </label>
             )}
-            <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+            <input type="hidden" id='csrf' name="csrfmiddlewaretoken" value={csrftoken} />
 
-            <button type="submit" className='border-indigo-200 px-4 py-2 border rounded-3xl
+            <button type="submit" id='submit' className='border-indigo-200 px-4 py-2 border rounded-3xl
              hover:bg-Intone-300 hover:text-black flex ml-auto mr-4 mt-6'>Add Connection</button>
         </form>
     )
@@ -711,7 +722,7 @@ export function NewReviewForm({ singleEntryData, fetchSingleEntry, setReviewErro
             <label>
                 <p>Stars:</p>
                 <select className='w-1/4 border-solid border-2 rounded-lg py-2 px-4 text-black scrollbar-blue-thin'
-                    value={stars} onChange={(e) => setStars(e.target.value)}>
+                    value={stars} onChange={(e) => setStars(e.target.value)} name='stars' id='stars'>
                     <option value="">Select a rating</option>
                     <option value="0">0</option>
                     <option value="0.5">0.5</option>
@@ -746,8 +757,8 @@ export function NewReviewForm({ singleEntryData, fetchSingleEntry, setReviewErro
                     className='bg-Intone-200 px-6 placeholder:text-gray-500 outline-none resize-none border rounded-xl w-3/4 mx-auto py-2 scrollbar-blue-thin text-Intone-600' />
             </label>
             <br />
-            <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
-            <button type="submit" className='border-indigo-200 px-4 py-2 border rounded-3xl
+            <input type="hidden" id='submit' name="csrfmiddlewaretoken" value={csrftoken} />
+            <button type="submit" id='submit' className='border-indigo-200 px-4 py-2 border rounded-3xl
              hover:bg-Intone-300 hover:text-black flex ml-auto mr-4 mt-6'>Submit</button>
         </form>
     );
