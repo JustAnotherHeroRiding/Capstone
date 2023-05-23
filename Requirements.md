@@ -72,7 +72,7 @@
 ## Finishing Touches
 - Reviews sorted in reverse chronological order #DONE 
 - Pagination for the entries so I dont have to scroll a lot if there are a lot of entries for profile reviews and comments #DONE
-- Pagination for reviews and comments on Entries
+- Pagination for reviews and comments on Entries #DONE 
 - Infinite scroll for messages
 - Testing the responsiveness of the UI and appearance on smaller screens #DONE 
 - Smoothing out elements that don't fit the style or stick out

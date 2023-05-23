@@ -263,7 +263,6 @@ function Profile({
     setCurrentPageReviewsUser(page);
   };
   const handleReviewFollowingPageChange = (page) => {
-    console.log(page)
     setCurrentPageReviewsFollowing(page);
   };
 
@@ -274,7 +273,7 @@ function Profile({
       pageReviewNumbersUser.push(
         <button
           key={i}
-          className={`mx-1 px-2 rounded-2xl ${i === currentPageReviewsUser ? 'bg-Intone-300 text-white' : 'bg-Intone-900 text-white'
+          className={`mx-1 px-2 rounded-2xl ${i === currentPageReviewsUser ? 'bg-indigo-600 text-white' : 'bg-Intone-900 text-white'
             }`}
           onClick={() => handleReviewUserPageChange(i)}
         >

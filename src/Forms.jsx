@@ -746,7 +746,7 @@ export function NewReviewForm({ singleEntryData, fetchSingleEntry, setReviewErro
             pageReviewNumbersEntry.push(
                 <button
                     key={i}
-                    className={`mx-1 px-2 rounded-2xl ${i === currentPageReviewsEntry ? 'bg-Intone-300 text-white' : 'bg-Intone-900 text-white'
+                    className={`mx-1 px-2 rounded-2xl ${i === currentPageReviewsEntry ? 'bg-indigo-600 text-white' : 'bg-Intone-900 text-white'
                         }`}
                     onClick={() => handleReviewEntryPageChange(i)}
                 >
