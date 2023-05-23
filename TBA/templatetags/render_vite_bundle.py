@@ -18,24 +18,28 @@ def render_vite_bundle():
     Supposed to only be used in production.
     For development, see other files.
     """
-  
+
     try:
-        fd = open(f"{settings.VITE_APP_DIR}/dist/manifest.json", "r")
+        fd = open(f"{settings.VITE_APP_DIR}\dist\manifest.json", "r")
         manifest = json.load(fd)
     except:
         raise Exception(
-            f"Vite manifest file not found or invalid. Maybe your {settings.VITE_APP_DIR}/dist/manifest.json file is empty?"
+            f"Vite manifest file not found or invalid. Maybe your {settings.VITE_APP_DIR}\dist\manifest.json file is empty?"
         )
 
-    imports_files = "".join(
-        [
-            f'<script type="module" src="/static/{manifest[file]["file"]}"></script>'
-            for file in manifest["index.html"]["imports"]
-        ]
-    )
+    imports_files = ""
+
+
+    if "imports" in manifest.get("index.html", {}):
+        imports_files = "".join(
+            [
+                f'<script type="module" src="/static/{manifest[file]["file"]}"></script>'
+                for file in manifest["index.html"]["imports"]
+            ]
+        )
 
     return mark_safe(
         f"""<script type="module" src="/static/{manifest['index.html']['file']}"></script>
         <link rel="stylesheet" type="text/css" href="/static/{manifest['index.html']['css'][0]}" />
         {imports_files}"""
-    )
+)

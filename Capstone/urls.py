@@ -24,7 +24,7 @@ urlpatterns = [
     path("", include("TBA.urls")),
 
 
-#re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
+re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
 re_path(r"^.*$", TemplateView.as_view(template_name="base.html"),
             )
 ]

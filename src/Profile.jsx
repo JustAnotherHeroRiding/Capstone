@@ -385,7 +385,7 @@ function Profile({
 
   const handleMessageClick = () => {
     setShowChat(showChat => !showChat);
-    setConversation(false)
+    fetchMessageHistory(userData.id)
   };
 
 

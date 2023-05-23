@@ -552,25 +552,28 @@ def get_following_reviews(request, user_id):
 
 @login_required
 def delete_entry(request, entry_type, entry_id):
-    # Map the model type to the corresponding model
-    model_mapping = {
-        "album": Album,
-        "band": Band,
-        "gear": Gear,
-        "player": Player,
-    }
-    Model = model_mapping[entry_type]
+    if request.user.id == 2:
+        # Map the model type to the corresponding model
+        model_mapping = {
+            "album": Album,
+            "band": Band,
+            "gear": Gear,
+            "player": Player,
+        }
+        Model = model_mapping[entry_type]
 
-    # Check if the model exists
-    if Model is None:
-        return JsonResponse({"error": f"Invalid model type: {entry_type}"})
+        # Check if the model exists
+        if Model is None:
+            return JsonResponse({"error": f"Invalid model type: {entry_type}"})
 
-    # Get the object or return an error if it doesn't exist
-    obj = get_object_or_404(Model, pk=entry_id)
+        # Get the object or return an error if it doesn't exist
+        obj = get_object_or_404(Model, pk=entry_id)
 
-    # Delete the object and return a success message
-    obj.delete()
-    return JsonResponse({"message": f"{entry_type} {entry_id} deleted successfully"})
+        # Delete the object and return a success message
+        obj.delete()
+        return JsonResponse({"message": f"{entry_type} {entry_id} deleted successfully"})
+    else:
+        return JsonResponse({'message':"Unauthorized action, admin acccess required."})
 
 
 @login_required
