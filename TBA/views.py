@@ -535,6 +535,22 @@ def get_all_reviews(request):
 
 
 @login_required
+def get_following_reviews(request, user_id):
+    # Get the current user
+    user = User.objects.filter(pk=user_id).first()
+    
+    # Retrieve the user IDs of the users the current user is following
+    following_users = user.following.all().values_list('id', flat=True)
+    
+    # Retrieve the reviews from the following users
+    reviews = Review.objects.filter(user__in=following_users)
+    
+    # Serialize the reviews
+    serialized_reviews = [r.serialize() for r in reviews]
+    
+    return JsonResponse(serialized_reviews, safe=False)
+
+@login_required
 def delete_entry(request, entry_type, entry_id):
     # Map the model type to the corresponding model
     model_mapping = {

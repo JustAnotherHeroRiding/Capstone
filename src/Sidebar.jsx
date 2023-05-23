@@ -165,7 +165,6 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
 
     useEffect(() => {
         FetchSearchData();
-        fetchAllReviews();
     }, []);
 
 
@@ -279,7 +278,6 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                             handleSearchResultClick={handleSearchResultClick}
                             currentUserId={currentUserId}
                             fetchSingleEntry={fetchSingleEntry}
-                            reviews={reviews}
                         />
                     )}
 
@@ -292,7 +290,6 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                             handleSearchResultClick={handleSearchResultClick}
                             currentUserId={currentUserId}
                             fetchSingleEntry={fetchSingleEntry}
-                            reviews={reviews}
                         />
                     )}
                 </>

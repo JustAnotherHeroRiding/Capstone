@@ -3,8 +3,8 @@ import Cookies from 'js-cookie';
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { fa0, faFaceSmile } from '@fortawesome/free-solid-svg-icons'
-
+import { faPaperclip, faCircleLeft, faFaceSmile, faPlus, faStar, faStarHalfStroke } from '@fortawesome/free-solid-svg-icons'
+import { faStar as farStar } from '@fortawesome/free-regular-svg-icons'
 
 
 
@@ -96,7 +96,7 @@ export function AddAlbumForm({ AllEntriesData, fetchAllEntries }) {
             <label className='mr-4'>
                 <p>Album Name:</p>
                 <input className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' type="text"
-                    value={name} onChange={handleNameChange} name='name' id='name' autoComplete='off'/>
+                    value={name} onChange={handleNameChange} name='name' id='name' autoComplete='off' />
             </label>
             <br />
             <label className='mr-4'>
@@ -222,8 +222,8 @@ export function AddGearForm({ AllEntriesData, fetchAllEntries }) {
         <form onSubmit={handleSubmit} className='flex flex-col overflow-auto max-h-[400px] scrollbar-blue-thin text-Intone-300'>
             <label className='mr-4'>
                 Category:
-                <select value={category} onChange={handleCategoryChange} 
-                className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' name='category' id='category'>
+                <select value={category} onChange={handleCategoryChange}
+                    className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' name='category' id='category'>
                     <option value="">Select a category</option>
                     {categories.map((category) => (
                         <option key={category.value} value={category.value}>
@@ -235,27 +235,27 @@ export function AddGearForm({ AllEntriesData, fetchAllEntries }) {
             <br />
             <label className='mr-4'>
                 Name:
-                <input type="text" name='name' id='name' 
-                className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' 
-                value={name} onChange={(e) => setName(e.target.value)} autoComplete='off'/>
+                <input type="text" name='name' id='name'
+                    className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black'
+                    value={name} onChange={(e) => setName(e.target.value)} autoComplete='off' />
             </label>
             <br />
             <label className='mr-4'>
                 Tonehunt URL:
-                <input type="text" name='tonehunt_url' id='tonehunt_url' 
-                className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' value={tonehunt} onChange={(e) => setTonehunt(e.target.value)} />
+                <input type="text" name='tonehunt_url' id='tonehunt_url'
+                    className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' value={tonehunt} onChange={(e) => setTonehunt(e.target.value)} />
             </label>
             <br />
             <label className='mr-4'>
                 Image:
-                <input type="file" name='image' id='image' 
-                onChange={(e) => setImage(e.target.files[0])} />
+                <input type="file" name='image' id='image'
+                    onChange={(e) => setImage(e.target.files[0])} />
             </label>
             <br />
             <label className='mr-4'>
                 Description:
-                <textarea value={description}  name='description' id='description'
-                className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black resize-none' onChange={(e) => setDescription(e.target.value)} />
+                <textarea value={description} name='description' id='description'
+                    className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black resize-none' onChange={(e) => setDescription(e.target.value)} />
             </label>
             <br />
             <input type="hidden" name="csrfmiddlewaretoken" id='csrf' value={csrftoken} />
@@ -342,8 +342,8 @@ export function AddPlayerForm({ AllEntriesData, fetchAllEntries }) {
         <form onSubmit={handleSubmit} className='flex flex-col overflow-auto max-h-[400px] scrollbar-blue-thin text-Intone-300'>
             <label className='mr-4'>
                 Name:
-                <input type="text" className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' name='name' id='name' autoComplete='off' 
-                value={name} onChange={(e) => setName(e.target.value)} />
+                <input type="text" className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' name='name' id='name' autoComplete='off'
+                    value={name} onChange={(e) => setName(e.target.value)} />
             </label>
             <br />
             <label className='mr-4'>
@@ -402,7 +402,7 @@ export function AddPlayerForm({ AllEntriesData, fetchAllEntries }) {
             <label className='mr-4'>
                 Description:
                 <textarea value={description} name='description' id='description'
-                className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black resize-none' onChange={(e) => setDescription(e.target.value)} />
+                    className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black resize-none' onChange={(e) => setDescription(e.target.value)} />
             </label>
             <br />
             <input type="hidden" name="csrfmiddlewaretoken" id='csrf' value={csrftoken} />
@@ -460,19 +460,19 @@ export function AddBandForm({ AllEntriesData, fetchAllEntries }) {
             <label className='mr-4'>
                 Name:
                 <input type="text" className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black' name='name' id='name' autoComplete='off'
-                value={name} onChange={(e) => setName(e.target.value)} />
+                    value={name} onChange={(e) => setName(e.target.value)} />
             </label>
             <br />
             <label className='mr-4'>
                 Image:
                 <input type="file" name='image' id='image'
-                onChange={(e) => setPicture(e.target.files[0])} />
+                    onChange={(e) => setPicture(e.target.files[0])} />
             </label>
             <br />
             <label className='mr-4'>
                 Description:
                 <textarea value={description} name='description' id='description'
-                className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black resize-none' onChange={(e) => setDescription(e.target.value)} />
+                    className='w-full border-solid border-2 rounded-lg py-2 px-4 text-black resize-none' onChange={(e) => setDescription(e.target.value)} />
             </label>
             <br />
             <input type="hidden" name="csrfmiddlewaretoken" id='csrf' value={csrftoken} />
@@ -716,52 +716,137 @@ export function NewReviewForm({ singleEntryData, fetchSingleEntry, setReviewErro
     };
 
 
+    // Define the number of reviews per page
+    const REVIEWS_PER_PAGE = 8;
+
+    // Component code
+    const [currentPageReviewsEntry, setCurrentPageReviewsEntry] = useState(1);
+
+    // Calculate the index range for the current page
+    const startIndexReviewsEntry = (currentPageReviewsEntry - 1) * REVIEWS_PER_PAGE;
+    const endIndexReviewsEntry = startIndexReviewsEntry + REVIEWS_PER_PAGE;
+
+    // Slice the reviews array based on the current page
+    const displayedReviewsEntry = singleEntryData.reviews.slice(startIndexReviewsEntry, endIndexReviewsEntry);
+
+
+    // Calculate the total number of pages
+    const totalPagesReviewsEntry = Math.ceil(singleEntryData.reviews.length / REVIEWS_PER_PAGE);
+
+
+    // Handle page navigation
+    const handleReviewEntryPageChange = (page) => {
+        setCurrentPageReviewsEntry(page);
+    };
+
+    // Render the page numbers
+    const renderPageReviewEntryNumbers = () => {
+        const pageReviewNumbersEntry = [];
+        for (let i = 1; i <= totalPagesReviewsEntry; i++) {
+            pageReviewNumbersEntry.push(
+                <button
+                    key={i}
+                    className={`mx-1 px-2 rounded-2xl ${i === currentPageReviewsEntry ? 'bg-Intone-300 text-white' : 'bg-Intone-900 text-white'
+                        }`}
+                    onClick={() => handleReviewEntryPageChange(i)}
+                >
+                    {i}
+                </button>
+            );
+        }
+        return pageReviewNumbersEntry;
+    };
+
 
     return (
-        <form onSubmit={handleSubmit} className='flex flex-col overflow-auto max-h-[400px] scrollbar-blue-thin text-Intone-300'>
-            <label>
-                <p>Stars:</p>
-                <select className='w-1/4 border-solid border-2 rounded-lg py-2 px-4 text-black scrollbar-blue-thin'
-                    value={stars} onChange={(e) => setStars(e.target.value)} name='stars' id='stars'>
-                    <option value="">Select a rating</option>
-                    <option value="0">0</option>
-                    <option value="0.5">0.5</option>
-                    <option value="1">1</option>
-                    <option value="1.5">1.5</option>
-                    <option value="2">2</option>
-                    <option value="2.5">2.5</option>
-                    <option value="3">3</option>
-                    <option value="3.5">3.5</option>
-                    <option value="4">4</option>
-                    <option value="4.5">4.5</option>
-                    <option value="5">5</option>
-                </select>
-            </label>
-            <br />
-            <label className='flex flex-col'>
-                <p className='font-bold mx-auto mb-4'>
-                    Text:
-                </p>
-                <textarea type="text"
-                    onChange={onChange}
-                    ref={textareaRef}
-                    style={{
-                        minHeight: MIN_TEXTAREA_HEIGHT,
-                        maxHeight: 400
-                    }}
-                    value={value}
-                    name="body"
-                    id="body-textarea"
-                    placeholder="What did you think about it?"
-                    rows='4'
-                    className='bg-Intone-200 px-6 placeholder:text-gray-500 outline-none resize-none border rounded-xl w-3/4 mx-auto py-2 scrollbar-blue-thin text-Intone-600' />
-            </label>
-            <br />
-            <input type="hidden" id='submit' name="csrfmiddlewaretoken" value={csrftoken} />
-            <button type="submit" id='submit' className='border-indigo-200 px-4 py-2 border rounded-3xl
+        <div>
+            <form onSubmit={handleSubmit} className='flex flex-col overflow-auto max-h-[400px] scrollbar-blue-thin text-Intone-300'>
+                <label>
+                    <p>Stars:</p>
+                    <select className='w-1/4 border-solid border-2 rounded-lg py-2 px-4 text-black scrollbar-blue-thin'
+                        value={stars} onChange={(e) => setStars(e.target.value)} name='stars' id='stars'>
+                        <option value="">Select a rating</option>
+                        <option value="0">0</option>
+                        <option value="0.5">0.5</option>
+                        <option value="1">1</option>
+                        <option value="1.5">1.5</option>
+                        <option value="2">2</option>
+                        <option value="2.5">2.5</option>
+                        <option value="3">3</option>
+                        <option value="3.5">3.5</option>
+                        <option value="4">4</option>
+                        <option value="4.5">4.5</option>
+                        <option value="5">5</option>
+                    </select>
+                </label>
+                <br />
+                <label className='flex flex-col'>
+                    <p className='font-bold mx-auto mb-4'>
+                        Text:
+                    </p>
+                    <textarea type="text"
+                        onChange={onChange}
+                        ref={textareaRef}
+                        style={{
+                            minHeight: MIN_TEXTAREA_HEIGHT,
+                            maxHeight: 400
+                        }}
+                        value={value}
+                        name="body"
+                        id="body-textarea"
+                        placeholder="What did you think about it?"
+                        rows='4'
+                        className='bg-Intone-200 px-6 placeholder:text-gray-500 outline-none resize-none border rounded-xl w-3/4 mx-auto py-2 scrollbar-blue-thin text-Intone-600' />
+                </label>
+                <br />
+                <input type="hidden" id='submit' name="csrfmiddlewaretoken" value={csrftoken} />
+                <button type="submit" id='submit' className='border-indigo-200 px-4 py-2 border rounded-3xl
              hover:bg-Intone-300 hover:text-black flex ml-auto mr-4 mt-6'>Submit</button>
-        </form>
+            </form>
+            <div className='px-2 py-4 md:ml-6'>
+                <div className='md:w-[700px] max-md:w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto mx-auto'>
+                    <div className='mr-4'>
+                        {displayedReviewsEntry.map(review => (
+                            <div key={review.id}>
+                                    <div className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
+                                        <div className='flex'>
+                                            {[...Array(Math.floor(review.stars))].map((_, index) => (
+                                                <FontAwesomeIcon icon={faStar} className='text-yellow-400' key={`full-star-${index}`} />
+                                            ))}
+                                            {review.stars % 1 !== 0 && (
+                                                <FontAwesomeIcon icon={faStarHalfStroke} className='text-yellow-400' key={`half-star-${review.id}`} />)}
+                                            {[...Array(5 - Math.ceil(review.stars))].map((_, index) => (
+                                                <FontAwesomeIcon icon={farStar} className='text-yellow-400' key={`empty-star-${index}`} />
+                                            ))}
+                                        </div>
+                                        <p className='whitespace-pre-line mb-2'>{review.text}</p>
+                                        <div className='flex justify-between'>
+                                            <div className='flex flex-row'>
+                                                <img src={`static/profile_pictures/${review.user.profile_pic}`}
+                                                    className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                                                <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                                                    onClick={() => handleUserMessageClick(review.user)}>{review.user.name}</p>
+                                            </div>
+                                            <p>
+                                                {review.is_edited && (
+                                                    <span className=' text-gray-500'>*</span>
+                                                )}
+                                                {review.created_at}
+                                            </p>
+                                        </div>
+
+                                    </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className='flex justify-center mt-4'>
+                    {renderPageReviewEntryNumbers()}
+                </div>
+            </div>
+        </div>
     );
+
 }
 
 
@@ -769,6 +854,44 @@ export function NewEntryComment({ singleEntryData, fetchSingleEntry, handleUserM
 
     const MIN_TEXTAREA_HEIGHT = 32;
     const csrftoken = Cookies.get('csrftoken');
+
+    const COMMENTS_PER_PAGE = 10;
+
+    // Component code
+    const [currentCommentPage, setCurrentCommentPage] = useState(1);
+
+    // Calculate the index range for the current page
+    const startIndexComments = (currentCommentPage - 1) * COMMENTS_PER_PAGE;
+    const endIndexComments = startIndexComments + COMMENTS_PER_PAGE;
+
+    // Slice the comments array based on the current page
+    const displayedComments = singleEntryData.comments.slice(startIndexComments, endIndexComments);
+
+    // Calculate the total number of pages
+    const totalPagesComments = Math.ceil(singleEntryData.comments.length / COMMENTS_PER_PAGE);
+
+    // Handle page navigation
+    const handleCommentPageChange = (page) => {
+        setCurrentCommentPage(page);
+    };
+
+    // Render the page numbers
+    const renderCommentPageNumbers = () => {
+        const pageCommentNumbers = [];
+        for (let i = 1; i <= totalPagesComments; i++) {
+            pageCommentNumbers.push(
+                <button
+                    key={i}
+                    className={`mx-1 px-2 rounded-2xl ${i === currentCommentPage ? 'bg-indigo-600 text-white' : 'bg-Intone-900 text-white'
+                        }`}
+                    onClick={() => handleCommentPageChange(i)}
+                >
+                    {i}
+                </button>
+            );
+        }
+        return pageCommentNumbers;
+    };
 
 
 
@@ -819,14 +942,14 @@ export function NewEntryComment({ singleEntryData, fetchSingleEntry, handleUserM
 
     function handleEmojiSelect(emoji) {
         setValue(prevValue => prevValue + emoji.native)
-      }
-    
-      const [showEntryCommentEmoji, setShowEntryCommentEmoji] = useState(false)
-    
-      function handleEmojiShow() {
+    }
+
+    const [showEntryCommentEmoji, setShowEntryCommentEmoji] = useState(false)
+
+    function handleEmojiShow() {
         setShowEntryCommentEmoji(!showEntryCommentEmoji)
-        
-      }
+
+    }
 
 
     return (
@@ -867,7 +990,7 @@ export function NewEntryComment({ singleEntryData, fetchSingleEntry, handleUserM
                 <div className='px-2 py-4 md:ml-6'>
                     <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto'>
                         <div className='mr-4'>
-                            {singleEntryData.comments.map(comment => (
+                            {displayedComments.map(comment => (
                                 <div key={comment.id} className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
                                     <p className='whitespace-pre-line mb-2'>{comment.text}</p>
                                     <div className='flex justify-between'>
@@ -883,8 +1006,12 @@ export function NewEntryComment({ singleEntryData, fetchSingleEntry, handleUserM
                             ))}
                         </div>
                     </div>
+                    <div className='flex justify-center mt-4'>
+                        {renderCommentPageNumbers()}
+                    </div>
                 </div>
             </div>
+
         </div>
     )
 }
@@ -893,73 +1020,73 @@ export function NewEntryComment({ singleEntryData, fetchSingleEntry, handleUserM
 export function WishlistAddRemove({ singleEntryData, currentUserId }) {
     const [isInWishlist, setIsInWishlist] = useState(false);
     const csrftoken = Cookies.get('csrftoken');
-  
+
     useEffect(() => {
-      if (singleEntryData.wishlist && singleEntryData.wishlist.some(wishlist => wishlist.user_id === currentUserId && wishlist.gear_items.includes(singleEntryData.id))) {
-        setIsInWishlist(true);
-      } else {
-        setIsInWishlist(false);
-      }
+        if (singleEntryData.wishlist && singleEntryData.wishlist.some(wishlist => wishlist.user_id === currentUserId && wishlist.gear_items.includes(singleEntryData.id))) {
+            setIsInWishlist(true);
+        } else {
+            setIsInWishlist(false);
+        }
     }, [singleEntryData, currentUserId]);
-  
+
     function handleWishlistAddRequest(event) {
         event.preventDefault();
         fetch(`wishlist/add/${parseInt(singleEntryData.id, 10)}`, {
-          method: 'POST',
-          headers: {
-            'X-CSRFToken': csrftoken
-          }
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
         })
-          .then(response => response.json())
-          .then(data => {
-            setIsInWishlist(true);
-          })
-          .catch(error => {
-            console.log('Error:', error.message);
-          });
-      }
-      
-      function handleWishlistRemoveRequest(event) {
+            .then(response => response.json())
+            .then(data => {
+                setIsInWishlist(true);
+            })
+            .catch(error => {
+                console.log('Error:', error.message);
+            });
+    }
+
+    function handleWishlistRemoveRequest(event) {
         event.preventDefault();
         fetch(`wishlist/remove/${parseInt(singleEntryData.id, 10)}`, {
-          method: 'POST',
-          headers: {
-            'X-CSRFToken': csrftoken
-          }
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
         })
-          .then(response => response.json())
-          .then(data => {
-            setIsInWishlist(false);
-          })
-          .catch(error => {
-            console.log('Error:', error.message);
-          });
-      }
-  
-    if (isInWishlist) {
-      return (
-        <form onSubmit={handleWishlistRemoveRequest} className='mx-auto mb-4'>
-          <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
-          <button
-            type="submit"
-            className="border-indigo-200 px-4 py-2 border rounded-3xl hover:bg-Intone-300 hover:text-black mr-4 mt-6"
-          >
-            Remove from wishlist
-          </button>
-        </form>
-      );
+            .then(response => response.json())
+            .then(data => {
+                setIsInWishlist(false);
+            })
+            .catch(error => {
+                console.log('Error:', error.message);
+            });
     }
-  
+
+    if (isInWishlist) {
+        return (
+            <form onSubmit={handleWishlistRemoveRequest} className='mx-auto mb-4'>
+                <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+                <button
+                    type="submit"
+                    className="border-indigo-200 px-4 py-2 border rounded-3xl hover:bg-Intone-300 hover:text-black mr-4 mt-6"
+                >
+                    Remove from wishlist
+                </button>
+            </form>
+        );
+    }
+
     return (
-      <form onSubmit={handleWishlistAddRequest} className='mx-auto mb-4'>
-        <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
-        <button
-          type="submit"
-          className="border-indigo-200 px-4 py-2 border rounded-3xl hover:bg-Intone-300 hover:text-black mr-4 mt-6"
-        >
-          Add to wishlist
-        </button>
-      </form>
+        <form onSubmit={handleWishlistAddRequest} className='mx-auto mb-4'>
+            <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+            <button
+                type="submit"
+                className="border-indigo-200 px-4 py-2 border rounded-3xl hover:bg-Intone-300 hover:text-black mr-4 mt-6"
+            >
+                Add to wishlist
+            </button>
+        </form>
     );
-  }
-  
+}
+

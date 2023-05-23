@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPaperclip, faCircleLeft, faFaceSmile, faPlus, faStar, faStarHalfStroke } from '@fortawesome/free-solid-svg-icons'
 import { faStar as farStar } from '@fortawesome/free-regular-svg-icons'
-import { AddAlbumForm, AddGearForm, AddPlayerForm, AddBandForm, AddNewConnection, NewReviewForm, NewEntryComment,WishlistAddRemove } from './Forms.jsx';
+import { AddAlbumForm, AddGearForm, AddPlayerForm, AddBandForm, AddNewConnection, NewReviewForm, NewEntryComment, WishlistAddRemove } from './Forms.jsx';
 
 function MainPageItems({
     fetchSingleEntry, exitSingleView, singleView, singleViewType,
@@ -21,7 +21,8 @@ function MainPageItems({
                     return accumulator + review.stars;
                 }, 0);
                 const averageScore = totalScore / singleEntryData.reviews.length;
-                setReviewScore(averageScore);
+                const roundedScore = averageScore.toFixed(2); // Round to two decimal places
+                setReviewScore(roundedScore);
             } else if (singleEntryData.reviews.length === 0) {
                 setReviewScore(0)
             }
@@ -90,9 +91,6 @@ function MainPageItems({
 
 
 
-
-
-
     return (
         <div className='relative'>
             <div className={showForm ? 'newentryparent z-10' : 'hidden'}>
@@ -141,9 +139,9 @@ function MainPageItems({
             {showOnlyEntryType ? (
                 <div className='flex justify-center flex-col'>
                     <h1 className='mx-auto mt-6 text-3xl text-Intone-500'>{showEntryType.charAt(0).toUpperCase() + showEntryType.slice(1).toLowerCase()}</h1>
-                    <div className='mt-6'>
+                    <div className='mt-6 w-[80%] flex overflow-auto scrollbar-blue-thin mx-auto flex-shrink-0'>
                         {AllEntries[showEntryType] && (
-                            <div className='flex justify-center md:flex-row flex-col'>
+                            <div className='flex justify-center md:flex-row flex-col md:mb-6 mx-auto'>
                                 {AllEntries[showEntryType].map((entry) => (
                                     <div key={entry.id} onClick={() => fetchSingleEntry(entry.model_type, entry.id)}
                                         className='border cursor-pointer border-indigo-200 px-4 py-6 rounded-2xl hover:bg-Intone-100 mr-6 max-md:mb-6 max-md:mx-auto'>
@@ -339,45 +337,7 @@ function MainPageItems({
                                                 <NewReviewForm
                                                     singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} setReviewErrorMessage={setReviewErrorMessage} />
                                                 <p className='mx-auto text-red-400'>{reviewErrorMessage}</p>
-                                                <div className='px-2 py-4 md:ml-6'>
-                                                    <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto'>
-                                                        <div className='mr-4'>
-                                                            {singleEntryData.reviews.map(review => (
-                                                                <div key={review.id}>
-                                                                    {review.gear && review.gear.id === singleEntryData.id && (
-                                                                        <div className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
-                                                                            <div className='flex'>
-                                                                                {[...Array(Math.floor(review.stars))].map((_, index) => (
-                                                                                    <FontAwesomeIcon icon={faStar} className='text-yellow-400' key={`full-star-${index}`} />
-                                                                                ))}
-                                                                                {review.stars % 1 !== 0 && (
-                                                                                    <FontAwesomeIcon icon={faStarHalfStroke} className='text-yellow-400' key={`half-star-${review.id}`} />)}
-                                                                                {[...Array(5 - Math.ceil(review.stars))].map((_, index) => (
-                                                                                    <FontAwesomeIcon icon={farStar} className='text-yellow-400' key={`empty-star-${index}`} />
-                                                                                ))}
-                                                                            </div>
-                                                                            <p className='whitespace-pre-line mb-2'>{review.text}</p>
-                                                                            <div className='flex justify-between'>
-                                                                                <div className='flex flex-row'>
-                                                                                    <img src={`static/profile_pictures/${review.user.profile_pic}`}
-                                                                                        className='object-cover w-8 h-8 rounded-full mr-2'></img>
-                                                                                    <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
-                                                                                        onClick={() => handleUserMessageClick(review.user)}>{review.user.name}</p>
-                                                                                </div>
-                                                                                <p>
-                                                                                    {review.is_edited && (
-                                                                                        <span className=' text-gray-500'>*</span>
-                                                                                    )}
-                                                                                    {review.created_at}
-                                                                                </p>
-                                                                            </div>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                               
                                             </div>
                                             <NewEntryComment singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} handleUserMessageClick={handleUserMessageClick} />
 
@@ -517,46 +477,6 @@ function MainPageItems({
                                                 <NewReviewForm
                                                     singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} setReviewErrorMessage={setReviewErrorMessage} />
                                                 <p className='mx-auto text-red-400'>{reviewErrorMessage}</p>
-                                                <div className='px-2 py-4 md:ml-6'>
-                                                    <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto'>
-                                                        <div className='mr-4'>
-                                                            {singleEntryData.reviews.map(review => (
-                                                                <div key={review.id}>
-                                                                    {review.album && review.album.id === singleEntryData.id && (
-                                                                        <div className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
-                                                                            <div className='flex'>
-                                                                                {[...Array(Math.floor(review.stars))].map((_, index) => (
-                                                                                    <FontAwesomeIcon icon={faStar} className='text-yellow-400' key={`full-star-${index}`} />
-                                                                                ))}
-                                                                                {review.stars % 1 !== 0 && (
-                                                                                    <FontAwesomeIcon icon={faStarHalfStroke} className='text-yellow-400' key={`half-star-${review.id}`} />)}
-                                                                                {[...Array(5 - Math.ceil(review.stars))].map((_, index) => (
-                                                                                    <FontAwesomeIcon icon={farStar} className='text-yellow-400' key={`empty-star-${index}`} />
-                                                                                ))}
-                                                                            </div>
-                                                                            <p className='whitespace-pre-line mb-2'>{review.text}</p>
-                                                                            <div className='flex justify-between'>
-                                                                                <div className='flex flex-row'>
-                                                                                    <img src={`static/profile_pictures/${review.user.profile_pic}`}
-                                                                                        className='object-cover w-8 h-8 rounded-full mr-2'></img>
-                                                                                    <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
-                                                                                        onClick={() => handleUserMessageClick(review.user)}>{review.user.name}</p>
-                                                                                </div>
-                                                                                <p>
-                                                                                    {review.is_edited && (
-                                                                                        <span className=' text-gray-500'>*</span>
-                                                                                    )}
-                                                                                    {review.created_at}
-                                                                                </p>
-                                                                            </div>
-
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </div>
                                             <NewEntryComment singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} handleUserMessageClick={handleUserMessageClick} />
                                         </div>

@@ -2,6 +2,7 @@ import { useState, useLayoutEffect, useRef, useEffect } from 'react'
 import './App.css'
 import Cookies from 'js-cookie';
 import _ from 'lodash';
+import { debounce } from 'lodash'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPaperclip, faCircleLeft, faFaceSmile, faPlus, faStar, faStarHalfStroke } from '@fortawesome/free-solid-svg-icons'
 import { faStar as farStar } from '@fortawesome/free-regular-svg-icons'
@@ -14,8 +15,7 @@ const MIN_TEXTAREA_HEIGHT = 32;
 
 function Profile({
   userData, fetchUserData, current_user, handleProfileClick,
-  handleSearchResultClick, currentUserId, fetchSingleEntry,
-  reviews }) {
+  handleSearchResultClick, currentUserId, fetchSingleEntry }) {
   const csrftoken = Cookies.get('csrftoken');
 
   const [showReviews, setShowReviews] = useState(false)
@@ -40,6 +40,7 @@ function Profile({
     setShowFollowingReviews(false)
     setShowWishlist(showWishlist => !showWishlist)
   }
+  
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -173,6 +174,15 @@ function Profile({
   const debouncedFetchMessages = _.debounce(fetchMessages, 10);
   const debounchedConversations = _.debounce(GetUsersWithMessage, 10);
 
+  const [reviewsFollowing, setReviewsFollowing] = useState([]);
+
+  const fetchFollowingReviews = debounce(() => {
+    fetch(`review/get/following/${userData.id}`)
+        .then(response => response.json())
+        .then(data => setReviewsFollowing(data))
+        .catch(error => console.log(error))
+}, 50); // Adjust the debounce delay as needed
+
 
 
   // Call the debounced function in useEffect
@@ -180,7 +190,117 @@ function Profile({
     debouncedFetchComments();
     //debouncedFetchMessages();
     debounchedConversations();
+    fetchFollowingReviews()
   }, [userData.id]);
+
+
+  // Define the number of comments per page
+  const COMMENTS_PER_PAGE = 10;
+
+  // Component code
+  const [currentCommentPage, setCurrentCommentPage] = useState(1);
+
+  // Calculate the index range for the current page
+  const startIndexComments = (currentCommentPage - 1) * COMMENTS_PER_PAGE;
+  const endIndexComments = startIndexComments + COMMENTS_PER_PAGE;
+
+  // Slice the comments array based on the current page
+  const displayedComments = comments.slice(startIndexComments, endIndexComments);
+
+  // Calculate the total number of pages
+  const totalPagesComments = Math.ceil(comments.length / COMMENTS_PER_PAGE);
+
+  // Handle page navigation
+  const handleCommentPageChange = (page) => {
+    setCurrentCommentPage(page);
+  };
+
+  // Render the page numbers
+  const renderCommentPageNumbers = () => {
+    const pageCommentNumbers = [];
+    for (let i = 1; i <= totalPagesComments; i++) {
+      pageCommentNumbers.push(
+        <button
+          key={i}
+          className={`mx-1 px-2 rounded-2xl ${i === currentCommentPage ? 'bg-indigo-600 text-white' : 'bg-Intone-900 text-white'
+            }`}
+          onClick={() => handleCommentPageChange(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pageCommentNumbers;
+  };
+
+
+  // Define the number of reviews per page
+  const REVIEWS_PER_PAGE = 8;
+
+  // Component code
+  const [currentPageReviewsUser, setCurrentPageReviewsUser] = useState(1);
+  const [currentPageReviewsFollowing, setCurrentPageReviewsFollowing] = useState(1)
+
+  // Calculate the index range for the current page
+  const startIndexReviewsUser = (currentPageReviewsUser - 1) * REVIEWS_PER_PAGE;
+  const endIndexReviewsUser = startIndexReviewsUser + REVIEWS_PER_PAGE;
+
+  const startIndexReviewsFollowing = (currentPageReviewsFollowing - 1) * REVIEWS_PER_PAGE;
+  const endIndexReviewsFollowing = startIndexReviewsFollowing + REVIEWS_PER_PAGE;
+
+  // Slice the reviews array based on the current page
+  const displayedReviewsUser = userData.reviews.slice(startIndexReviewsUser, endIndexReviewsUser);
+  const displayedReviewsFollowing = reviewsFollowing.slice(startIndexReviewsFollowing, endIndexReviewsFollowing);
+
+
+  // Calculate the total number of pages
+  const totalPagesReviewsUser = Math.ceil(userData.reviews.length / REVIEWS_PER_PAGE);
+  const totalPagesReviewsFollowing = Math.ceil(reviewsFollowing.length / REVIEWS_PER_PAGE);
+
+
+  // Handle page navigation
+  const handleReviewUserPageChange = (page) => {
+    setCurrentPageReviewsUser(page);
+  };
+  const handleReviewFollowingPageChange = (page) => {
+    console.log(page)
+    setCurrentPageReviewsFollowing(page);
+  };
+
+  // Render the page numbers
+  const renderPageReviewUserNumbers = () => {
+    const pageReviewNumbersUser = [];
+    for (let i = 1; i <= totalPagesReviewsUser; i++) {
+      pageReviewNumbersUser.push(
+        <button
+          key={i}
+          className={`mx-1 px-2 rounded-2xl ${i === currentPageReviewsUser ? 'bg-Intone-300 text-white' : 'bg-Intone-900 text-white'
+            }`}
+          onClick={() => handleReviewUserPageChange(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pageReviewNumbersUser;
+  };
+  const renderPageReviewFollowingNumbers = () => {
+    const pageReviewNumbersFollowing = [];
+    for (let i = 1; i <= totalPagesReviewsFollowing; i++) {
+      pageReviewNumbersFollowing.push(
+        <button
+          key={i}
+          className={`mx-1 px-2 rounded-2xl ${i === currentPageReviewsFollowing ? 'bg-indigo-600 text-white' : 'bg-Intone-900 text-white'
+            }`}
+          onClick={() => handleReviewFollowingPageChange(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pageReviewNumbersFollowing;
+  };
+
 
   function send_comment(event) {
     event.preventDefault();
@@ -542,9 +662,8 @@ function Profile({
             <div className='px-2 py-4 md:ml-6'>
               <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto mx-auto'>
                 <div className='mr-4'>
-                  {reviews.map(review => (
+                  {displayedReviewsFollowing.map(review => (
                     <div key={review.id}>
-                      {userData.following_users.includes(review.user.id) && (
                         <div>
                           {review.gear || review.album ? (
                             <div className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
@@ -592,12 +711,14 @@ function Profile({
                             </div>
                           ) : null}
                         </div>
-                      )}
                     </div>
                   ))}
                 </div>
               </div>
             </div>
+            <div className='flex justify-center mt-4'>
+      {renderPageReviewFollowingNumbers()}
+    </div>
           </div>
         )}
         {showReviews && (
@@ -605,7 +726,7 @@ function Profile({
             <div className='px-2 py-4 md:ml-6'>
               <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto mx-auto'>
                 <div className='mr-4'>
-                  {userData.reviews.map(review => (
+                  {displayedReviewsUser.map(review => (
                     <div key={review.id}>
                       {review.gear || review.album ? (
                         <div className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
@@ -652,6 +773,9 @@ function Profile({
                 </div>
               </div>
             </div>
+            <div className='flex justify-center mt-4'>
+      {renderPageReviewUserNumbers()}
+    </div>
           </div>
         )}
         {showChat && (
@@ -789,7 +913,7 @@ function Profile({
         <div className='px-2 py-4 md:ml-6'>
           <div className='w-96 max-h-[350px] scrollbar-blue-thin overflow-y-auto'>
             <div className='mr-4'>
-              {comments.map(comment => (
+              {displayedComments.map((comment) => (
                 <div key={comment.id} className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
                   <p className='whitespace-pre-line mb-2'>{comment.text}</p>
                   <div className='flex justify-between'>
@@ -800,10 +924,12 @@ function Profile({
                     </div>
                     <p>{comment.created_at}</p>
                   </div>
-
                 </div>
               ))}
             </div>
+          </div>
+          <div className='flex justify-center mt-4'>
+          {renderCommentPageNumbers()}
           </div>
         </div>
       </div>

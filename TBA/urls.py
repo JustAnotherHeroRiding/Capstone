@@ -34,6 +34,7 @@ urlpatterns = [
 
     path('review/post/<str:entry_type>/<int:entry_id>', views.post_review, name='post_review'),
     path('review/get/all', views.get_all_reviews, name='get_all_reviews'),
+    path('review/get/following/<int:user_id>', views.get_following_reviews, name='get_following_reviews'),
     
     path('search', views.search, name='search'),
     path('user/data/<int:user_id>', views.get_user_data, name='get_user_data')
