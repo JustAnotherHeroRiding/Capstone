@@ -1,1 +1,1 @@
-web: gunicorn 'name-of-application.wsgi'
+web: gunicorn my-app-name.wsgi —log-file -
