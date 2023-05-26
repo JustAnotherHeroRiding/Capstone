@@ -1,1 +1,1 @@
-web: gunicorn TBA.wsgi --log-file -
+web: gunicorn Capstone.wsgi --log-file -
