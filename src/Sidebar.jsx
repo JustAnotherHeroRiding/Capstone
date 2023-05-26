@@ -278,6 +278,7 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                             handleSearchResultClick={handleSearchResultClick}
                             currentUserId={currentUserId}
                             fetchSingleEntry={fetchSingleEntry}
+                            AllEntriesData={data}
                         />
                     )}
 
@@ -290,6 +291,7 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                             handleSearchResultClick={handleSearchResultClick}
                             currentUserId={currentUserId}
                             fetchSingleEntry={fetchSingleEntry}
+                            AllEntriesData={data}
                         />
                     )}
                 </>

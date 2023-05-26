@@ -137,16 +137,21 @@ function MainPageItems({
                 <button className='flex border border-indigo-200 px-4 py-2 rounded-3xl mx-auto mt-6 hover:bg-Intone-300 hover:text-black' onClick={toggleAddForm}>Add</button>
             )}
             {showOnlyEntryType ? (
-                <div className='flex justify-center flex-col'>
+                <div className='flex justify-center flex-col ml-[100px]'>
                     <h1 className='mx-auto mt-6 text-3xl text-Intone-500'>{showEntryType.charAt(0).toUpperCase() + showEntryType.slice(1).toLowerCase()}</h1>
                     <div className='mt-6 w-[80%] flex overflow-auto scrollbar-blue-thin mx-auto flex-shrink-0'>
                         {AllEntries[showEntryType] && (
                             <div className='flex justify-center md:flex-row flex-col md:mb-6 mx-auto'>
                                 {AllEntries[showEntryType].map((entry) => (
-                                    <div key={entry.id} onClick={() => fetchSingleEntry(entry.model_type, entry.id)}
-                                        className='border cursor-pointer border-indigo-200 px-4 py-6 rounded-2xl hover:bg-Intone-100 mr-6 max-md:mb-6 max-md:mx-auto'>
-                                        <h1 className='text-2xl font-bold flex justify-center w-40'
-                                        >{entry.name}</h1>
+                                    <div
+                                        key={entry.id}
+                                        onClick={() => fetchSingleEntry(entry.model_type, entry.id)}
+                                        className='border cursor-pointer border-indigo-200 px-4 py-6 rounded-2xl 
+                     hover:bg-Intone-100 mr-6 max-md:mb-6 max-md:mx-auto h-fit'
+                                    >
+                                            <h1 className='text-2xl font-bold flex justify-center w-40'>
+                                                {entry.name}
+                                            </h1>
                                         {entry.model_type === 'band' && (
                                             <img src={`static/band_pics/${entry.picture}`} className='object-cover w-40 h-40 mx-auto ' />
                                         )}
@@ -337,7 +342,7 @@ function MainPageItems({
                                                 <NewReviewForm
                                                     singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} setReviewErrorMessage={setReviewErrorMessage} />
                                                 <p className='mx-auto text-red-400'>{reviewErrorMessage}</p>
-                                               
+
                                             </div>
                                             <NewEntryComment singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} handleUserMessageClick={handleUserMessageClick} />
 

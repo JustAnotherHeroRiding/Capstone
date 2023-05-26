@@ -707,3 +707,13 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "base.html")
+    
+@login_required
+def delete_user(request, user_id):
+    if request.user.id == 2:
+        try:
+            user = User.objects.get(id=user_id)
+            user.delete()
+            return JsonResponse({'message': 'User deleted successfully'})
+        except User.DoesNotExist:
+            return JsonResponse({'message': 'User not found'}, status=404)

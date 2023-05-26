@@ -15,7 +15,7 @@ const MIN_TEXTAREA_HEIGHT = 32;
 
 function Profile({
   userData, fetchUserData, current_user, handleProfileClick,
-  handleSearchResultClick, currentUserId, fetchSingleEntry }) {
+  handleSearchResultClick, currentUserId, fetchSingleEntry, AllEntriesData }) {
   const csrftoken = Cookies.get('csrftoken');
 
   const [showReviews, setShowReviews] = useState(false)
@@ -183,7 +183,29 @@ function Profile({
         .catch(error => console.log(error))
 }, 50); // Adjust the debounce delay as needed
 
+const [messageQuery, setMessageQuery] = useState('');
+const [showMessageResults, setShowMessageResults] = useState(false);
+const [messageResults, setMessageResults] = useState([]);
+const [nrMessageResults, setNrMessageResults] = useState(0);
 
+
+
+const handleMessageSearchInputChange = (event) => {
+    const value = event.target.value
+    setMessageQuery(value);
+
+    if (value !== '') {
+        const filteredData = Object.values(AllEntriesData.users).flat().filter((item) => item.name.toLowerCase().includes(value.toLowerCase()));
+
+        setMessageResults(filteredData);
+        setNrMessageResults(filteredData.length);
+        setShowMessageResults(true);
+    } else {
+        setMessageResults([]);
+        setNrMessageResults(0);
+        setShowMessageResults(false);
+    }
+};
 
   // Call the debounced function in useEffect
   useEffect(() => {
@@ -521,7 +543,6 @@ function Profile({
       });
   }
 
-
   return (
 
     <div className='mx-auto h-screen flex flex-col items-center relative'>
@@ -792,7 +813,32 @@ function Profile({
 
                     </div>
                   ))}
-                </div>}
+                  <div className='flex flex-col'>
+                  <input type='text'
+                        placeholder='Search Albums,Gear,Players and more' name='sidebar-search'
+                        className='text-sm h-10 my-auto w-3/4 mx-auto rounded-3xl px-4 py-2 text-black'
+                        value={messageQuery}
+                        onChange={handleMessageSearchInputChange}
+                        autoComplete='off'
+                        ></input>
+                    {showMessageResults && messageResults && nrMessageResults > 0 && (
+                        <div className='bg-gray-800 z-50 px-2 mt-2 py-2 
+                        rounded-2xl cursor-pointer max-h-[300px] overflow-auto scrollbar-blue-thin w-[300px] mx-auto'>
+                            <>
+                                {messageResults.map((result) => (
+                                    <div key={`${result.id}-${result.model_type}`} className='flex justify-between hover:bg-gray-700 p-2 rounded-2xl'
+                                        onClick={() => fetchMessageHistory(result.id)}>
+                                        <p>{result.name}</p>
+                                        <img src={`static/profile_pictures/${result.profile_pic}`} className='object-cover w-12 h-12 cursor-pointer rounded-2xl' onClick={() => fetchMessageHistory(result.id)} />
+                                    </div>
+                                ))}
+                                
+                            </>
+                        </div>
+                    )}
+                    </div>
+                </div>
+                }
               {conversation &&
                 <div className='max-h-[380px] scrollbar-thumb-Intone-300 
             scrollbar-thin scrollbar-track-rounded-3xl scrollbar-thumb-rounded-3xl 

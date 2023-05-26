@@ -24,7 +24,7 @@
 - If i follow a user i can see all of their reviews #DONE 
 - The user view will have a reactive second nav menu allowing me to select my reviews, reviews from followed users, gear on my wishlist etc #DONE 
 - Create Lists
-- Pagination for comments, infinite scroll for messages where messages get loaded when scrolling up
+- Pagination for comments, infinite scroll for messages where messages get loaded when scrolling up #DONE 
 
 ### There will be a search bar to search for any matches in any of the categories
 
@@ -76,8 +76,8 @@
 - Infinite scroll for messages
 - Testing the responsiveness of the UI and appearance on smaller screens #DONE 
 - Smoothing out elements that don't fit the style or stick out
-- Default profile pic for new users
-- Search bar in message box
+- Default profile pic for new users #DONE 
+- Search bar in message box #DONE 
 ## Browse Albums, Players or Gear #DONE
 
 ## Leave Reviews for albums or gear, leave comments for players #DONE 

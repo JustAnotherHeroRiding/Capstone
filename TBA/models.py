@@ -8,7 +8,7 @@ class User(AbstractUser):
     groups = models.ManyToManyField(Group, related_name="tba_users")
     user_permissions = models.ManyToManyField(Permission, related_name="tba_users")
     profile_pic = models.ImageField(
-        upload_to="TBA/static/profile_pics", blank=True, null=True
+        upload_to="TBA/static/profile_pics", blank=True, null=True, default="default.png"  
     )
     followers = models.ManyToManyField(
         "self", symmetrical=False, related_name="following"

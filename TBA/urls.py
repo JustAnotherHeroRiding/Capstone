@@ -37,6 +37,8 @@ urlpatterns = [
     path('review/get/following/<int:user_id>', views.get_following_reviews, name='get_following_reviews'),
     
     path('search', views.search, name='search'),
-    path('user/data/<int:user_id>', views.get_user_data, name='get_user_data')
+    path('user/data/<int:user_id>', views.get_user_data, name='get_user_data'),
+    path('user/delete/<int:user_id>', views.delete_user, name='delete_user'),
+
 
 ]
