@@ -104,10 +104,9 @@ and fast when browsing the various entries and their connections, users can mess
 
 ## How to run the application
 * Install project dependencies by running pip install -r requirements.txt
-* Install node modules with npm install
 * Make and apply migrations by running python manage.py makemigrations and python manage.py migrate.
 
-* Open a second terminal window and navigate to the project directory, run npm install to install all npm dependencies and then run npm run dev in order to start the vite react app.
+* Open a second terminal window and navigate to the frontend directory, run npm install to install all npm dependencies and then run npm run dev in order to start the vite react app.
 
-* If you wish to run it into production mode, run npm run build, python manage.py collectstatic and then python manage.py runserver with debug set to false, this way you do not need to run the npm server to serve the 
+* If you wish to run it into production mode, run npm run build from the frontend direcotry, python manage.py collectstatic and then python manage.py runserver with debug set to false, this way you do not need to run the npm server to serve the 
 front end code.
