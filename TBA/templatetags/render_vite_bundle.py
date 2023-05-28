@@ -26,7 +26,7 @@ def render_vite_bundle():
             fd = open(f"{settings.VITE_APP_DIR}\dist\manifest.json", "r")
         elif platform.system() == "Linux":
     # Linux platform
-            fd = open(f"{settings.VITE_APP_DIR}dist/manifest.json", "r")
+            fd = open(f"{settings.VITE_APP_DIR}/dist/manifest.json", "r")
 
         manifest = json.load(fd)
     except:
