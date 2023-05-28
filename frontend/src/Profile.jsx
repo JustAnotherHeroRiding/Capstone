@@ -610,9 +610,6 @@ const handleMessageSearchInputChange = (event) => {
             Following</li>
           <li className='mr-6 cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl' onClick={handleWishlistClick}>
             Wishlist</li>
-          <li className='cursor-pointer hover:bg-Intone-500 px-4 py-2 rounded-3xl mr-6'>
-            Charts
-          </li>
           {currentUserId && (
             <>
               {current_user && (

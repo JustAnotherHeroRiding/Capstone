@@ -181,7 +181,7 @@ function MainPageItems({
                                         <div className='flex flex-row md:flex-col'>
                                             {AllEntries.bands.map((band) => (
                                                 <div key={band.id} onClick={() => fetchSingleEntry(band.model_type, band.id)}
-                                                    className='border cursor-pointer border-indigo-200 px-4 py-6 rounded-2xl hover:bg-Intone-100 mb-4 mr-4'>
+                                                    className='border cursor-pointer border-indigo-200 px-4 py-6 rounded-2xl hover:bg-Intone-100 mb-4 mr-4 h-fit'>
                                                     <h1 className='text-2xl font-bold flex justify-center w-40'
                                                     >{band.name}</h1>
                                                     <img src={`static/band_pics/${band.picture}`} className='object-cover w-40 h-40 mx-auto' />
@@ -199,7 +199,7 @@ function MainPageItems({
                                             {AllEntries.albums.map((album) => (
                                                 <div key={album.id} onClick={() => fetchSingleEntry(album.model_type, album.id)}
                                                     className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4 mr-4
-                                        hover:bg-Intone-100 cursor-pointer'>
+                                        hover:bg-Intone-100 cursor-pointer h-fit'>
                                                     <h1 className='text-2xl font-bold flex justify-center w-40'
                                                     >{album.name}</h1>
                                                     <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
@@ -217,7 +217,7 @@ function MainPageItems({
                                         <div className='flex flex-row md:flex-col'>
                                             {AllEntries.gear.map((gear) => (
                                                 <div key={gear.id} onClick={() => fetchSingleEntry(gear.model_type, gear.id)}
-                                                    className='border border-indigo-200 px-4 py-6 rounded-2xl hover:bg-Intone-100 cursor-pointer mb-4 mr-4'>
+                                                    className='border border-indigo-200 px-4 py-6 rounded-2xl hover:bg-Intone-100 cursor-pointer mb-4 mr-4 h-fit'>
                                                     <h1 className='text-2xl font-bold flex justify-center w-40'
                                                     >{gear.name}</h1>
                                                     <img src={`static/gear_images/${gear.picture}`} className='object-cover mx-auto w-40 h-40' />
@@ -234,7 +234,7 @@ function MainPageItems({
                                             {AllEntries.players.map((player) => (
                                                 <div key={player.id} onClick={() => fetchSingleEntry(player.model_type, player.id)}
                                                     className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
-                                        hover:bg-Intone-100 cursor-pointer mr-4'>
+                                        hover:bg-Intone-100 cursor-pointer mr-4 h-fit'>
                                                     <h1 className='text-2xl font-bold flex justify-center w-40'
                                                     >{player.name}</h1>
                                                     <img src={`static/player_pics/${player.picture}`} className='object-cover mx-auto w-40 h-40' />
@@ -338,7 +338,7 @@ function MainPageItems({
                                             </div>
                                             <div className='flex flex-col border border-indigo-200 rounded-2xl px-4 py-2 mt-6'>
                                                 <p className='text-Intone-300 font-bold text-xl mx-auto'>
-                                                    {reviewScore}<FontAwesomeIcon icon={faStar} className='text-yellow-400' /></p>
+                                                    {reviewScore}<FontAwesomeIcon icon={faStar} className='text-yellow-400 ml-2' /></p>
                                                 <NewReviewForm
                                                     singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} setReviewErrorMessage={setReviewErrorMessage} handleUserMessageClick={handleUserMessageClick} />
                                                 <p className='mx-auto text-red-400'>{reviewErrorMessage}</p>
@@ -425,7 +425,7 @@ function MainPageItems({
                                                     <h1 className='text-2xl font-bold my-4 cursor-pointer text-Intone-300 hover:underline'
                                                         onClick={() => fetchSingleEntry('band', singleEntryData.band_id)}>
                                                         {singleEntryData.band}</h1>
-                                                    <img src={`static/album_covers/${singleEntryData.cover_art_url}`} className='object-cover w-40 h-40' />
+                                                    <img src={`static/album_covers/${singleEntryData.cover_art_url}`} className='object-cover w-60 h-60' />
                                                     <p className='w-80'>{singleEntryData.description}</p>
 
                                                 </div>
@@ -478,7 +478,7 @@ function MainPageItems({
                                             </div>
                                             <div className='flex flex-col border border-indigo-200 rounded-2xl px-4 py-2 mt-6'>
                                                 <p className='text-Intone-300 font-bold text-xl mx-auto'>
-                                                    {reviewScore}<FontAwesomeIcon icon={faStar} className='text-yellow-400' /></p>
+                                                    {reviewScore}<FontAwesomeIcon icon={faStar} className='text-yellow-400 ml-2' /></p>
                                                 <NewReviewForm
                                                     singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} setReviewErrorMessage={setReviewErrorMessage} handleUserMessageClick={handleUserMessageClick}  />
                                                 <p className='mx-auto text-red-400'>{reviewErrorMessage}</p>
@@ -497,7 +497,7 @@ function MainPageItems({
                                             )}
                                             <div className='mb-auto'>
                                                 <h1 className='text-2xl font-bold my-4 w-72'>{singleEntryData.name}</h1>
-                                                <img src={`static/player_pics/${singleEntryData.picture}`} className='object-cover w-40 h-40' />
+                                                <img src={`static/player_pics/${singleEntryData.picture}`} className='object-cover w-60 h-60' />
                                                 <p className='w-80'>{singleEntryData.description}</p>
                                             </div>
                                             <div className='mb-auto mr-6'>
@@ -539,7 +539,7 @@ function MainPageItems({
                                                         <div onClick={() => fetchSingleEntry('album', album.id)}
                                                             className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                            <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                            <h1 className='text-2xl font-bold flex justify-center mb-4 w-40 h-fit'
                                                             >{album.name}</h1>
                                                             <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
                                                         </div>

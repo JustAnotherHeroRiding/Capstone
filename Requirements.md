@@ -78,6 +78,10 @@
 - Smoothing out elements that don't fit the style or stick out
 - Default profile pic for new users #DONE 
 - Search bar in message box #DONE 
+- Hamburger menu #DONE 
+
+## Deploying
+- Find out why the CSRF tokens are not being recognized when deployed
 ## Browse Albums, Players or Gear #DONE
 
 ## Leave Reviews for albums or gear, leave comments for players #DONE 

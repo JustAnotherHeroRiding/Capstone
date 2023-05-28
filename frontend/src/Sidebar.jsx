@@ -6,7 +6,8 @@ import LogIn from './LogIn'
 import Profile from './Profile'
 import Entry from './AlbumGearArtist'
 import MainPageItems from './AlbumGearArtist'
-import { faL } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faL, faBars } from '@fortawesome/free-solid-svg-icons'
 
 function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, currentUserId }) {
 
@@ -190,6 +191,10 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
     };
 
 
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    
+
 
 
     return (
@@ -220,8 +225,8 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                     )}
                 </div>
 
-                <div className="">
-                    <ul className="max-2xl:flex max-2xl:justify-between max-2xl:mx-auto ">
+                <div className="flex">
+                    <ul className="max-2xl:flex justify-between max-2xl:mx-auto max-md:hidden ">
                         {userData && (
                             <li className='3xl:mb-4 max-2xl:mx-2 flex flex-row max-2xl:flex-col justify-start max-2xl:mb-2'>
                                 <a className=" hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer max-2xl:hidden" onClick={handleProfileClick}>{userData.name}</a>
@@ -261,6 +266,55 @@ function Sidebar({ isLoggedIn, userData, fetchUserData, fetchOtherUserData, curr
                             </div>
                         )}
                     </ul>
+                    {isMenuOpen && (
+                        <ul className="md:hidden absolute right-6 top-32 bg-gray-600 px-4 py-4 z-50 rounded-2xl">
+                        {userData && (
+                            <li className='3xl:mb-4 max-2xl:mx-2 flex flex-row max-2xl:flex-col justify-start max-2xl:mb-2'>
+                                <a className=" hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" onClick={handleProfileClick}>{userData.name}</a>
+                                {userData.profile_pic && (
+                                    <img src={`static/profile_pictures/${userData.profile_pic}`} className='object-cover w-12 h-12 cursor-pointer rounded-2xl' onClick={handleProfileClick} />
+
+                                )}
+                            </li>
+                        )}
+                        <li className="3xl:mb-4 max-2xl:mx-2 max-2xl:mb-2">
+                            <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" id='sidebar-all-posts' onClick={() => ShowAllX('albums')}>Albums</a>
+                        </li>
+                        <li className="3xl:mb-4 max-2xl:mx-2 max-2xl:mb-2">
+                            <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" id='sidebar-following' onClick={() => ShowAllX('bands')}>Bands</a>
+                        </li>
+                        <li className="3xl:mb-4 max-2xl:mx-2 max-2xl:mb-2">
+                            <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" id='sidebar-following' onClick={() => ShowAllX('gear')}>Gear</a>
+                        </li>
+                        <li className="3xl:mb-4 max-2xl:mx-2 max-2xl:mb-2">
+                            <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer" id='sidebar-following' onClick={() => ShowAllX('players')}>Players</a>
+                        </li>
+                        {isLoggedIn ? (
+                            <li className="3xl:mb-4 max-2xl:mx-2 max-2xl:mb-2">
+                                <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3" href="/logout">Log Out</a>
+                            </li>
+                        ) : null}
+                        {!isLoggedIn && (
+                            <div className="max-2xl:flex max-2xl:justify-between">
+                                <li className="3xl:mb-4 max-md:mx-2 max-2xl:mb-2">
+                                    <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer"
+                                        onClick={handleLogInClick}>Log In</a>
+                                </li>
+                                <li className="3xl:mb-4 max-2xl:mx-2 max-2xl:mb-2">
+                                    <a className="hover:bg-Intone-700 rounded-3xl px-3 py-3 cursor-pointer"
+                                        onClick={handleRegisterClick}>Register</a>
+                                </li>
+                            </div>
+                        )}
+                    </ul>   
+                    )}
+                    <button
+        className="md:hidden hover:bg-Intone-700 rounded-3xl cursor-pointer ml-auto p-2"
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+      >
+      <FontAwesomeIcon icon={faBars} className='' />
+      </button>
+                                     
 
                 </div>
 
