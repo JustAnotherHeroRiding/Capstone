@@ -1,1 +1,1 @@
-web: pip install -r requirements.txt && npm run build && nixpacks install && gunicorn Capstone.wsgi --log-file -
+web: python -m pip install -r requirements.txt gunicorn Capstone.wsgi --log-file -
