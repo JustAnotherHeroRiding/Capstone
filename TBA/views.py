@@ -647,7 +647,6 @@ def remove_from_wishlist(request, gear_id):
         return JsonResponse({"error": str(e)}, status=500)
 
 
-@csrf_protect
 def login_view(request):
     if request.method == "POST":
         # Attempt to sign user in

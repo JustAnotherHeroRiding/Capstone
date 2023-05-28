@@ -340,7 +340,7 @@ function MainPageItems({
                                                 <p className='text-Intone-300 font-bold text-xl mx-auto'>
                                                     {reviewScore}<FontAwesomeIcon icon={faStar} className='text-yellow-400' /></p>
                                                 <NewReviewForm
-                                                    singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} setReviewErrorMessage={setReviewErrorMessage} />
+                                                    singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} setReviewErrorMessage={setReviewErrorMessage} handleUserMessageClick={handleUserMessageClick} />
                                                 <p className='mx-auto text-red-400'>{reviewErrorMessage}</p>
 
                                             </div>
@@ -480,7 +480,7 @@ function MainPageItems({
                                                 <p className='text-Intone-300 font-bold text-xl mx-auto'>
                                                     {reviewScore}<FontAwesomeIcon icon={faStar} className='text-yellow-400' /></p>
                                                 <NewReviewForm
-                                                    singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} setReviewErrorMessage={setReviewErrorMessage} />
+                                                    singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} setReviewErrorMessage={setReviewErrorMessage} handleUserMessageClick={handleUserMessageClick}  />
                                                 <p className='mx-auto text-red-400'>{reviewErrorMessage}</p>
                                             </div>
                                             <NewEntryComment singleEntryData={singleEntryData} fetchSingleEntry={fetchSingleEntry} handleUserMessageClick={handleUserMessageClick} />

@@ -668,7 +668,7 @@ export function AddNewConnection({ AllEntriesData, fetchAllEntries, origin, conn
 };
 
 
-export function NewReviewForm({ singleEntryData, fetchSingleEntry, setReviewErrorMessage }) {
+export function NewReviewForm({ singleEntryData, fetchSingleEntry, setReviewErrorMessage, handleUserMessageClick }) {
     const [stars, setStars] = useState(0);
 
     const MIN_TEXTAREA_HEIGHT = 32;
