@@ -2,7 +2,7 @@
 
 # CS50 WEB PROGRAMMING FINAL PROJECT: InTone
 
-The project video is: WIP
+The project video is: https://www.youtube.com/watch?v=0qHFcEABeHc
 
 ## Main idea
 A website where users can discuss guitar music, rate albums, list the gear used by the players and discuss the players themselves. A never ending chase of "Tone" and the gear used to obtain it.  The main components are:
