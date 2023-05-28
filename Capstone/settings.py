@@ -53,6 +53,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'Capstone.urls'
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://capstone-production-68d3.up.railway.app',
+]
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
