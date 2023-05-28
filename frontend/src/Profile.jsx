@@ -40,7 +40,7 @@ function Profile({
     setShowFollowingReviews(false)
     setShowWishlist(showWishlist => !showWishlist)
   }
-  
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -178,34 +178,34 @@ function Profile({
 
   const fetchFollowingReviews = debounce(() => {
     fetch(`review/get/following/${userData.id}`)
-        .then(response => response.json())
-        .then(data => setReviewsFollowing(data))
-        .catch(error => console.log(error))
-}, 50); // Adjust the debounce delay as needed
+      .then(response => response.json())
+      .then(data => setReviewsFollowing(data))
+      .catch(error => console.log(error))
+  }, 50); // Adjust the debounce delay as needed
 
-const [messageQuery, setMessageQuery] = useState('');
-const [showMessageResults, setShowMessageResults] = useState(false);
-const [messageResults, setMessageResults] = useState([]);
-const [nrMessageResults, setNrMessageResults] = useState(0);
+  const [messageQuery, setMessageQuery] = useState('');
+  const [showMessageResults, setShowMessageResults] = useState(false);
+  const [messageResults, setMessageResults] = useState([]);
+  const [nrMessageResults, setNrMessageResults] = useState(0);
 
 
 
-const handleMessageSearchInputChange = (event) => {
+  const handleMessageSearchInputChange = (event) => {
     const value = event.target.value
     setMessageQuery(value);
 
     if (value !== '') {
-        const filteredData = Object.values(AllEntriesData.users).flat().filter((item) => item.name.toLowerCase().includes(value.toLowerCase()));
+      const filteredData = Object.values(AllEntriesData.users).flat().filter((item) => item.name.toLowerCase().includes(value.toLowerCase()));
 
-        setMessageResults(filteredData);
-        setNrMessageResults(filteredData.length);
-        setShowMessageResults(true);
+      setMessageResults(filteredData);
+      setNrMessageResults(filteredData.length);
+      setShowMessageResults(true);
     } else {
-        setMessageResults([]);
-        setNrMessageResults(0);
-        setShowMessageResults(false);
+      setMessageResults([]);
+      setNrMessageResults(0);
+      setShowMessageResults(false);
     }
-};
+  };
 
   // Call the debounced function in useEffect
   useEffect(() => {
@@ -361,6 +361,14 @@ const handleMessageSearchInputChange = (event) => {
       });
   }
 
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const handleFileChange = (event) => {
+    setSelectedImage(event.target.files[0]);
+  };
+  
+
+
   function send_message(event) {
     event.preventDefault();
     const profile_id = conversationUserId
@@ -389,6 +397,7 @@ const handleMessageSearchInputChange = (event) => {
       })
       .then(data => {
         setMessageValue("");
+        setSelectedImage(null);
         // Do something with the returned data, like update the UI or show a success message
       })
       .catch(error => {
@@ -681,61 +690,61 @@ const handleMessageSearchInputChange = (event) => {
                 <div className='mr-4'>
                   {displayedReviewsFollowing.map(review => (
                     <div key={review.id}>
-                        <div>
-                          {review.gear || review.album ? (
-                            <div className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
-                              <div className='flex'>
-                                {[...Array(Math.floor(review.stars))].map((_, index) => (
-                                  <FontAwesomeIcon icon={faStar} className='text-yellow-400' key={`full-star-${index}`} />
-                                ))}
-                                {review.stars % 1 !== 0 && (
-                                  <FontAwesomeIcon icon={faStarHalfStroke} className='text-yellow-400' key={`half-star-${review.id}`} />)}
-                                {[...Array(5 - Math.ceil(review.stars))].map((_, index) => (
-                                  <FontAwesomeIcon icon={farStar} className='text-yellow-400' key={`empty-star-${index}`} />
-                                ))}
-                              </div>
-                              <p className='whitespace-pre-line mb-2'>{review.text}</p>
-                              <div className='flex justify-between'>
-                                {review.gear && (
-                                  <div className='flex flex-row'>
-                                    <img src={`static/gear_images/${review.gear.picture}`}
-                                      className='object-cover w-8 h-8 rounded-full mr-2'></img>
-                                    <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
-                                      onClick={() => fetchSingleEntry(review.gear.model_type, review.gear.id)}>{review.gear.name}</p>
-                                  </div>
-                                )}
-                                {review.album && (
-                                  <div className='flex flex-row'>
-                                    <img src={`static/album_covers/${review.album.cover_art_url}`}
-                                      className='object-cover w-8 h-8 rounded-full mr-2'></img>
-                                    <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
-                                      onClick={() => fetchSingleEntry(review.album.model_type, review.album.id)}>{review.album.name}</p>
-                                  </div>
-                                )}
-
-                                <p>
-                                  {review.is_edited && (
-                                    <span className=' text-gray-500'>*</span>
-                                  )}
-                                  {review.created_at}
-                                </p>
-                              </div>
-                              <div className='flex flex-row justify-end'>
-                                <img src={`static/profile_pictures/${review.user.profile_pic}`} className='object-cover w-8 h-8 rounded-full mr-2'></img>
-                                <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
-                                  onClick={() => handleUserMessageClick(review.user)}>{review.user.username}</p>
-                              </div>
+                      <div>
+                        {review.gear || review.album ? (
+                          <div className='w-full flex flex-col border px-4 pt-2 rounded-lg border-indigo-900 mb-6 pb-4'>
+                            <div className='flex'>
+                              {[...Array(Math.floor(review.stars))].map((_, index) => (
+                                <FontAwesomeIcon icon={faStar} className='text-yellow-400' key={`full-star-${index}`} />
+                              ))}
+                              {review.stars % 1 !== 0 && (
+                                <FontAwesomeIcon icon={faStarHalfStroke} className='text-yellow-400' key={`half-star-${review.id}`} />)}
+                              {[...Array(5 - Math.ceil(review.stars))].map((_, index) => (
+                                <FontAwesomeIcon icon={farStar} className='text-yellow-400' key={`empty-star-${index}`} />
+                              ))}
                             </div>
-                          ) : null}
-                        </div>
+                            <p className='whitespace-pre-line mb-2'>{review.text}</p>
+                            <div className='flex justify-between'>
+                              {review.gear && (
+                                <div className='flex flex-row'>
+                                  <img src={`static/gear_images/${review.gear.picture}`}
+                                    className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                                  <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                                    onClick={() => fetchSingleEntry(review.gear.model_type, review.gear.id)}>{review.gear.name}</p>
+                                </div>
+                              )}
+                              {review.album && (
+                                <div className='flex flex-row'>
+                                  <img src={`static/album_covers/${review.album.cover_art_url}`}
+                                    className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                                  <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                                    onClick={() => fetchSingleEntry(review.album.model_type, review.album.id)}>{review.album.name}</p>
+                                </div>
+                              )}
+
+                              <p>
+                                {review.is_edited && (
+                                  <span className=' text-gray-500'>*</span>
+                                )}
+                                {review.created_at}
+                              </p>
+                            </div>
+                            <div className='flex flex-row justify-end'>
+                              <img src={`static/profile_pictures/${review.user.profile_pic}`} className='object-cover w-8 h-8 rounded-full mr-2'></img>
+                              <p className='text-Intone-300 hover:text-Intone-900 cursor-pointer font-bold'
+                                onClick={() => handleUserMessageClick(review.user)}>{review.user.username}</p>
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
             <div className='flex justify-center mt-4'>
-      {renderPageReviewFollowingNumbers()}
-    </div>
+              {renderPageReviewFollowingNumbers()}
+            </div>
           </div>
         )}
         {showReviews && (
@@ -791,8 +800,8 @@ const handleMessageSearchInputChange = (event) => {
               </div>
             </div>
             <div className='flex justify-center mt-4'>
-      {renderPageReviewUserNumbers()}
-    </div>
+              {renderPageReviewUserNumbers()}
+            </div>
           </div>
         )}
         {showChat && (
@@ -811,31 +820,31 @@ const handleMessageSearchInputChange = (event) => {
                     </div>
                   ))}
                   <div className='flex flex-col'>
-                  <input type='text'
-                        placeholder='Search Albums,Gear,Players and more' name='sidebar-search'
-                        className='text-sm h-10 my-auto w-3/4 mx-auto rounded-3xl px-4 py-2 text-black'
-                        value={messageQuery}
-                        onChange={handleMessageSearchInputChange}
-                        autoComplete='off'
-                        ></input>
+                    <input type='text'
+                      placeholder='Search Albums,Gear,Players and more' name='sidebar-search'
+                      className='text-sm h-10 my-auto w-3/4 mx-auto rounded-3xl px-4 py-2 text-black'
+                      value={messageQuery}
+                      onChange={handleMessageSearchInputChange}
+                      autoComplete='off'
+                    ></input>
                     {showMessageResults && messageResults && nrMessageResults > 0 && (
-                        <div className='bg-gray-800 z-50 px-2 mt-2 py-2 
+                      <div className='bg-gray-800 z-50 px-2 mt-2 py-2 
                         rounded-2xl cursor-pointer max-h-[300px] overflow-auto scrollbar-blue-thin w-[300px] mx-auto'>
-                            <>
-                                {messageResults.map((result) => (
-                                    <div key={`${result.id}-${result.model_type}`} className='flex justify-between hover:bg-gray-700 p-2 rounded-2xl'
-                                        onClick={() => fetchMessageHistory(result.id)}>
-                                        <p>{result.name}</p>
-                                        <img src={`static/profile_pictures/${result.profile_pic}`} className='object-cover w-12 h-12 cursor-pointer rounded-2xl' onClick={() => fetchMessageHistory(result.id)} />
-                                    </div>
-                                ))}
-                                
-                            </>
-                        </div>
+                        <>
+                          {messageResults.map((result) => (
+                            <div key={`${result.id}-${result.model_type}`} className='flex justify-between hover:bg-gray-700 p-2 rounded-2xl'
+                              onClick={() => fetchMessageHistory(result.id)}>
+                              <p>{result.name}</p>
+                              <img src={`static/profile_pictures/${result.profile_pic}`} className='object-cover w-12 h-12 cursor-pointer rounded-2xl' onClick={() => fetchMessageHistory(result.id)} />
+                            </div>
+                          ))}
+
+                        </>
+                      </div>
                     )}
-                    </div>
+                  </div>
                 </div>
-                }
+              }
               {conversation &&
                 <div className='max-h-[380px] scrollbar-thumb-Intone-300 
             scrollbar-thin scrollbar-track-rounded-3xl scrollbar-thumb-rounded-3xl 
@@ -887,10 +896,20 @@ const handleMessageSearchInputChange = (event) => {
                         rows='3'
                         className='bg-Intone-200 px-6 placeholder:text-gray-500 mr-5 outline-none resize-none border rounded-xl w-64 py-2 scrollbar-blue-thin' />
                       <div className='flex flex-col'>
-                        <label className='cursor-pointer hover:bg-Intone-900 rounded-lg flex justify-center items-center'>
-                          <input type='file' name='image' accept='image/*' className='opacity-0 absolute -z-10 cursor-pointer' />
-                          <FontAwesomeIcon icon={faPaperclip} className='h-10 w-10 hover:bg-Intone-900 my-2' />
+                        <label className="cursor-pointer hover:bg-Intone-900 rounded-lg flex justify-center items-center">
+                          <input type="file" name="image" accept="image/*" onChange={handleFileChange} className="opacity-0 absolute -z-10 cursor-pointer" />
+                          <FontAwesomeIcon icon={faPaperclip} className="h-10 w-10 hover:bg-Intone-900 my-2" />
                         </label>
+                        {/* Render the image preview if an image is selected */}
+                        {selectedImage && (
+                          <div>
+                          <span className='absolute left-0 bottom-64 text-3xl 
+                          border border-red-500 px-2 rounded-3xl hover:bg-red-700 cursor-pointer'
+                          onClick={() => setSelectedImage(null)}>X</span>
+                          <img src={URL.createObjectURL(selectedImage)} alt="Selected Image" 
+                          className="w-20 h-20 mt-2 absolute left-0 bottom-40" />
+                          </div>
+                        )}
 
 
                         <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
@@ -971,7 +990,7 @@ const handleMessageSearchInputChange = (event) => {
             </div>
           </div>
           <div className='flex justify-center mt-4'>
-          {renderCommentPageNumbers()}
+            {renderCommentPageNumbers()}
           </div>
         </div>
       </div>
