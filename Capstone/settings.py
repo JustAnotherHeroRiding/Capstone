@@ -128,7 +128,7 @@ ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = ['127.0.0.1']
 
 # Vite App Dir: point it to the folder your vite app is in.
-VITE_APP_DIR = BASE_DIR / "src"
+VITE_APP_DIR = BASE_DIR / "frontend/src"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/

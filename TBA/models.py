@@ -295,6 +295,7 @@ class Album(models.Model):
             "name": self.name,
             "cover_art_url": self.cover_art.url if self.cover_art else None,
             "gear": [gear.minimal_serialize() for gear in self.gear.all()],
+            "band_id": self.band.id,
             "model_type": "album",
         }
 
