@@ -3,6 +3,7 @@
 
 import os
 import json
+import platform
 
 from django import template
 from django.conf import settings
@@ -20,7 +21,13 @@ def render_vite_bundle():
     """
 
     try:
-        fd = open(f"{settings.VITE_APP_DIR}\dist\manifest.json", "r")
+        if platform.system() == "Windows":
+    # Windows platform
+            fd = open(f"{settings.VITE_APP_DIR}\dist\manifest.json", "r")
+        elif platform.system() == "Linux":
+    # Linux platform
+            fd = open("frontend/src/dist/manifest.json", "r")
+
         manifest = json.load(fd)
     except:
         raise Exception(
