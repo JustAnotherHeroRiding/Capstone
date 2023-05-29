@@ -316,6 +316,7 @@ export function AddPlayerForm({ AllEntriesData, fetchAllEntries }) {
         formData.append('album', JSON.stringify(selectedAlbums));
         formData.append('description', description);
         formData.append('picture', picture);
+        console.log(picture)
 
         const response = await fetch(`entries/add/player`, {
             method: 'POST',

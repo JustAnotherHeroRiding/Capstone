@@ -28,10 +28,6 @@ function LogIn({ handleRegisterClick }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-
-    console.log(csrftoken)
-
-
     const handleLogInSubmit = async (event) => {
         event.preventDefault();
 
