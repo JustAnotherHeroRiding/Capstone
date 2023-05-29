@@ -304,7 +304,7 @@ function MainPageItems({
                                                             <div onClick={() => fetchSingleEntry(player.model_type, player.id)}
                                                                 className='border border-indigo-200 px-4 py-6 rounded-2xl mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                                <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                                <h1 className='text-2xl font-bold flex justify-center mb-4 w-40'
                                                                 >{player.name}</h1>
                                                                 <img src={`static/player_pics/${player.picture}`} className='object-cover mx-auto w-40 h-40' />
                                                             </div>
@@ -328,7 +328,7 @@ function MainPageItems({
                                                             <div onClick={() => fetchSingleEntry(album.model_type, album.id)}
                                                                 className='border border-indigo-200 px-4 py-6 rounded-2xl  mb-4
                                         hover:bg-Intone-100 cursor-pointer'>
-                                                                <h1 className='text-2xl font-bold flex justify-center mb-4'
+                                                                <h1 className='text-2xl font-bold flex justify-center mb-4 w-40'
                                                                 >{album.name}</h1>
                                                                 <img src={`static/album_covers/${album.cover_art_url}`} className='object-cover mx-auto w-40 h-40' />
                                                             </div>
