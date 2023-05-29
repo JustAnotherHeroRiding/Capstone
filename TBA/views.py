@@ -650,8 +650,8 @@ def remove_from_wishlist(request, gear_id):
 def login_view(request):
     if request.method == "POST":
         # Attempt to sign user in
-        username = request.POST["username"]
-        password = request.POST["password"]
+        username = request.POST.get("username")
+        password = request.POST.get("password")
         user = User.objects.filter(username=username).first()
 
         # Check if user exists
