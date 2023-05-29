@@ -1,13 +1,33 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import Cookies from 'js-cookie';
 
 
 function LogIn({ handleRegisterClick }) {
-    const csrftoken = Cookies.get('csrftoken');
+
+    const [csrftoken, setCsrfToken] = useState('');
+
+    useEffect(() => {
+        const fetchCsrfToken = async () => {
+            try {
+                const response = await fetch('/api/get-csrf-token/');
+                const data = await response.json();
+                const csrfToken = data.csrfToken;
+                setCsrfToken(csrfToken);
+                // Set the obtained CSRF token
+                Cookies.set('csrftoken', csrfToken);
+            } catch (error) {
+                console.error('Error fetching CSRF token:', error);
+            }
+        };
+
+        fetchCsrfToken();
+    }, []);
+
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
 
     console.log(csrftoken)
 

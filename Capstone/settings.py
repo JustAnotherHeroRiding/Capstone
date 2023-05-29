@@ -54,7 +54,8 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'Capstone.urls'
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://capstone-production-68d3.up.railway.app',
+    'https://capstone-production-af97.up.railway.app',
+    'https://capstone-production-af97.up.railway.app/login'
 ]
 
 

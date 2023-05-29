@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.views.decorators.csrf import csrf_exempt, csrf_protect, get_token
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST, require_http_methods
 from django.core.files.storage import FileSystemStorage
@@ -645,6 +645,11 @@ def remove_from_wishlist(request, gear_id):
         return JsonResponse({"error": "Gear item not found."}, status=404)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+    
+    
+def get_csrf_token(request):
+    csrf_token = get_token(request)
+    return JsonResponse({'csrfToken': csrf_token})
 
 
 def login_view(request):
