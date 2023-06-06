@@ -563,7 +563,7 @@ function Profile({
       </div>
 
       <div className='flex flex-row justify-between mt-12'>
-        {current_user && <div className='text-Intone-600 border border-indigo-200 rounded-xl px-6 py-4 mr-12'>
+        {current_user && <div className='text-Intone-600 border border-indigo-200 rounded-3xl px-6 py-4 mr-12'>
           <h1>Upload Profile Picture</h1>
           <form onSubmit={handleSubmit} encType='multipart/form-data'>
             <div className='flex flex-col'>
